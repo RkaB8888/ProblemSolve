@@ -47,6 +47,7 @@ public class Solution {
 	}
 
 	private static void subSet(int row, int cnt) {
+		if(cnt>=result) return;
 		if (row == D) {
 			if (isPosible()) {
 				if (cnt < result)
@@ -54,7 +55,7 @@ public class Solution {
 			}
 			return;
 		}
-		//안 바꿈
+		//안바꿈
 		subSet(row + 1, cnt);
 		
 		//임시 저장
