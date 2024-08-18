@@ -1,22 +1,17 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.StringTokenizer;
+
  
 public class Solution {
  
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void main(String[] args) throws Exception {
         StringBuilder sb = new StringBuilder();
-        int T = Integer.parseInt(br.readLine());
+        int T = readInt();
         for (int test_case = 1; test_case <= T; test_case++) {
-            int treeN = Integer.parseInt(br.readLine());
+            int treeN = readInt();
             int tree[] = new int[treeN];
-            StringTokenizer st = new StringTokenizer(br.readLine());
             int max = 0;
             for (int i = 0; i < treeN; i++) {
-                tree[i] = Integer.parseInt(st.nextToken());
+                tree[i] = readInt();
                 if (tree[i] > max)
                     max = tree[i];
             }
@@ -89,5 +84,17 @@ public class Solution {
             }
         }
     }
+    public static int readInt() throws Exception {
+	    int val = 0;
+	    int c = System.in.read();
+	    while (c <= ' ') {  // 공백 문자 건너뛰기
+	        c = System.in.read();
+	    }
+	    do {
+	        val = 10 * val + c - 48;  // 아스키 값으로 숫자 변환
+	    } while ((c = System.in.read()) >= 48 && c <= 57);
+
+	    return val;  // 양수 반환
+	}
  
 }
