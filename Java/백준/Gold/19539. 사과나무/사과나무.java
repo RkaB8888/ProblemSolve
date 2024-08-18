@@ -10,26 +10,20 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
 		int N = Integer.parseInt(br.readLine());
-		int[] idealH = new int[N];
 		int[] cnt = {0,0};
-		boolean flag = false;
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < N; i++) {
-			idealH[i] = Integer.parseInt(st.nextToken());
-			cnt[0]+=idealH[i]%2;
-			cnt[1]+=idealH[i]/2;
+			int temp = Integer.parseInt(st.nextToken());
+			cnt[0]+=temp%2;
+			cnt[1]+=temp/2;
 		}
-		if(cnt[1]<cnt[0]) flag = false;
-		else if(cnt[1]==cnt[0]) flag= true;
+		if(cnt[1]<cnt[0]) System.out.println("NO");
+		else if(cnt[1]==cnt[0]) System.out.println("YES");
 		else {
 			int diff = cnt[1]-cnt[0];
-			if(diff%3!=0) flag = false;
-			else flag = true;
+			if(diff%3!=0) System.out.println("NO");
+			else System.out.println("YES");
 		}
-		if (flag)
-			System.out.println("YES");
-		else
-			System.out.println("NO");
 	}
 
 }
