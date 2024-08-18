@@ -22,12 +22,9 @@ public class Main {
 		if(cnt[1]<cnt[0]) flag = false;
 		else if(cnt[1]==cnt[0]) flag= true;
 		else {
-			while(cnt[1]>cnt[0]) {
-				cnt[1]--;
-				cnt[0]+=2;
-			}
-			if(cnt[0]==cnt[1]) flag = true;
-			else flag = false;
+			int diff = cnt[1]-cnt[0];
+			if(diff%3!=0) flag = false;
+			else flag = true;
 		}
 		if (flag)
 			System.out.println("YES");
