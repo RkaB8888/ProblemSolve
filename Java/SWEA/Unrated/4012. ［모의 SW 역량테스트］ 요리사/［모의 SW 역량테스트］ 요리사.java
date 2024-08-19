@@ -59,7 +59,6 @@ public class Solution {
 			isSelect[i] = true;
 			combi1(cnt + 1, i + 1, bitmask | (1 << i));
 			isSelect[i] = false;
-			combi1(cnt, i + 1, bitmask);
 		}
 	}
 
