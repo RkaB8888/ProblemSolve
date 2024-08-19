@@ -1,8 +1,14 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-
-public class Solution {
+/**
+ * 메모리:29,712KB, 시간:1,733ms
+ * 재귀를 통한 조합 생성을 2번 함
+ * 모든 재료에 대해 A와 B가 나눠가지는 조합 1번
+ * 나눠가진 재료에 대해서 궁합을 계산하기 위해 2개씩 고르는 조합 2번
+ * DP가 없을 때 시간 초과가 걸렸고, DP를 넣고 돌리니 통과함
+ */
+public class Solution{
 	static int N;// 전체 식재료 개수
 	static int H;// 한 사람이 가져갈 식재료 개수 (N/2)
 	static int[][] table;// 궁합 테이블
@@ -42,11 +48,7 @@ public class Solution {
 	public static void combi1(int cnt, int str, int bitmask) {
 		if (cnt == H) {// N/2개 선택했다면 나눠진 재료를 토대로 점수 계산
 			if (dp[bitmask] == 0) {
-				a = 0;// a의 맛 점수
-				combi2(0, 0, new int[2], true);
-				b = 0;// b의 맛 점수
-				combi2(0, 0, new int[2], false);
-				int diff = Math.abs(a - b);
+				int diff = calcDiff();
 				if (result > diff)
 					result = diff;
 				dp[bitmask] = diff;
@@ -65,27 +67,28 @@ public class Solution {
 
 	// 사용하기로 한 재료들 중에서 2개를 선택해서 궁합 점수를 산출한다.
 	// list는 선택된 2가지 재료를 담는 배열, aCheck가 true라면 A재료를 계산하는 중
-	public static void combi2(int cnt, int str, int[] list, boolean aCheck) {
-		if (cnt == 2) {
-			if (aCheck)
-				a += calcFlav(list);
-			else
-				b += calcFlav(list);
-			return;
+	public static int calcDiff() {
+		a = 0; b = 0;
+		for(int i = 0 ; i < N ; i++) {
+			for(int j = 0 ; j < i ; j++) {
+				if(isSelect[i]==isSelect[j]) {
+					if(isSelect[i]) {
+						a+=calcFlav(i,j);
+					}
+					else {
+						b+=calcFlav(i,j);
+					}
+				}
+			}
 		}
-		for (int i = str; i < N; i++) {
-			if (isSelect[i] != aCheck)
-				continue;
-			list[cnt] = i;
-			combi2(cnt + 1, i + 1, list, aCheck);
-		}
+		return Math.abs(a-b);
 	}
 
 	// 선택된 2개의 재료의 궁합 점수를 반환해 줌
-	public static int calcFlav(int[] list) {
+	public static int calcFlav(int i , int j) {
 		int sum = 0;
-		sum += table[list[0]][list[1]];
-		sum += table[list[1]][list[0]];
+		sum += table[i][j];
+		sum += table[j][i];
 		return sum;
 	}
 
