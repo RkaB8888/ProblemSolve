@@ -8,13 +8,11 @@ import java.util.StringTokenizer;
  * 나눠가진 재료에 대해서 궁합을 계산하기 위해 2개씩 고르는 조합 2번
  * DP가 없을 때 시간 초과가 걸렸고, DP를 넣고 돌리니 통과함
  */
-public class Solution{
+public class Solution {
 	static int N;// 전체 식재료 개수
 	static int H;// 한 사람이 가져갈 식재료 개수 (N/2)
 	static int[][] table;// 궁합 테이블
 	static boolean[] isSelect;// 어떤게 A가 사용하는지 판단
-	static int a;// A가 사용하는 재료의 점수
-	static int b;// B가 사용하는 재료으 점수
 	static int result;// 차이의 최소를 저장
 
 	static int[] dp;
@@ -68,28 +66,21 @@ public class Solution{
 	// 사용하기로 한 재료들 중에서 2개를 선택해서 궁합 점수를 산출한다.
 	// list는 선택된 2가지 재료를 담는 배열, aCheck가 true라면 A재료를 계산하는 중
 	public static int calcDiff() {
-		a = 0; b = 0;
+		int a = 0; 
+		int b = 0;
 		for(int i = 0 ; i < N ; i++) {
 			for(int j = 0 ; j < i ; j++) {
 				if(isSelect[i]==isSelect[j]) {
 					if(isSelect[i]) {
-						a+=calcFlav(i,j);
+						a+=table[i][j]+table[j][i];
 					}
 					else {
-						b+=calcFlav(i,j);
+						b+=table[i][j]+table[j][i];
 					}
 				}
 			}
 		}
 		return Math.abs(a-b);
-	}
-
-	// 선택된 2개의 재료의 궁합 점수를 반환해 줌
-	public static int calcFlav(int i , int j) {
-		int sum = 0;
-		sum += table[i][j];
-		sum += table[j][i];
-		return sum;
 	}
 
 }
