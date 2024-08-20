@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:32,240kb, 시간:528ms
+ * 메모리:34,336kb, 시간:476ms
  */
 public class Main {
 	static int N;// 배열 i 크기 N
@@ -64,28 +64,53 @@ public class Main {
 		}
 		public void counterClockWise(int rotate) {
 			rotate%=cnt;
-			while(rotate>0) {
-				int temp = map[r][c];
-				int i = r;
-				int j = c;
-				while(j<c+m-1) {
-					map[i][j] = map[i][j+1];
-					j++;
-				}
-				while(i<r+n-1) {
-					map[i][j] = map[i+1][j];
-					i++;
-				}
-				while(j>c) {
-					map[i][j] = map[i][j-1];
-					j--;
-				}
-				while(i>r) {
-					map[i][j] = map[i-1][j];
-					i--;
-				}
-				map[r+1][c] = temp;
-				rotate--;
+			int[] arr = new int[cnt];
+			int i = 0;
+			int j = 0;
+			int arridx = 0;
+			while(j<m-1) {
+				arr[arridx++] = map[r][c+j];
+				j++;
+			}
+			while(i<n-1) {
+				arr[arridx++]=map[r+i][c+j];
+				i++;
+			}
+			while(j>0) {
+				arr[arridx++]=map[r+i][c+j];
+				j--;
+			}
+			while(i>0) {
+				arr[arridx++]=map[r+i][c];
+				i--;
+			}
+			int idx1 = cnt-1;
+			int idx2 = idx1-rotate;
+			int cnt2 = 0;
+			int[] arrshift = new int[cnt];
+			while(cnt2<cnt) {
+				arrshift[idx2--] = arr[idx1--];
+				if(idx2<0) idx2+=cnt;
+				if(idx1<0) idx1+=cnt;
+				cnt2++;
+			}
+
+			arridx = 0;
+			while(j<m-1) {
+				map[r][c+j] = arrshift[arridx++];
+				j++;
+			}
+			while(i<n-1) {
+				map[r+i][c+j]=arrshift[arridx++];
+				i++;
+			}
+			while(j>0) {
+				map[r+i][c+j]=arrshift[arridx++];
+				j--;
+			}
+			while(i>0) {
+				map[r+i][c]=arrshift[arridx++];
+				i--;
 			}
 		}
 	}
