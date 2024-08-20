@@ -1,32 +1,24 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
-
 /**
- * 메모리:34,336kb, 시간:476ms
+ * 메모리:32,976kb, 시간:300ms
  */
 public class Main {
 	static int N;// 배열 i 크기 N
 	static int M;// 배열 j 크기 M
 	static int R;// 회전 수
 	static int[][] map;
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	public static void main(String[] args) throws Exception {
 		StringBuilder sb = new StringBuilder();
-		StringTokenizer st = new StringTokenizer(br.readLine());
 
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		R = Integer.parseInt(st.nextToken());
+		N = readInt();
+		M = readInt();
+		R = readInt();
 
 		map = new int[N][M];
 
 		// 배열 정보 입력
 		for (int i = 0; i < N; i++) {
-			st = new StringTokenizer(br.readLine());
 			for (int j = 0; j < M; j++) {
-				map[i][j] = Integer.parseInt(st.nextToken());
+				map[i][j] = readInt();
 			}
 		}
 /////////////////////////////////입력 끝/////////////////////////////////////////
@@ -93,6 +85,17 @@ public class Main {
 			while(j>0) map[r+i][c+j--]=arrshift[arridx++]; // 아래
 			while(i>0) map[r+i--][c]=arrshift[arridx++]; // 왼쪽
 		}
+	}
+	public static int readInt() throws Exception {
+		int val = 0;
+		int c = System.in.read();
+		while(c<=' ') {
+			c = System.in.read();
+		}
+		do {
+			val = 10*val + c-48;
+		}while((c=System.in.read())>=48 && c <=57);
+		return val;
 	}
 
 }
