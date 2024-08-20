@@ -63,55 +63,35 @@ public class Main {
 			this.cnt = 2*(n+m)-4;
 		}
 		public void counterClockWise(int rotate) {
-			rotate%=cnt;
-			int[] arr = new int[cnt];
-			int i = 0;
-			int j = 0;
-			int arridx = 0;
-			while(j<m-1) {
-				arr[arridx++] = map[r][c+j];
-				j++;
-			}
-			while(i<n-1) {
-				arr[arridx++]=map[r+i][c+j];
-				i++;
-			}
-			while(j>0) {
-				arr[arridx++]=map[r+i][c+j];
-				j--;
-			}
-			while(i>0) {
-				arr[arridx++]=map[r+i][c];
-				i--;
-			}
-			int idx1 = cnt-1;
-			int idx2 = idx1-rotate;
-			int cnt2 = 0;
+			rotate%=cnt; // 실제 회전 수 계산
+			int[] arr = new int[cnt]; // 껍데기 요소를 저장함
+			int i = 0, j = 0, arridx = 0;
+			
+			// 껍데기 요소를 배열에 반시계방향으로 저장
+			while(j<m-1) arr[arridx++] = map[r][c+j++]; // 위
+			while(i<n-1) arr[arridx++]=map[r+i++][c+j]; // 오른쪽
+			while(j>0) arr[arridx++]=map[r+i][c+j--]; // 아래
+			while(i>0) arr[arridx++]=map[r+i--][c]; // 왼쪽
+			
+			//저장한 배열을 시프트한 결과를 저장할 배열 생성
 			int[] arrshift = new int[cnt];
+			int idx1 = cnt-1, idx2 = idx1-rotate;
+			int cnt2 = 0;
+			
+			//rotate만큼 시프트 과정
 			while(cnt2<cnt) {
 				arrshift[idx2--] = arr[idx1--];
 				if(idx2<0) idx2+=cnt;
 				if(idx1<0) idx1+=cnt;
 				cnt2++;
 			}
-
-			arridx = 0;
-			while(j<m-1) {
-				map[r][c+j] = arrshift[arridx++];
-				j++;
-			}
-			while(i<n-1) {
-				map[r+i][c+j]=arrshift[arridx++];
-				i++;
-			}
-			while(j>0) {
-				map[r+i][c+j]=arrshift[arridx++];
-				j--;
-			}
-			while(i>0) {
-				map[r+i][c]=arrshift[arridx++];
-				i--;
-			}
+			
+			//시프트 배열을 토대로 다시 맵에 저장
+			arridx = 0; j = 0; i = 0;
+			while(j<m-1) map[r][c+j++] = arrshift[arridx++]; // 위
+			while(i<n-1) map[r+i++][c+j]=arrshift[arridx++]; // 오른쪽
+			while(j>0) map[r+i][c+j--]=arrshift[arridx++]; // 아래
+			while(i>0) map[r+i--][c]=arrshift[arridx++]; // 왼쪽
 		}
 	}
 
