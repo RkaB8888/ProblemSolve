@@ -3,16 +3,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 /**
- * 메모리:22,924kb, 시간:2,575ms
+ * 메모리:27,296kb, 시간:224ms
+ * 가능한 모든 부분 집합?(3진수)을 확인하면서 최소 횟수를 구함
  */
 public class Solution {
-	static int D;
-	static int W;
-	static int K;
+	static int D; // 두께
+	static int W; // 폭
+	static int K; // 몇개 연속이냐
 	static boolean[][] map;
-	static boolean[] A;
-	static boolean[] B;
-	static boolean flag;
+	static boolean[] A; // 해당 열 교체시 투입할 것 false
+	static boolean[] B; // 해당 열 교체시 투입할 것 true
 	static int result;
 
 	public static void main(String[] args) throws IOException {
@@ -39,7 +39,6 @@ public class Solution {
 					}
 				}
 			} // map 설정 끝
-			flag = false;
 			result = Integer.MAX_VALUE;
 			subSet(0, 0);
 			sb.append('#').append(t).append(' ').append(result).append('\n');
@@ -51,8 +50,7 @@ public class Solution {
 		if(cnt>=result) return;
 		if (row == D) {
 			if (isPosible()) {
-				if (cnt < result)
-					result = cnt;
+				result = cnt;
 			}
 			return;
 		}
@@ -75,10 +73,9 @@ public class Solution {
 
 	}
 
-	private static boolean isPosible() {
+	private static boolean isPosible() {//바꾼 맵의 조건이 성립하는지 판단
 
-		for (int j = 0; j < W; j++) {
-			boolean flag = false;
+		a: for (int j = 0; j < W; j++) {
 			int trueCnt = 0, falseCnt = 0;
 			for (int i = 0; i < D; i++) {
 				if (map[i][j]) {
@@ -89,14 +86,10 @@ public class Solution {
 					falseCnt++;
 				}
 				if (trueCnt >= K || falseCnt >= K) {
-					flag = true;
-					break;
+					continue a;//해당 열은 더이상 볼 필요 없음
 				}
 			}
-			if (flag) {
-				continue;
-			}
-			return false;
+			return false;//해당 열에서 조건이 안맞아서 끝까지 확인했다면
 		}
 		return true;
 	}
