@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,13 +23,11 @@ public class Solution {
 		System.out.println(sb);
 	}
 	public static void process() {
-		while(N>2.0) {
-			double temp = Math.sqrt(N);
-			double tempCeil = Math.ceil(temp);
+		while(N>2) {
+			double tempCeil = Math.ceil(Math.sqrt(N));
 			double tempPow = Math.pow(tempCeil, 2);
-			result+=tempPow-N;
+			result+=tempPow-N+1;
 			N=tempCeil;
-			result++;
 		}
 	}
 
