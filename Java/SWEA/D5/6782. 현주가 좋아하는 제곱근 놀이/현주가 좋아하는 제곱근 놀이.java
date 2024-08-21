@@ -1,6 +1,3 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 /**
  * 메모리:29,772KB, 시간:290ms
  * @author SSAFY
@@ -9,13 +6,12 @@ import java.io.InputStreamReader;
 public class Solution {
     static double N;
     static long result;
-    public static void main(String[] args) throws NumberFormatException, IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void main(String[] args) throws Exception {
          
         StringBuilder sb = new StringBuilder();
-        int T = Integer.parseInt(br.readLine());
+        int T = readInt();
         for(int tc=1; tc<=T; tc++) {
-            N = Double.parseDouble(br.readLine());
+            N = readDouble();
             result = 0;
             process();
             sb.append("#").append(tc).append(" ").append(result).append("\n");
@@ -31,6 +27,28 @@ public class Solution {
             result+=tempPow-N+1;
             N=tempCeil;
         }
+    }
+    public static int readInt() throws Exception{
+    	int val = 0;
+    	int c = System.in.read();
+    	while(c<=' ') {
+    		c = System.in.read();
+    	}
+    	do {
+    		val = 10*val+c-48;
+    	}while((c=System.in.read()) >= 48 && c <= 57);
+    	return val;
+    }
+    public static double readDouble() throws Exception{
+    	double val = 0;
+    	int c = System.in.read();
+    	while(c<=' ') {
+    		c = System.in.read();
+    	}
+    	do {
+    		val = 10*val+c-48;
+    	}while((c=System.in.read()) >= 48 && c <= 57);
+    	return val;
     }
  
 }
