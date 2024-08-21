@@ -1,9 +1,10 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-
+/**
+ * 메모리:22,924kb, 시간:2,575ms
+ */
 public class Solution {
 	static int D;
 	static int W;
