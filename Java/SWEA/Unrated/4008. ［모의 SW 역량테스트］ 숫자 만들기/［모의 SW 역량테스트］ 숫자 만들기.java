@@ -26,13 +26,13 @@ public class Solution {
 			
 			N = Integer.parseInt(br.readLine());
 			Operand = new int[N];
-			PermutationLen = N-1;
+			PermutationLen = N;
 			Permutation = new int[PermutationLen];
-			max = Integer.MIN_VALUE;
-			min = Integer.MAX_VALUE;
+			max = -100000000;
+			min = 100000000;
 			
 			st = new StringTokenizer(br.readLine());
-			int pCnt = 0;
+			int pCnt = 1;
 			for(int i = 0 ; i < 4 ; i++) {
 				Operator[i] = Integer.parseInt(st.nextToken());
 				for(int j = 0, jEnd = Operator[i];j<jEnd;j++) {
@@ -47,20 +47,20 @@ public class Solution {
 			int start = Operand[0];
 			do {
 				result = start;
-				cnt = 0;
+				cnt = 1;
 				while(cnt<PermutationLen) {
 					switch (Permutation[cnt]) {
 					case 0:
-						result+=Operand[cnt+1];
+						result+=Operand[cnt];
 						break;
 					case 1:
-						result-=Operand[cnt+1];
+						result-=Operand[cnt];
 						break;
 					case 2:
-						result*=Operand[cnt+1];
+						result*=Operand[cnt];
 						break;
 					case 3:
-						result/=Operand[cnt+1];
+						result/=Operand[cnt];
 						break;
 					}
 					cnt++;
@@ -75,10 +75,10 @@ public class Solution {
 	
 	public static boolean np() {
 		int i = PermutationLen-1;
-		while(i>0&&Permutation[i]<=Permutation[i-1]) {
+		while(i>1&&Permutation[i]<=Permutation[i-1]) {
 			i--;
 		}
-		if(i==0) return false; // 순열 생성 끝
+		if(i==1) return false; // 순열 생성 끝
 		int j = PermutationLen-1;
 		while(Permutation[i-1]>=Permutation[j]) {
 			j--;
