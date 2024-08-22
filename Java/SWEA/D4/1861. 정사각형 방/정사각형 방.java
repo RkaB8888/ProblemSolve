@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:29,344kb, 시간:249ms
+ * 메모리:37,468kb, 시간:148ms
  */
 public class Solution {
 	static int strNum;
@@ -35,12 +35,9 @@ public class Solution {
 				for (int j = 0; j < N; j++) {
 					if (count[i][j] == -1)
 						continue;
+					count[i][j]++;
 					find(i, j);
-					if (maxVal < count[i][j]) {
-						maxVal = count[i][j];
-						strNum = map[i][j];
-					}
-					else if(maxVal==count[i][j]&&strNum>map[i][j]) {
+					if (maxVal < count[i][j]||maxVal==count[i][j]&&strNum>map[i][j]) {
 						maxVal = count[i][j];
 						strNum = map[i][j];
 					}
@@ -53,10 +50,9 @@ public class Solution {
 	}
 
 	public static void find(int row, int col) {
-		int r = row, sr = row;
+		int r = row, sr = row; // r은 방문해야 하는 값, sr은 시작한 r 값
 		int c = col, sc = col;
 		int preNum = map[row][col];
-		if(count[r][c]==0) count[r][c]++;
 		for (int i = 0; i < 4; i++) {
 			r = row + dr_dc[i][0];
 			c = col + dr_dc[i][1];
@@ -66,12 +62,12 @@ public class Solution {
 				continue;// 다음 숫자가 아님
 			if (count[r][c] > 0) { // 시작으로 했던 곳
 				count[sr][sc] += count[r][c];// 이전의 시작점이므로 횟수 옮겨 저장
-				count[r][c] = -1;
+				count[r][c] = -1; // 거처 간 곳으로 바꿈
 				return;
 			}
 			preNum = map[r][c];
-			count[r][c] = -1; // 거처간 곳 표시
 			count[sr][sc]++;// 거처가지 않았다면
+			count[r][c] = -1; // 거처간 곳 표시
 			row = r;
 			col = c; // 해당 지점을 기준으로 4방 탐색 하게끔
 			i=-1;//다시 사방 탐색
