@@ -4,14 +4,14 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:20,100KB, 시간:1,440ms
+ * 메모리:24,528KB, 시간:669ms
  */
 public class Solution {
 	static int min;// 최소 거리
 	static int N;// 고객 수
 	static int[][] map;// 각자의 거리 미리 계산
 	static int[][] lengths;// 입력받은 좌표들 N-2:회사 N-1:집
-	static int[] permutation;
+	static int[] permutation;//0~N-1까지의 숫자가 들어있는  배열
 	static int sum;
 
 	public static void main(String[] args) throws IOException {
@@ -89,7 +89,7 @@ public class Solution {
 			}
 			return;
 		}
-		sum+=calc(permutation[cnt],permutation[pre]);
+		sum+=map[permutation[cnt]][permutation[pre]];
 		loop(cnt+1,cnt);
 	}
 	//거리를 반환해주는 메소드
