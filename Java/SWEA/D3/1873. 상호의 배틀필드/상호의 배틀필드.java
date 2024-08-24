@@ -124,13 +124,13 @@ public class Solution {
 				}
 			}
 			// 명령어 시작
-			for (int i = 0; i < N; i++) {
-				p.Command(input[i]);
+			for (char i : input) {
+				p.Command(i);
 			}
 			sb.append('#').append(tc).append(' ');
-			for(int i = 0 ; i < H ; i++) {
-				for(int j = 0 ; j < W ; j++) {
-					sb.append(map[i][j]);
+			for(char[] row : map) {
+				for(char col : row) {
+					sb.append(col);
 				}
 				sb.append('\n');
 			}
