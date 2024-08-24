@@ -4,9 +4,9 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:18,908KB, 시간:109ms
+ * 메모리:21,996KB, 시간:126ms
  * 
- * @author SSAFY
+ * 구현
  *
  */
 public class Solution {
@@ -14,7 +14,7 @@ public class Solution {
 	static int W; // 너비
 	static char[][] map;// 맵 정보
 	static int N; // 명령어 길이
-	static String input; // 명령어
+	static char[] input; // 명령어
 
 	static class player {
 		int i;
@@ -94,7 +94,7 @@ public class Solution {
 				map[i] = br.readLine().toCharArray();
 			}
 			N = Integer.parseInt(br.readLine());
-			input = br.readLine();
+			input = br.readLine().toCharArray();
 			// 입력 끝
 			// 플레이어 위치 찾기
 			player p = new player();
@@ -125,7 +125,7 @@ public class Solution {
 			}
 			// 명령어 시작
 			for (int i = 0; i < N; i++) {
-				p.Command(input.charAt(i));
+				p.Command(input[i]);
 			}
 			sb.append('#').append(tc).append(' ');
 			for(int i = 0 ; i < H ; i++) {
