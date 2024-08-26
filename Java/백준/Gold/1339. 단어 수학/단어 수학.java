@@ -1,60 +1,70 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
+import java.util.ArrayList;
+import java.util.List;
+/**
+ * 메모리:293,976kb, 시간:976ms
+ */
 public class Main {
-	static int N;//단어 갯수
-	static char[][] inputString;//받은 단어를 글자로 쪼개서 저장
-	static int cntChar; // 받은 글자 갯수
-	static int[] num; // 각 글자에 할당할 숫자를 저장
-	static int result; // 최대 합 저장
-	static int minNum; // 숫자 사용의 최저점
-	static boolean[] isSelected = new boolean[10];//해당 숫자를 할당했었는지
-	static boolean[] check = new boolean[26];//이전에 받았는지 확인
+	static int N;//들어올 문자열 갯수
+	static char[][] inputString;//들어온 문자열을 문자로 쪼개서 저장
+	static boolean[] isCounting;//해당 알파벳이 들어온적 있는지 확인
+	static int charCnt;//알파벳 종류가 얼마나 있는지 카운팅
+	static IndexValuePair[] priorChar;//각 알파벳의 가치를 저장
+	static int[] num;
+	static class IndexValuePair{
+		int idx;
+		double val;
+		public IndexValuePair(int idx, double val) {
+			super();
+			this.idx = idx;
+			this.val = val;
+		}
+		
+	}
+	
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		N = Integer.parseInt(br.readLine());
-		inputString = new char[N][];//입력 받은 단어를 쪼개서 저장
-		
+		inputString = new char[N][];
+		isCounting = new boolean[26];
+		charCnt = 0;
+		priorChar = new IndexValuePair[26];
+		num = new int[26];
+		List<IndexValuePair> list = new ArrayList<>();
 		for(int i = 0 ; i < N ; i++) {
 			inputString[i] = br.readLine().toCharArray();
-			for(char c : inputString[i]) {
-				if(!check[c-'A']) {
-					check[c-'A'] = true;
-					cntChar++;
+			int len = inputString[i].length;
+			for(int j = 0 ; j < len ; j++) {
+				int temp = inputString[i][j]-'A';
+				if(priorChar[temp]==null) {
+					IndexValuePair tempI = new IndexValuePair(temp,Math.pow(10, len-j));
+					priorChar[temp] = tempI;
+					list.add(tempI);
+					charCnt++;
+				}
+				else {
+					priorChar[temp].val+=Math.pow(10, len-j);
 				}
 			}
 		}
-		num = new int[cntChar];
-		minNum = 10-cntChar;
-		loop(0);
+		
+		list.sort((a,b)->(int)(b.val-a.val));
+		int n = 9;
+		for(IndexValuePair i : list) {
+			num[i.idx] = n--;
+		}
+		int result = 0;
+		for(int i = 0 ; i < N ; i++) {
+			int tempNum = 0;
+			for(char c : inputString[i]) {
+				tempNum = tempNum*10+num[c-'A'];
+			}
+			result+=tempNum;
+		}
 		System.out.println(result);
 	}
 	
-	public static void loop(int cnt) {
-		if(cnt==cntChar) {
-			int[] numtemp = new int[26];
-			for(int i = 0 , j = 0; i < 26 ; i++) {
-				if(check[i]) numtemp[i] = num[j++];
-			}
-			int sum = 0;
-			for(int i = 0 ; i < N ; i++) {
-				int val = 0;
-				for(char c : inputString[i]) {
-					val = val*10 + numtemp[c-'A'];
-				}
-				sum+=val;
-			}
-			if(sum>result) result = sum;
-			return;
-		}
-		for(int i = 9 ; i >= minNum ; i--) {
-			if(isSelected[i]) continue;
-			isSelected[i] = true;
-			num[cnt] = i;
-			loop(cnt+1);
-			isSelected[i] = false;
-		}
-	}
 
 }
