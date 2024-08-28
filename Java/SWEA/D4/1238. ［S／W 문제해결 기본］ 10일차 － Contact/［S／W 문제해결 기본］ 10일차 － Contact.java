@@ -5,7 +5,9 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.StringTokenizer;
 /**
- * 메모리:20,532KB, 시간:120ms
+ * 메모리:19,100KB, 시간:118ms
+ * bfs 탐색
+ * 
  */
 public class Solution {
 	static int L; // 데이터의 길이
@@ -29,9 +31,11 @@ public class Solution {
 			for(int i = 0 ; i < L ; i++) {
 				int from = Integer.parseInt(st.nextToken());
 				int to = Integer.parseInt(st.nextToken());
-				if(adjMatrix[from][to]==0)adjMatrix[from][0]++;
-				adjMatrix[from][to]++;
+				int[] matrix = adjMatrix[from];
+				if(matrix[to]==0)matrix[0]++;
+				matrix[to]++;
 			}
+			/////////입력 끝//////////////
 			bfs();
 			sb.append('#').append(tc).append(' ').append(maxNum).append('\n');
 		}
@@ -39,21 +43,24 @@ public class Solution {
 	}
 	public static void bfs() {
 		Queue<Integer> q = new ArrayDeque<>();
-		q.add(startNodeNum);
-		Contact[startNodeNum] = true;
+		
+		q.add(startNodeNum); // 마중물
+		Contact[startNodeNum] = true; // 해당 노드 방문 표시
+		
 		while(!q.isEmpty()) {
 			int size = q.size();
 			int num = 0;
-			while(--size>=0) {
+			while(--size>=0) {//해당 레벨만 돌려본다.
 				int curNode = q.poll();
 				if(num<curNode) num = curNode;
 				int idx = 1;
-				while(adjMatrix[curNode][0]>0&&idx<101) {
-					if(adjMatrix[curNode][idx]>0&&Contact[idx]==false) {//idx 노드로 길이 있다면
+				int[] matrix = adjMatrix[curNode];
+				while(matrix[0]>0&&idx<101) {
+					if(matrix[idx]>0&&Contact[idx]==false) {//idx 노드로 길이 있다면
 						Contact[idx] = true;
 						q.add(idx);
-						adjMatrix[curNode][idx] = 0;//지나간 간선 제거
-						adjMatrix[curNode][0]--;//해당 노드의 간선 수 차감
+						matrix[idx] = 0;//지나간 간선 제거
+						matrix[0]--;//해당 노드의 간선 수 차감
 					}
 					idx++;
 				}
