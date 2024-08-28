@@ -31,9 +31,8 @@ public class Solution {
 			for(int i = 0 ; i < L ; i++) {
 				int from = Integer.parseInt(st.nextToken());
 				int to = Integer.parseInt(st.nextToken());
-				int[] matrix = adjMatrix[from];
-				if(matrix[to]==0)matrix[0]++;
-				matrix[to]++;
+				if(adjMatrix[from][to]==0)adjMatrix[from][0]++;
+				adjMatrix[from][to]++;
 			}
 			/////////입력 끝//////////////
 			bfs();
@@ -54,13 +53,12 @@ public class Solution {
 				int curNode = q.poll();
 				if(num<curNode) num = curNode;
 				int idx = 1;
-				int[] matrix = adjMatrix[curNode];
-				while(matrix[0]>0&&idx<101) {
-					if(matrix[idx]>0&&Contact[idx]==false) {//idx 노드로 길이 있다면
+				while(adjMatrix[curNode][0]>0&&idx<101) {
+					if(adjMatrix[curNode][idx]>0&&Contact[idx]==false) {//idx 노드로 길이 있다면
 						Contact[idx] = true;
 						q.add(idx);
-						matrix[idx] = 0;//지나간 간선 제거
-						matrix[0]--;//해당 노드의 간선 수 차감
+						adjMatrix[curNode][idx] = 0;//지나간 간선 제거
+						adjMatrix[curNode][0]--;//해당 노드의 간선 수 차감
 					}
 					idx++;
 				}
