@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:19,400KB, 시간:232ms
+ * 메모리:16,932KB, 시간:216ms
+ * 인접리스트로 저장 후 dfs를 이용한 탐색
+ * depth가 5에 도달하면 탐색 중지
  */
 public class Main {
 	static int N;
@@ -30,16 +32,18 @@ public class Main {
 			list[from].add(to);
 			list[to].add(from);
 		}
+		isSelect = new boolean[N];
 		for(int i = 0 ; i < N ; i++) {
-			isSelect = new boolean[N];
+			isSelect[i] = true;
 			dfs(i,0);
 			if(result==1) break;
+			isSelect[i] = false;
 		}
 		System.out.println(result);
 	}
 	
 	public static void dfs(int from, int depth) {
-		if(depth == 5) {
+		if(depth == 4) {
 			result = 1;
 			return;
 		}
