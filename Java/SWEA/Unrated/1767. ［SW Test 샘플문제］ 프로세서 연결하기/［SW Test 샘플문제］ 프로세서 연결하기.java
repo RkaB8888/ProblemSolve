@@ -80,6 +80,12 @@ public class Solution {
 					}
 				}
 			}
+			Arrays.sort(cores, (a, b) -> {
+                // 코어의 위치에 따라 우선순위 정렬: 경계에 가까운 코어부터 우선적으로 처리
+                int distA = Math.min(Math.min(a.i, N - 1 - a.i), Math.min(a.j, N - 1 - a.j));
+                int distB = Math.min(Math.min(b.i, N - 1 - b.i), Math.min(b.j, N - 1 - b.j));
+                return distA - distB;
+            });
 			maxCore = 0;
 			minVal = Integer.MAX_VALUE;
 			cores = Arrays.copyOf(cores, coreCnt); // 실제 코어 개수에 맞게 배열 크기 조정
