@@ -1,11 +1,10 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:25,296kb, 시간:153ms
+ * 메모리:27,412kb, 시간:149ms
  *
  */
 public class Solution {
@@ -83,7 +82,6 @@ public class Solution {
 			}
 			maxCore = 0;
 			minVal = Integer.MAX_VALUE;
-			cores = Arrays.copyOf(cores, coreCnt); // 실제 코어 개수에 맞게 배열 크기 조정
 			dfs(0, 0, 0);
 			sb.append('#').append(tc).append(' ').append(minVal).append('\n');
 		}
