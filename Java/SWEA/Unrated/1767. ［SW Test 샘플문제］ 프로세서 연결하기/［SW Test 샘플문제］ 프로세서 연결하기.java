@@ -44,6 +44,7 @@ public class Solution {
 						break;
 					}
 					if (map[row][col] != 0) {
+						this.way[i] = false;
 						break;
 					}
 				}
@@ -105,7 +106,7 @@ public class Solution {
 			core curcore = cores[idx];
 			if (curcore.able()) {
 				for (int dir = 0; dir < 4; dir++) {
-					if (curcore.way[dir] && checkLine(curcore.i, curcore.j, dir)) {
+					if (curcore.way[dir]) {
 						dfs(idx + 1, lineSum + setLine(curcore.i, curcore.j, dir, curcore.num), successCnt + 1);// 성공 후
 						removeLine(curcore.i, curcore.j, dir, curcore.num);
 					}
@@ -114,19 +115,6 @@ public class Solution {
 			dfs(idx + 1, lineSum, successCnt); // 연결 실패 시
 		}
 
-	}
-
-	public static boolean checkLine(int row, int col, int dir) {
-		while (true) {
-			row += dr_dc[dir][0];
-			col += dr_dc[dir][1];
-			if (row < 0 || col < 0 || row >= N || col >= N) {
-				return true; // 경계에 도달하면 라인 길이 반환
-			}
-			if (map[row][col] != 0) {
-				return false; // 다른 코어나 라인에 막히면 실패
-			}
-		}
 	}
 
 	public static int setLine(int row, int col, int dir, int num) {
