@@ -67,25 +67,20 @@ public class Solution {
 				st = new StringTokenizer(br.readLine());
 				for (int j = 0; j < N; j++) {
 					map[i][j] = Integer.parseInt(st.nextToken());
-					if(map[i][j]==1)coreCnt++;
+					if (map[i][j] == 1)
+						coreCnt++;
 
 				}
 			}
 			cores = new core[coreCnt];
-			for (int i = 0, num = 2; i < N ; i++) {
-				for (int j = 0; j < N ; j++) {
+			for (int i = 0, num = 2; i < N; i++) {
+				for (int j = 0; j < N; j++) {
 					if (map[i][j] == 1) {
 						core one = new core(i, j, num++);
-						cores[num-3] = one;
+						cores[num - 3] = one;
 					}
 				}
 			}
-			Arrays.sort(cores, (a, b) -> {
-                // 코어의 위치에 따라 우선순위 정렬: 경계에 가까운 코어부터 우선적으로 처리
-                int distA = Math.min(Math.min(a.i, N - 1 - a.i), Math.min(a.j, N - 1 - a.j));
-                int distB = Math.min(Math.min(b.i, N - 1 - b.i), Math.min(b.j, N - 1 - b.j));
-                return distA - distB;
-            });
 			maxCore = 0;
 			minVal = Integer.MAX_VALUE;
 			cores = Arrays.copyOf(cores, coreCnt); // 실제 코어 개수에 맞게 배열 크기 조정
@@ -110,14 +105,15 @@ public class Solution {
 		}
 		for (int idx = str; idx < coreCnt; idx++) {
 			core curcore = cores[idx];
-			curcore.able();
-			for (int dir = 0; dir < 4; dir++) {
-				if (curcore.way[dir] && checkLine(curcore.i, curcore.j, dir)) {
-					dfs(idx + 1, lineSum + setLine(curcore.i, curcore.j, dir, curcore.num), successCnt + 1);// 성공 후 다음 코어
-					removeLine(curcore.i, curcore.j, dir, curcore.num);
+			if (curcore.able()) {
+				for (int dir = 0; dir < 4; dir++) {
+					if (curcore.way[dir] && checkLine(curcore.i, curcore.j, dir)) {
+						dfs(idx + 1, lineSum + setLine(curcore.i, curcore.j, dir, curcore.num), successCnt + 1);// 성공 후
+						removeLine(curcore.i, curcore.j, dir, curcore.num);
+					}
 				}
 			}
-			dfs(idx+1,lineSum, successCnt); // 연결 실패 시
+			dfs(idx + 1, lineSum, successCnt); // 연결 실패 시
 		}
 
 	}
