@@ -15,7 +15,6 @@ public class Solution {
 	static int V, E;
 	static boolean[] Visited;
 	static List<Node>[] list;
-	static long result;
 
 	static class Node {
 		int to, w;
@@ -36,7 +35,6 @@ public class Solution {
 			E = Integer.parseInt(st.nextToken());
 			list = new List[V];
 			Visited = new boolean[V];
-			result = 0;
 
 			for (int i = 0; i < V; i++) {
 				list[i] = new ArrayList<>();
@@ -50,13 +48,13 @@ public class Solution {
 				list[from].add(new Node( to, weight ));
 				list[to].add(new Node( from, weight ));
 			}
-			Prim(0);
-			sb.append("#").append(tc).append(" ").append(result).append("\n");
+			sb.append("#").append(tc).append(" ").append(Prim(0)).append("\n");
 		}
 		System.out.println(sb);
 	}
 
-	public static void Prim(int start) {
+	public static long Prim(int start) {
+		long result = 0;
 		PriorityQueue<Node> pq = new PriorityQueue<Node>((a, b) -> a.w - b.w);
 		Visited[start] = true;
 		int nodeCnt = 1;
@@ -84,6 +82,7 @@ public class Solution {
 				pq.offer(edge);
 			}
 		}
+		return result;
 	}
 
 }
