@@ -15,10 +15,19 @@ public class Solution {
 	static int V;
 	static int E;
 	static boolean[] Visited;
-	static List<int[]>[] list;
+	static List<Node>[] list;
 	static int startNode;
 	static long result;
 
+	static class Node {
+		int to;
+		int w;
+		public Node(int to, int w) {
+			this.to = to;
+			this.w = w;
+		}
+		
+	}
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
@@ -41,8 +50,8 @@ public class Solution {
 				int from = Integer.parseInt(st.nextToken()) - 1;
 				int to = Integer.parseInt(st.nextToken()) - 1;
 				int weight = Integer.parseInt(st.nextToken());
-				list[from].add(new int[] { to, weight });
-				list[to].add(new int[] { from, weight });
+				list[from].add(new Node( to, weight ));
+				list[to].add(new Node( from, weight ));
 			}
 			Prim(0);
 			sb.append("#").append(tc).append(" ").append(result).append("\n");
@@ -51,21 +60,21 @@ public class Solution {
 	}
 
 	public static void Prim(int start) {
-		PriorityQueue<int[]> pq = new PriorityQueue<int[]>((a, b) -> a[1] - b[1]);
+		PriorityQueue<Node> pq = new PriorityQueue<Node>((a, b) -> a.w - b.w);
 		Visited[start] = true;
 		int nodeCnt = 1;
 		int[] minVal = new int[V];
 		Arrays.fill(minVal, Integer.MAX_VALUE);
 		minVal[start] = 0;
-		for (int[] edge : list[start]) {
-			if(minVal[edge[0]]<=edge[1]) continue;
-			minVal[edge[0]] = edge[1];
+		for (Node edge : list[start]) {
+			if(minVal[edge.to]<=edge.w) continue;
+			minVal[edge.to] = edge.w;
 			pq.offer(edge);
 		}
 		while (!pq.isEmpty() && nodeCnt < V) {
-			int[] next = pq.poll();
-			int to = next[0];
-			int weight = next[1];
+			Node next = pq.poll();
+			int to = next.to;
+			int weight = next.w;
 
 			if (Visited[to])
 				continue;
@@ -73,10 +82,10 @@ public class Solution {
 			Visited[to] = true;
 			nodeCnt++;
 			result += weight;
-			for (int[] edge : list[to]) {
-				if (Visited[edge[0]]) continue;
-				if(minVal[edge[0]]<=edge[1]) continue;
-				minVal[edge[0]] = edge[1];
+			for (Node edge : list[to]) {
+				if (Visited[edge.to]) continue;
+				if(minVal[edge.to]<=edge.w) continue;
+				minVal[edge.to] = edge.w;
 				pq.offer(edge);
 			}
 		}
