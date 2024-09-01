@@ -1,13 +1,15 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:23,296KB, 시간:153ms
+ * 메모리:26,336KB, 시간:145ms
  * 
- * @author SSAFY
+ * 완전탐색 가지치기
+ * 회전 방향 정해둠, 모든 좌표 순회하며 시작점으로 사용
+ * 회전 반경을 계산하여 점점 키워가며 계산
+ * 이전의 들렀던 카페 수보다 회전 둘레가 작다면 가지치기
  *
  */
 public class Solution {
@@ -43,29 +45,27 @@ public class Solution {
 
 	public static void process(int row, int col) {
 		int maxRD = Math.min((N - 1 - row), (N - col));
-		int maxLD;
+		int maxLD, cnt;
 		for (int i = 1; i < maxRD; i++) {// 우하 횟수
 			maxLD = Math.min((N - row - i), col+1);
 			for (int j = 1; j < maxLD; j++) {// 좌하 횟수
-				calc(row, col, i, j);
+				cnt = i*2+j*2;
+				if(cnt<=maxCnt) continue;
+				if(calc(row, col, i, j)) {
+					maxCnt = cnt;
+				}
 			}
 		}
 	}
 
-	public static void calc(int row, int col, int RD, int LD) {
-//		StringBuilder sbtemp = new StringBuilder();
-		int cnt = RD * 2 + LD * 2;
-		if (cnt <= maxCnt)
-			return;
+	public static boolean calc(int row, int col, int RD, int LD) {
 		boolean[] check = new boolean[101];
-//		sbtemp.append('(').append(row).append(", ").append(col).append(", ").append(map[row][col]).append(')').append(", ");
 		for (int i = 0; i < RD; i++) {
 			row += dr_dc[0][0];
 			col += dr_dc[0][1];
 			int num = map[row][col];
 			if (check[num])
-				return;
-//			sbtemp.append('(').append(row).append(", ").append(col).append(", ").append(num).append(')').append(", ");
+				return false;
 			check[num] = true;
 		}
 		for (int i = 0; i < LD; i++) {
@@ -73,8 +73,7 @@ public class Solution {
 			col += dr_dc[1][1];
 			int num = map[row][col];
 			if (check[num])
-				return;
-//			sbtemp.append('(').append(row).append(", ").append(col).append(", ").append(num).append(')').append(", ");
+				return false;
 			check[num] = true;
 		}
 		for (int i = 0; i < RD; i++) {
@@ -82,8 +81,7 @@ public class Solution {
 			col += dr_dc[2][1];
 			int num =map[row][col];
 			if (check[num])
-				return;
-//			sbtemp.append('(').append(row).append(", ").append(col).append(", ").append(num).append(')').append(", ");
+				return false;
 			check[num] = true;
 		}
 		for (int i = 0; i < LD; i++) {
@@ -91,12 +89,9 @@ public class Solution {
 			col += dr_dc[3][1];
 			int num = map[row][col];
 			if (check[num])
-				return;
-//			sbtemp.append('(').append(row).append(", ").append(col).append(", ").append(num).append(')').append(", ");
+				return false;
 			check[num] = true;
 		}
-		maxCnt = cnt;
-//		sbtemp.append('\n').append(cnt).append('\n');
-//		System.out.print(sbtemp);
+		return true;
 	}
 }
