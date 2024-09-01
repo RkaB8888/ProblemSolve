@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:26,336KB, 시간:145ms
+ * 메모리:23,428KB, 시간:138ms
  * 
  * 완전탐색 가지치기
  * 회전 방향 정해둠, 모든 좌표 순회하며 시작점으로 사용
@@ -44,13 +44,12 @@ public class Solution {
 	}
 
 	public static void process(int row, int col) {
-		int maxRD = Math.min((N - 1 - row), (N - col));
-		int maxLD, cnt;
+		int maxRD = Math.min(N - 1 - row, N - col);
 		for (int i = 1; i < maxRD; i++) {// 우하 횟수
-			maxLD = Math.min((N - row - i), col+1);
+			int maxLD = Math.min(N - row - i, col+1);
 			for (int j = 1; j < maxLD; j++) {// 좌하 횟수
-				cnt = i*2+j*2;
-				if(cnt<=maxCnt) continue;
+				int cnt = i*2+j*2;
+				if(cnt<=maxCnt) continue;// 이전 최대 경로보다 짧으면 가지치기
 				if(calc(row, col, i, j)) {
 					maxCnt = cnt;
 				}
@@ -60,37 +59,16 @@ public class Solution {
 
 	public static boolean calc(int row, int col, int RD, int LD) {
 		boolean[] check = new boolean[101];
-		for (int i = 0; i < RD; i++) {
-			row += dr_dc[0][0];
-			col += dr_dc[0][1];
-			int num = map[row][col];
-			if (check[num])
-				return false;
-			check[num] = true;
-		}
-		for (int i = 0; i < LD; i++) {
-			row += dr_dc[1][0];
-			col += dr_dc[1][1];
-			int num = map[row][col];
-			if (check[num])
-				return false;
-			check[num] = true;
-		}
-		for (int i = 0; i < RD; i++) {
-			row += dr_dc[2][0];
-			col += dr_dc[2][1];
-			int num =map[row][col];
-			if (check[num])
-				return false;
-			check[num] = true;
-		}
-		for (int i = 0; i < LD; i++) {
-			row += dr_dc[3][0];
-			col += dr_dc[3][1];
-			int num = map[row][col];
-			if (check[num])
-				return false;
-			check[num] = true;
+		int[][] directions = new int[][] { { RD, 0 }, { LD, 1 }, { RD, 2 }, { LD, 3 } };
+		
+		for(int[] dir : directions) {
+			for (int i = 0; i < dir[0]; i++) {
+				row += dr_dc[dir[1]][0];
+				col += dr_dc[dir[1]][1];
+				int num = map[row][col];
+				if (check[num]) return false;
+				check[num] = true;
+			}
 		}
 		return true;
 	}
