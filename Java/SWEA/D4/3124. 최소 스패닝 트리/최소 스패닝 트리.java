@@ -26,18 +26,18 @@ public class Solution {
 			st = new StringTokenizer(br.readLine());
 			V = Integer.parseInt(st.nextToken());
 			E = Integer.parseInt(st.nextToken());
-			list = new ArrayList[V]; 
-			Visited = new boolean[V];
+			list = new ArrayList[V+1]; 
+			Visited = new boolean[V+1];
 			result = 0;
 			
-			for (int i = 0; i < V; i++) {
+			for (int i = 1; i <= V; i++) {
                 list[i] = new ArrayList<>();
             }
 			
 			for(int i = 0 ; i < E ; i++) {
 				st = new StringTokenizer(br.readLine());
-				int from = Integer.parseInt(st.nextToken())-1;
-				int to = Integer.parseInt(st.nextToken())-1;
+				int from = Integer.parseInt(st.nextToken());
+				int to = Integer.parseInt(st.nextToken());
 				int weight = Integer.parseInt(st.nextToken());
 				list[from].add(new int[] {to,weight});
 				list[to].add(new int[] {from,weight});
