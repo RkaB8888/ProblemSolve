@@ -12,16 +12,13 @@ import java.util.StringTokenizer;
  * 우선순위큐를 사용함
  */
 public class Solution {
-	static int V;
-	static int E;
+	static int V, E;
 	static boolean[] Visited;
 	static List<Node>[] list;
-	static int startNode;
 	static long result;
 
 	static class Node {
-		int to;
-		int w;
+		int to, w;
 		public Node(int to, int w) {
 			this.to = to;
 			this.w = w;
@@ -37,7 +34,7 @@ public class Solution {
 			st = new StringTokenizer(br.readLine());
 			V = Integer.parseInt(st.nextToken());
 			E = Integer.parseInt(st.nextToken());
-			list = new ArrayList[V];
+			list = new List[V];
 			Visited = new boolean[V];
 			result = 0;
 
@@ -73,16 +70,14 @@ public class Solution {
 		}
 		while (!pq.isEmpty() && nodeCnt < V) {
 			Node next = pq.poll();
-			int to = next.to;
-			int weight = next.w;
 
-			if (Visited[to])
+			if (Visited[next.to])
 				continue;
 
-			Visited[to] = true;
+			Visited[next.to] = true;
 			nodeCnt++;
-			result += weight;
-			for (Node edge : list[to]) {
+			result += next.w;
+			for (Node edge : list[next.to]) {
 				if (Visited[edge.to]) continue;
 				if(minVal[edge.to]<=edge.w) continue;
 				minVal[edge.to] = edge.w;
