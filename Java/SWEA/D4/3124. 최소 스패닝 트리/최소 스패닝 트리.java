@@ -16,53 +16,61 @@ public class Solution {
 	static List<int[]>[] list;
 	static int startNode;
 	static long result;
-	
+
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
 		int T = Integer.parseInt(br.readLine());
-		for(int tc=1; tc<=T; tc++) {
+		for (int tc = 1; tc <= T; tc++) {
 			st = new StringTokenizer(br.readLine());
 			V = Integer.parseInt(st.nextToken());
 			E = Integer.parseInt(st.nextToken());
-			list = new ArrayList[V+1]; 
-			Visited = new boolean[V+1];
+			list = new ArrayList[V];
+			Visited = new boolean[V];
 			result = 0;
-			
-			for (int i = 1; i <= V; i++) {
-                list[i] = new ArrayList<>();
-            }
-			
-			for(int i = 0 ; i < E ; i++) {
-				st = new StringTokenizer(br.readLine());
-				int from = Integer.parseInt(st.nextToken());
-				int to = Integer.parseInt(st.nextToken());
-				int weight = Integer.parseInt(st.nextToken());
-				list[from].add(new int[] {to,weight});
-				list[to].add(new int[] {from,weight});
+
+			for (int i = 0; i < V; i++) {
+				list[i] = new ArrayList<>();
 			}
-			Prim(1);
+
+			for (int i = 0; i < E; i++) {
+				st = new StringTokenizer(br.readLine());
+				int from = Integer.parseInt(st.nextToken()) - 1;
+				int to = Integer.parseInt(st.nextToken()) - 1;
+				int weight = Integer.parseInt(st.nextToken());
+				list[from].add(new int[] { to, weight });
+				list[to].add(new int[] { from, weight });
+			}
+			Prim(0);
 			sb.append("#").append(tc).append(" ").append(result).append("\n");
 		}
 		System.out.println(sb);
 	}
+
 	public static void Prim(int start) {
-		PriorityQueue<int[]> pq = new PriorityQueue<int[]>((a,b) -> a[1]-b[1]);
-		pq.addAll(list[start]);
+		PriorityQueue<int[]> pq = new PriorityQueue<int[]>((a, b) -> a[1] - b[1]);
 		Visited[start] = true;
+		for (int[] edge : list[start]) {
+			pq.offer(edge);
+		}
 		int nodeCnt = 1;
-		while(!pq.isEmpty()&&nodeCnt<V) {
+		while (!pq.isEmpty() && nodeCnt < V) {
 			int[] next = pq.poll();
 			int to = next[0];
 			int weight = next[1];
-			
-			if(Visited[to]) continue;
-			
+
+			if (Visited[to])
+				continue;
+
 			Visited[to] = true;
 			nodeCnt++;
-			result+=weight;
-			pq.addAll(list[to]);
+			result += weight;
+			for (int[] edge : list[to]) {
+				if (!Visited[edge[0]]) {
+					pq.offer(edge);
+				}
+			}
 		}
 	}
 
