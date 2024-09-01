@@ -2,12 +2,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:185,576, 시간:2,486ms
+ * 메모리:231,244kb, 시간:3,071ms
+ * 우선순위큐를 사용함
  */
 public class Solution {
 	static int V;
@@ -51,10 +53,15 @@ public class Solution {
 	public static void Prim(int start) {
 		PriorityQueue<int[]> pq = new PriorityQueue<int[]>((a, b) -> a[1] - b[1]);
 		Visited[start] = true;
+		int nodeCnt = 1;
+		int[] minVal = new int[V];
+		Arrays.fill(minVal, Integer.MAX_VALUE);
+		minVal[start] = 0;
 		for (int[] edge : list[start]) {
+			if(minVal[edge[0]]<=edge[1]) continue;
+			minVal[edge[0]] = edge[1];
 			pq.offer(edge);
 		}
-		int nodeCnt = 1;
 		while (!pq.isEmpty() && nodeCnt < V) {
 			int[] next = pq.poll();
 			int to = next[0];
@@ -67,9 +74,10 @@ public class Solution {
 			nodeCnt++;
 			result += weight;
 			for (int[] edge : list[to]) {
-				if (!Visited[edge[0]]) {
-					pq.offer(edge);
-				}
+				if (Visited[edge[0]]) continue;
+				if(minVal[edge[0]]<=edge[1]) continue;
+				minVal[edge[0]] = edge[1];
+				pq.offer(edge);
 			}
 		}
 	}
