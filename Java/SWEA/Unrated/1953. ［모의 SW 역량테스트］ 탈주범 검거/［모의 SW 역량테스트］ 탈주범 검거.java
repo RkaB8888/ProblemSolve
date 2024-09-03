@@ -6,14 +6,14 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:27,024KB, 시간:208ms
+ * 메모리:26,892KB, 시간:146ms
  *
  */
 public class Solution {
 	static int N, M, R, C, L;
 	// 지도의 세로 크기 N, 가로 크기 M, 맨홀 뚜껑이 위치한장소의 세로 위치 R, 가로 위치 C, 그리고 탈출 후 소요된 시간 L
-	static Node[][] map;// 1~7 터널, 0은 없는 곳
-	static boolean[][] check;// 접근 가능한 장소 체크
+    static int[][] map;
+    static boolean[][] visited;
 	static int checkCnt;
 	static final int[][] drdc = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };//상하좌우
 
@@ -37,18 +37,6 @@ public class Solution {
 			{ true, false, false, true },//상우
 			{ false, true, false, true }//하우
 	};//type,ways
-	static class Node {
-		int i, j, type, time;
-		boolean check;
-
-		public Node(int i, int j, int type) {
-			super();
-			this.i = i;
-			this.j = j;
-			this.type = type;
-		}
-
-	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -62,13 +50,13 @@ public class Solution {
 			R = Integer.parseInt(st.nextToken());
 			C = Integer.parseInt(st.nextToken());
 			L = Integer.parseInt(st.nextToken());
-			map = new Node[N][M];
+			map = new int[N][M];
+			visited = new boolean[N][M];
 			checkCnt = 0;
 			for (int i = 0; i < N; i++) {
 				st = new StringTokenizer(br.readLine());
 				for (int j = 0; j < M; j++) {
-					int type = Integer.parseInt(st.nextToken());
-					map[i][j] = new Node(i, j, type);
+					map[i][j] = Integer.parseInt(st.nextToken());
 				}
 			}
 			bfs();
@@ -78,25 +66,26 @@ public class Solution {
 	}
 
 	public static void bfs() {
-		Queue<Node> q = new ArrayDeque<>();
-		map[R][C].time = 1;
-		q.add(map[R][C]);
-		map[R][C].check = true;
+		Queue<int[]> q = new ArrayDeque<>();
+		q.add(new int[] { R, C, 1 }); // {row, col, time}
+		visited[R][C] = true;
 		checkCnt++;
 		while (!q.isEmpty()) {
-			Node cur = q.poll();
-			if (cur.time == L)
-				continue;
+			int[] cur = q.poll();
+			int r = cur[0], c = cur[1], time = cur[2];
+			if (time == L) continue;
+			
+			int type = map[r][c];
 			for (int i = 0; i < 4; i++) {
-				if(!out[cur.type][i]) continue;
-				int row = cur.i + drdc[i][0];
-				int col = cur.j + drdc[i][1];
-				if(row < 0 || col < 0 || row >= N || col >= M) continue;
-				Node next = map[row][col];
-				if (next.check || next.type == 0||!in[next.type][i]) continue;
-				next.time = cur.time + 1;
-				q.add(next);
-				next.check = true;
+				if(!out[type][i]) continue;
+				int nr = r + drdc[i][0];
+                int nc = c + drdc[i][1];
+                if (nr < 0 || nc < 0 || nr >= N || nc >= M || visited[nr][nc] || map[nr][nc] == 0) continue;
+                int nextType = map[nr][nc];
+                if (!in[nextType][i]) continue;
+                
+                q.add(new int[] { nr, nc, time + 1 });
+                visited[nr][nc] = true;
 				checkCnt++;
 			}
 		}
