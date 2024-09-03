@@ -4,62 +4,58 @@ import java.io.InputStreamReader;
 import java.util.PriorityQueue;
 
 public class Solution {
-	
 	static int N, map[][];
-	static int dr[] = {-1,1,0,0};
-	static int dc[] = {0,0,-1,1};
-	
+	static final int[] dr = { -1, 1, 0, 0 };
+	static final int[] dc = { 0, 0, -1, 1 };
+
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int TC = Integer.parseInt(br.readLine());
-		
-		for(int t = 1 ; t <= TC ; t++) {
+		StringBuilder sb = new StringBuilder();
+		int T = Integer.parseInt(br.readLine());
+		for (int tc = 1; tc <= T; tc++) {
 			N = Integer.parseInt(br.readLine());
 			map = new int[N][N];
-			
-			for(int i = 0 ; i < N ; i++) {
-				char[] ch = br.readLine().toCharArray();
-				for(int j = 0 ; j < N ; j++) {
-					map[i][j] = ch[j]-'0';
+			for (int i = 0; i < N; i++) {
+				String temp = br.readLine();
+				for (int j = 0; j < N; j++) {
+					map[i][j] = temp.charAt(j) - '0';
 				}
 			}
-			System.out.println("#"+t+" "+getMinTime(0, 0, N-1, N-1));
+			sb.append('#').append(tc).append(' ').append(getMinDistance(0, 0, N - 1, N - 1)).append('\n');
 		}
+		System.out.println(sb);
 	}
-	static int getMinTime(int sr, int sc, int er, int ec) {
+
+	static int getMinDistance(int startI, int startJ, int endI, int endJ) {
+		PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[2] - b[2]);
+		int[][] minDistance = new int[N][N];// 시작 정점에서 자신으로의 최소 거리
+		boolean[][] visited = new boolean[N][N];// 방문한 정점 관리
 		final int INF = Integer.MAX_VALUE;
-		boolean[][] visited = new boolean[N][N];
-		int[][] minTime = new int[N][N];
-		PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)-> Integer.compare(a[2], b[2]));
-		for(int i = 0 ; i < N ; i++) {
-			for(int j = 0 ; j < N ; j++) {
-				minTime[i][j] = INF;
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				minDistance[i][j] = INF;
 			}
 		}
-		
-		minTime[sr][sc] = 0;
-		pq.offer(new int[] {sr,sc,minTime[sr][sc]});
-		
-		while(!pq.isEmpty()) {
-			
-			int[] stopOver = pq.poll();
-			int r = stopOver[0];
-			int c = stopOver[1];
-			int time = stopOver[2];
-			if(visited[r][c]) continue;
-			visited[r][c] = true;
-			if(r==er&&c==ec)
-				return time;
-			for(int d = 0 ; d < 4 ; d++) {
-				int nr = r+dr[d];
-				int nc = c+dc[d];
-				if(nr>=0 && nc>=0 && nr<N&&nc<N&&!visited[nr][nc]
-						&&minTime[nr][nc]>time+map[nr][nc]) {
-					minTime[nr][nc]=time+map[nr][nc];
-					pq.offer(new int[] {nr,nc,minTime[nr][nc]});
+		minDistance[startI][startJ] = 0;
+		pq.add(new int[] { startI, startJ, minDistance[startI][startJ] });
+		while (!pq.isEmpty()) {
+			int[] cur = pq.poll();
+			if (visited[cur[0]][cur[1]])
+				continue;
+			if (cur[0] == endI && cur[1] == endJ)
+				return cur[2];
+			for (int i = 0; i < 4; i++) {
+				int nr = cur[0] + dr[i];
+				int nc = cur[1] + dc[i];
+				if (nr >= 0 && nr < N && nc >= 0 && nc < N && !visited[nr][nc]
+						&& minDistance[nr][nc] > cur[2] + map[nr][nc]) {
+					minDistance[nr][nc] = cur[2] + map[nr][nc];
+					pq.add(new int[] { nr, nc, minDistance[nr][nc] });
 				}
 			}
 		}
 		return -1;
 	}
+
 }
