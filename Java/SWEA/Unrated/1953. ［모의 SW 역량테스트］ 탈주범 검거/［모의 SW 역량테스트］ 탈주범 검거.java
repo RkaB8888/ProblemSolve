@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,7 +6,7 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:24,320KB, 시간:141ms
+ * 메모리:27,024KB, 시간:208ms
  *
  */
 public class Solution {
@@ -64,7 +63,6 @@ public class Solution {
 			C = Integer.parseInt(st.nextToken());
 			L = Integer.parseInt(st.nextToken());
 			map = new Node[N][M];
-			check = new boolean[N][M];
 			checkCnt = 0;
 			for (int i = 0; i < N; i++) {
 				st = new StringTokenizer(br.readLine());
@@ -87,23 +85,19 @@ public class Solution {
 		checkCnt++;
 		while (!q.isEmpty()) {
 			Node cur = q.poll();
-			int r = cur.i;
-			int c = cur.j;
-			int type = cur.type;
-			int time = cur.time;
-			if (time == L)
+			if (cur.time == L)
 				continue;
 			for (int i = 0; i < 4; i++) {
-				if(!out[type][i]) continue;
-				int row = r + drdc[i][0];
-				int col = c + drdc[i][1];
-				if (row >= 0 && col >= 0 && row < N && col < M && !map[row][col].check && map[row][col].type != 0&&in[map[row][col].type][i]) {
-					// 경계 안, 다닌 적 없음, 터널 있음, 들어갈 수 있음
-					map[row][col].time = time + 1;
-					q.add(map[row][col]);
-					map[row][col].check = true;
-					checkCnt++;
-				}
+				if(!out[cur.type][i]) continue;
+				int row = cur.i + drdc[i][0];
+				int col = cur.j + drdc[i][1];
+				if(row < 0 || col < 0 || row >= N || col >= M) continue;
+				Node next = map[row][col];
+				if (next.check || next.type == 0||!in[next.type][i]) continue;
+				next.time = cur.time + 1;
+				q.add(next);
+				next.check = true;
+				checkCnt++;
 			}
 		}
 	}
