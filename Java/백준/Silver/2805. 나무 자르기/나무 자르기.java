@@ -7,28 +7,28 @@ import java.util.StringTokenizer;
  * 메모리 13,524KB 시간 112ms
  */
 public class Main {
-	static int N, M;
-	static long trees[];
+	static int N, M, trees[];
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
-		trees = new long[N];
+		trees = new int[N];
 		st = new StringTokenizer(br.readLine());
 		for(int i = 0 ; i < N ; i++) {
-			trees[i] = Long.parseLong(st.nextToken());
+			trees[i] = Integer.parseInt(st.nextToken());
+			
 		}
-		long min = 0, max = 2000000000, mid = (min+max)/2, result=min, sum = 0;
+		int min = 0, max = 1999999999, result=min;
 		while(min<=max) {
-			sum = 0;
-			mid = (min+max)/2;
+			long sum = 0;
+			int mid = (min+max)/2;
 			for(int i = 0 ; i < N ; i++) {
 				if(trees[i]<mid) continue;
 				sum+=trees[i]-mid;
 				if(sum>M) break;
 			}
-			if(sum>=M) {
+			if(sum>M) {
 				result = mid;
 				min = mid+1;
 			}
