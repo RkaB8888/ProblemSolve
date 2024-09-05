@@ -32,10 +32,13 @@ public class Main {
 				result = mid;
 				min = mid+1;
 			}
-			else {
+			else if(sum<M){
 				max = mid-1;
 			}
-			
+			else {
+				result = mid;
+				break;
+			}
 		}
 		System.out.println(result);
 	}
