@@ -4,13 +4,11 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * 메모리:400220kb, 시간:676ms dp사용 가로는 대각선,가로에 가능 dp[i+1][j][0] += dp[i][j][0];
- * dp[i+1][j+1][2] += dp[i][j][0]; 세로는 대각선, 세로에 가능 dp[i][j+1][1] += dp[i][j][1];
- * dp[i+1][j+1][2] += dp[i][j][1]; 대각선은 대각선, 가로, 세로 가능 dp[i+1][j][0] +=
- * dp[i][j][2]; dp[i][j+1][1] += dp[i][j][2]; dp[i+1][j+1][2] += dp[i][j][2];
+ * 메모리:11788kb, 시간:68ms
+ * dp
  */
 public class Main {
-	static int N, result, map[][], dir[][] = { { 0, 1 }, { 1, 0 }, { 1, 1 } };// 가로, 세로, 대각선
+	static int N, result, map[][];
 	static int dp[][][];// i,j,type
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
@@ -30,22 +28,25 @@ public class Main {
 			if (map[1][2] == 0 && map[1][1] == 0) {
 				dp[1][2][2] = 1;
 			}
+			int[] dpTemp;
 			for (int i = 0, iEnd = N - 1; i < iEnd; i++) {
 				for (int j = 2, jEnd = N - 1; j < jEnd; j++) {
 					if (map[i][j] == 1)
 						continue;
-					if (map[i + 1][j] == 0 && map[i][j + 1] == 0 && map[i + 1][j + 1] == 0) {
-						dp[i + 1][j + 1][2] += dp[i][j][0];
-						dp[i + 1][j + 1][2] += dp[i][j][1];
-						dp[i + 1][j + 1][2] += dp[i][j][2];
-					}
+					boolean flag = true;
+					dpTemp = dp[i][j];
 					if (map[i + 1][j] == 0) {
-						dp[i + 1][j][1] += dp[i][j][1];
-						dp[i + 1][j][1] += dp[i][j][2];
-					}
+						dp[i + 1][j][1] += dpTemp[1];
+						dp[i + 1][j][1] += dpTemp[2];
+					} else flag = false;
 					if (map[i][j + 1] == 0) {
-						dp[i][j + 1][0] += dp[i][j][0];
-						dp[i][j + 1][0] += dp[i][j][2];
+						dp[i][j + 1][0] += dpTemp[0];
+						dp[i][j + 1][0] += dpTemp[2];
+					} else flag = false;
+					if (flag && map[i + 1][j + 1] == 0) {
+						dp[i + 1][j + 1][2] += dpTemp[0];
+						dp[i + 1][j + 1][2] += dpTemp[1];
+						dp[i + 1][j + 1][2] += dpTemp[2];
 					}
 				}
 			}
