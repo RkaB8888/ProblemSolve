@@ -3,12 +3,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-/*
- * 메모리 91,304 kb 실행시간 1,765 ms
- * 중복된 탐색을 하지 않도록 최적화
- */
 public class Solution {
-	static int N, M, result, adjMatrix[][], cnt;
+	static int N, M, result;
+	static int map[][], rmap[][];
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -19,56 +16,78 @@ public class Solution {
 		for (int tc = 1; tc <= TC; tc++) {
 			N = Integer.parseInt(br.readLine());
 			M = Integer.parseInt(br.readLine());
-
-			adjMatrix = new int[N + 1][N + 1]; // 학생번호 1번부터 시작
-
+			map = new int[N + 1][N + 1];
+			rmap = new int[N + 1][N + 1];
+			for (int i = 1; i <= N; i++) {
+				map[i][0] = -1;
+				rmap[i][0] = -1;
+			}
+			result = 0;
 			for (int i = 0; i < M; i++) {
 				st = new StringTokenizer(br.readLine());
 				int a = Integer.parseInt(st.nextToken());
 				int b = Integer.parseInt(st.nextToken());
-				adjMatrix[a][b] = 1;
+				map[a][b] = 1;
+				rmap[b][a] = 1;
 			}
-			
-			for(int i = 1 ; i <= N ; i++) {
-				adjMatrix[i][0] = -1; // 탐색되지 않은 학생을 나타냄(후에 탐색이 완료되면 자신보다 큰 학생 수 저장)
-			}
-			
-			result = 0;
 			for (int i = 1; i <= N; i++) {
-				if(adjMatrix[i][0] != -1) continue;
-				gtDFS(i);
+				if (map[i][0] == -1)
+					dfs1(i);
+				if (rmap[i][0] == -1)
+					dfs2(i);
+				if (map[i][0] + rmap[i][0] == N - 1)
+					result++;
 			}
-			for(int i = 1 ; i <= N ; i++) {
-				for(int j = 1 ; j <= N ; j++) {
-					adjMatrix[0][j]+=adjMatrix[i][j];
-				}
-			}
-			for(int i = 1 ; i <=N ; i++) {
-				if(adjMatrix[i][0]+adjMatrix[0][i]==N-1) result++;
-			}
+//			for(int i = 0 ; i <= N ; i++) {
+//				System.out.println(Arrays.toString(map[i]));
+//			}
+//			System.out.println("//////////////////////////////////");
+//			for(int i = 0 ; i <= N ; i++) {
+//				System.out.println(Arrays.toString(rmap[i]));
+//			}
 			sb.append('#').append(tc).append(' ').append(result).append('\n');
 		}
 		System.out.println(sb);
 	}
 
-	public static void gtDFS(int cur) {// 나보다 큰 녀석의 수를 찾는다.
+	public static void dfs1(int str) {
+		map[str][0] = 0;
 		for (int i = 1; i <= N; i++) {
-			if(adjMatrix[cur][i] == 0) continue;
-			if(adjMatrix[i][0]==-1) {
-				gtDFS(i);
+			if (map[str][i] == 0)
+				continue;
+			if (map[i][0] == -1) {
+				dfs1(i);
 			}
-			
-			// 나보다 키가 큰 학생이 탐색을 완료한 상태
-			// i보다 키가 큰 학생이 있다면 그 학생들의 정보를 cur에게 반영(간접 관계 직접 관계로 경로압축)
-			if(adjMatrix[i][0]>0) {
-				for(int j = 1 ; j <= N ; j++) {
-					if(adjMatrix[i][j]!=0) adjMatrix[cur][j] = 1;
+			if (map[i][0] != 0) {
+				for (int j = 1; j <= N; j++) {
+					if (map[i][j] == 1)
+						map[str][j] = 1;
 				}
 			}
 		}
-		adjMatrix[cur][0] = 0; // 초기값이 -1 이므로 누적 위해 0으로 초기화
-		for(int k = 1; k <= N ; k++) {
-			adjMatrix[cur][0]+=adjMatrix[cur][k];
+		for (int i = 1; i <= N; i++) {
+			map[str][0] += map[str][i];
+		}
+	}
+
+	public static void dfs2(int str) {
+		rmap[str][0] = 0;
+		for (int i = 1; i <= N; i++) {
+			if (rmap[str][i] == 0)
+				continue;
+			if (rmap[i][0] == -1) {
+				dfs2(i);
+			}
+			if (rmap[i][0] != 0) {
+				for (int j = 1; j <= N; j++) {
+					if (rmap[i][j] == 1)
+						rmap[str][j] = 1;
+				}
+			}
+			
+		}
+		for (int i = 1; i <= N; i++) {
+			rmap[str][0] += rmap[str][i];
 		}
 	}
 }
