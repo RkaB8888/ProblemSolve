@@ -5,7 +5,7 @@ import java.util.StringTokenizer;
 
 public class Solution {
 	static int N, M, result;
-	static int map[][], rmap[][];
+	static int map[][];
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -17,7 +17,6 @@ public class Solution {
 			N = Integer.parseInt(br.readLine());
 			M = Integer.parseInt(br.readLine());
 			map = new int[N + 1][N + 1];
-			rmap = new int[N + 1][N + 1];
 			for (int i = 1; i <= N; i++) {
 				map[i][0] = -1;
 				map[0][i] = -1;
@@ -25,9 +24,7 @@ public class Solution {
 			result = 0;
 			for (int i = 0; i < M; i++) {
 				st = new StringTokenizer(br.readLine());
-				int a = Integer.parseInt(st.nextToken());
-				int b = Integer.parseInt(st.nextToken());
-				map[a][b] = 1;
+				map[Integer.parseInt(st.nextToken())][Integer.parseInt(st.nextToken())] = 1;
 			}
 			for (int i = 1; i <= N; i++) {
 				if (map[i][0] == -1)
@@ -59,8 +56,7 @@ public class Solution {
 			}
 			if (map[i][0] != 0) {
 				for (int j = 1; j <= N; j++) {
-					if (map[i][j] == 1)
-						map[str][j] = 1;
+					map[str][j] |= map[i][j];
 				}
 			}
 		}
@@ -79,11 +75,9 @@ public class Solution {
 			}
 			if (map[0][i] != 0) {
 				for (int j = 1; j <= N; j++) {
-					if (map[j][i] == 1)
-						map[j][str] = 1;
+					map[j][str]|= map[j][i];
 				}
 			}
-			
 		}
 		for (int i = 1; i <= N; i++) {
 			map[0][str] += map[i][str];
