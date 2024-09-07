@@ -20,7 +20,7 @@ public class Solution {
 			rmap = new int[N + 1][N + 1];
 			for (int i = 1; i <= N; i++) {
 				map[i][0] = -1;
-				rmap[i][0] = -1;
+				map[0][i] = -1;
 			}
 			result = 0;
 			for (int i = 0; i < M; i++) {
@@ -28,14 +28,13 @@ public class Solution {
 				int a = Integer.parseInt(st.nextToken());
 				int b = Integer.parseInt(st.nextToken());
 				map[a][b] = 1;
-				rmap[b][a] = 1;
 			}
 			for (int i = 1; i <= N; i++) {
 				if (map[i][0] == -1)
 					dfs1(i);
-				if (rmap[i][0] == -1)
+				if (map[0][i] == -1)
 					dfs2(i);
-				if (map[i][0] + rmap[i][0] == N - 1)
+				if (map[i][0] + map[0][i] == N - 1)
 					result++;
 			}
 //			for(int i = 0 ; i <= N ; i++) {
@@ -71,23 +70,23 @@ public class Solution {
 	}
 
 	public static void dfs2(int str) {
-		rmap[str][0] = 0;
+		map[0][str] = 0;
 		for (int i = 1; i <= N; i++) {
-			if (rmap[str][i] == 0)
+			if (map[i][str] == 0)
 				continue;
-			if (rmap[i][0] == -1) {
+			if (map[0][i] == -1) {
 				dfs2(i);
 			}
-			if (rmap[i][0] != 0) {
+			if (map[0][i] != 0) {
 				for (int j = 1; j <= N; j++) {
-					if (rmap[i][j] == 1)
-						rmap[str][j] = 1;
+					if (map[j][i] == 1)
+						map[j][str] = 1;
 				}
 			}
 			
 		}
 		for (int i = 1; i <= N; i++) {
-			rmap[str][0] += rmap[str][i];
+			map[0][str] += map[i][str];
 		}
 	}
 }
