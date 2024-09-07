@@ -40,7 +40,7 @@ public class Solution {
 				result[i]+=arr[j]<<leftShift;
 			}
 			Arrays.sort(result);
-			int preNum = 0, cnt = 0;
+			int preNum = result[N-1], cnt = 1;
 			for(int i = N-1 ; i >= 0 ; i--) {
 				if(preNum!=result[i]) {
 					cnt++;
