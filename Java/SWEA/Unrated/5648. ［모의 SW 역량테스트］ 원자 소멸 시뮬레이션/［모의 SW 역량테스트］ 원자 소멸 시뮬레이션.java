@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 /*
- * 메모리 ?KB 시간 ?ms
+ * 메모리 79,104KB 시간 303ms
  */
 public class Solution {
 	static int N, result;
@@ -18,7 +18,7 @@ public class Solution {
 	// G의 방향 - E의 방향 == E-G의 단위 벡터와 같다면 abs(E.x-G.x)초 후에 충돌
 
 	static class Atom {
-		int dir, K, SN;// x,y,이동방향,에너지,고유넘버
+		int dir, K;// x,y,이동방향,에너지
 		double x, y;
 
 		public Atom(int i, int j, int dir, int k, int sn) {
@@ -27,7 +27,6 @@ public class Solution {
 			this.y = j;
 			this.dir = dir;
 			K = k;
-			SN = sn;
 		}
 
 	}
@@ -61,12 +60,14 @@ public class Solution {
 				atoms[i] = new Atom(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
 						Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), i);
 			}
+			//여기까지가 입력 받는 것
 			process();
 			sb.append('#').append(tc).append(' ').append(result).append('\n');
 		}
 		System.out.println(sb);
 	}
-
+	//각 원자의 충돌을 우선순위 큐에 담아서 하나씩 충돌 시킨다.
+	//이때 충돌 시간이 빠른 것을 먼저 처리하며, 이후에 나온 것에서 이미 충돌로 없어진 경우 그냥 넘어간다
 	public static void process() {
 		PriorityQueue<Collision> pq = new PriorityQueue<>((a, b) -> Double.compare(a.collTime, b.collTime));
 		for (int i = 0, iEnd = N - 1; i < iEnd; i++) {
@@ -94,7 +95,9 @@ public class Solution {
 		}
 	}
 
-	public static boolean collTest(Collision c) {
+	// 두 개의 원자가 충돌이 일어날 지 검사하는 부분
+	// 충돌이 일어난다면 c에 충돌 시간을 담고 true를 반환한다.
+	public static boolean collTest(Collision c) { 
 		Atom a = atoms[c.startAtomNum];
 		Atom b = atoms[c.endAtomNum];
 		int aDirX = dirs[a.dir][0];// a의 x축 이동방향
@@ -102,8 +105,10 @@ public class Solution {
 		int bDirX = dirs[b.dir][0];// b의 x축 이동방향
 		int bDirY = dirs[b.dir][1];// b의 y축 이동방향
 
-		if (a.dir == b.dir)
+		if (a.dir == b.dir)//두 원자의 이동방향이 같다면 충돌이 발생하지 않음
 			return false;
+		//좌표의 벡터와 이동방향의 벡터의 부호가 같다면 -> 거리만 생각했을 때 충돌 가능성을 계산 가능
+		// 서로 부호가 다르면 원자가 충돌하기 위해 가야하는 방향과 서로의 이동 방향이 다르다는 의미
 		if (((b.x - a.x)<0&&(aDirX - bDirX)<0||(b.x - a.x)==0&&(aDirX - bDirX)==0||(b.x - a.x)>0&&(aDirX - bDirX)>0)&& 
 				((b.y - a.y)<0&&(aDirY - bDirY)<0||(b.y - a.y)==0&&(aDirY - bDirY)==0||(b.y - a.y)>0&&(aDirY - bDirY)>0)) {//가야할 방향이 같은 경우
 			if(b.x-a.x==0) {
