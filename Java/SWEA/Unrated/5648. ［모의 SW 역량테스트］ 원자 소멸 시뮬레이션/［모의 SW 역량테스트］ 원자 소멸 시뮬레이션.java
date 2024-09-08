@@ -1,8 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /*
@@ -33,7 +32,7 @@ public class Solution {
 	}
 
 	// 충돌이 발생했을 때 정보를 큐에 저장하기 위한 클래스
-	static class Collision {
+	static class Collision implements Comparable<Collision>{
 		int startAtomNum;
 		int endAtomNum;
 		double collTime;
@@ -41,6 +40,11 @@ public class Solution {
 		public Collision(int startAtomNum, int endAtomNum) {
 			this.startAtomNum = startAtomNum;
 			this.endAtomNum = endAtomNum;
+		}
+
+		@Override
+		public int compareTo(Collision o) {
+			return Double.compare(this.collTime, o.collTime);
 		}
 
 	}
@@ -70,20 +74,21 @@ public class Solution {
 	//각 원자의 충돌을 우선순위 큐에 담아서 하나씩 충돌 시킨다.
 	//이때 충돌 시간이 빠른 것을 먼저 처리하며, 이후에 나온 것에서 이미 충돌로 없어진 경우 그냥 넘어간다
 	public static void process() {
-		List<Collision> list = new ArrayList<>();
+		Collision list[] = new Collision[N*(N-1)/2];
+		int size = 0;
 		for (int i = 0, iEnd = N - 1; i < iEnd; i++) {
 			for (int j = i + 1; j < N; j++) {
 				Collision c = new Collision(i, j);
 				if (collTest(c)) {
-					list.add(c);
+					list[size++] = c;
 				}
 			}
 		}
-		list.sort((a, b) -> Double.compare(a.collTime, b.collTime));
-		int size = list.size();
+		list = Arrays.copyOf(list, size);
+		Arrays.sort(list);
 		int cnt = 0;
 		while (cnt<size) {
-			Collision c = list.get(cnt);
+			Collision c = list[cnt];
 			cnt++;
 			int startNum = c.startAtomNum, endNum = c.endAtomNum;
 			if (is[startNum]&&c.collTime!=CT[startNum] || is[endNum]&&c.collTime!=CT[endNum]) {
