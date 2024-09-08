@@ -1,11 +1,12 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.PriorityQueue;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /*
- * 메모리 79,104KB 시간 303ms
+ * 메모리 76,612KB 시간 297ms
  */
 public class Solution {
 	static int N, result;
@@ -69,17 +70,21 @@ public class Solution {
 	//각 원자의 충돌을 우선순위 큐에 담아서 하나씩 충돌 시킨다.
 	//이때 충돌 시간이 빠른 것을 먼저 처리하며, 이후에 나온 것에서 이미 충돌로 없어진 경우 그냥 넘어간다
 	public static void process() {
-		PriorityQueue<Collision> pq = new PriorityQueue<>((a, b) -> Double.compare(a.collTime, b.collTime));
+		List<Collision> list = new ArrayList<>();
 		for (int i = 0, iEnd = N - 1; i < iEnd; i++) {
 			for (int j = i + 1; j < N; j++) {
 				Collision c = new Collision(i, j);
 				if (collTest(c)) {
-					pq.add(c);
+					list.add(c);
 				}
 			}
 		}
-		while (!pq.isEmpty()) {
-			Collision c = pq.poll();
+		list.sort((a, b) -> Double.compare(a.collTime, b.collTime));
+		int size = list.size();
+		int cnt = 0;
+		while (cnt<size) {
+			Collision c = list.get(cnt);
+			cnt++;
 			int startNum = c.startAtomNum, endNum = c.endAtomNum;
 			if (is[startNum]&&c.collTime!=CT[startNum] || is[endNum]&&c.collTime!=CT[endNum]) {
 				//둘 중에 없는게 있고, 그 충돌 시간과 다른 경우
