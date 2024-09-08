@@ -1,60 +1,52 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
-/*
- * 메모리 259,332KB 시간 2192ms
- * dp
- * goal의 진입차수의 dp값 중 가장 큰 값에 본인의 건설 시간 추가
- */
 public class Main {
-	static int N, K, adjMatrix[][], buildTimes[], goal;
-
+	
+	static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	static StringBuilder sb = new StringBuilder();
+	static StringTokenizer st = null;
+	
+	static ArrayList<Integer>[] need;
+	static int[] d;
+	static int[] memo;
+	
 	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = null;
-		StringBuilder sb = new StringBuilder();
 		
-		int TC = Integer.parseInt(br.readLine());
-		for(int tc = 1 ; tc <= TC ; tc++) {
-			st = new StringTokenizer(br.readLine());
-			N = Integer.parseInt(st.nextToken());
-			K = Integer.parseInt(st.nextToken());
-			
-			buildTimes = new int[N+1];
-			
-			st = new StringTokenizer(br.readLine());
-			for(int i = 1 ; i <= N ; i++) {
-				buildTimes[i] = Integer.parseInt(st.nextToken());
+		int T = Integer.parseInt(in.readLine());
+		while(T-- > 0) {
+			st = new StringTokenizer(in.readLine());
+			int n = Integer.parseInt(st.nextToken());
+			int k = Integer.parseInt(st.nextToken());
+			d = new int[n];
+			need = new ArrayList[n];
+			memo = new int[n];
+			Arrays.fill(memo, -1);
+			for(int i=0; i<n; ++i)
+				need[i] = new ArrayList<>();
+			st = new StringTokenizer(in.readLine());
+			for(int i=0; i<n; ++i)
+				d[i] = Integer.parseInt(st.nextToken());
+			for(int i=0; i<k; ++i) {
+				st = new StringTokenizer(in.readLine());
+				int u = Integer.parseInt(st.nextToken()) - 1;
+				int v = Integer.parseInt(st.nextToken()) - 1;
+				need[v].add(u);
 			}
-			adjMatrix = new int[N+1][N+1];
-			for(int i = 0 ; i < K ; i++) {
-				st = new StringTokenizer(br.readLine());
-				int from = Integer.parseInt(st.nextToken());
-				int to = Integer.parseInt(st.nextToken());
-				adjMatrix[from][to] = 1;
-			}
-			
-			for(int i = 1 ; i <= N ; i++) {
-				adjMatrix[0][i] = -1;
-			}
-			
-			goal = Integer.parseInt(br.readLine());
-			dfs(goal);
-			sb.append(adjMatrix[0][goal]).append('\n');
+			int w = Integer.parseInt(in.readLine()) - 1;
+			sb.append(time(w)).append('\n');
 		}
 		System.out.println(sb);
 	}
-	public static void dfs(int str) {
-		if(adjMatrix[0][str]!=-1) return;
-		adjMatrix[0][str] = 0;
-		for(int i = 1 ; i <= N ; i++) {
-			if(adjMatrix[i][str]==1) {
-				dfs(i);
-				if(adjMatrix[0][str]<adjMatrix[0][i]) adjMatrix[0][str]=adjMatrix[0][i];
-			}
+	
+	static int time(int x) {
+		if(memo[x] != -1)
+			return memo[x];
+		int ret = 0;
+		for(int u : need[x]) {
+			ret = Math.max(ret, time(u));
 		}
-		adjMatrix[0][str]+=buildTimes[str];
+		ret += d[x];
+		return memo[x] = ret;
 	}
 }
