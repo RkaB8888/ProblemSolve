@@ -2,7 +2,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-
+/*
+ * 메모리 32,196 KB 시간 596 ms
+ * dfs 사방탐색 법규 모양에 약간 변화
+ */
 public class Main {
 	static int N, M, map[][], result;
 	static int drdc[][] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
@@ -48,15 +51,7 @@ public class Main {
 				continue;
 			check[row][col] = true;
 			if (cnt == 2) {
-				for (int j = 0; j < 4; j++) {
-					int row2 = r + drdc[j][0];
-					int col2 = c + drdc[j][1];
-					if (row2 < 0 || col2 < 0 || row2 >= N || col2 >= M || check[row2][col2])
-						continue;
-					check[row2][col2] = true;
-					dfs(cnt + 2, sum + map[row][col] + map[row2][col2], row2, col2);
-					check[row2][col2] = false;
-				}
+				dfs(cnt + 1, sum + map[row][col], r, c);
 			}
 			dfs(cnt + 1, sum + map[row][col], row, col);
 			check[row][col] = false;
