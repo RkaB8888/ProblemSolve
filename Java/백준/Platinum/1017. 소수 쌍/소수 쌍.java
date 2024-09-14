@@ -12,13 +12,10 @@ import java.util.StringTokenizer;
  */
 public class Main {
 
-	static boolean[] isPrime = new boolean[2001];
-	static boolean[] isChecked = new boolean[2001]; // 소수 판별
+	static boolean[] isPrime = new boolean[2000], isChecked = new boolean[2000]; // 소수 판별
 
-	static int N;
-	static int[] numList, pair;
-	static List<Integer> adjList[];
-	static List<Integer> result = new ArrayList<>();
+	static int N, numList[], pair[];
+	static List<Integer> adjList[], result = new ArrayList<>();
 	static boolean[] isSelect;
 
 	public static void main(String[] args) throws IOException {
@@ -58,44 +55,43 @@ public class Main {
 				}
 			}
 		}
-		if (evenList.size() == oddList.size()) {
-			List<Integer> list;
-			if (numList[0] % 2 == 0) {
-				list = evenList;
-			} else {
-				list = oddList;
-			}
-			pair = new int[N];
-			a: for (int i : adjList[0]) {// 0번 숫자와 연결 가능한 간선을 따로 지정
-				Arrays.fill(pair, -1);
+		if (evenList.size() != oddList.size()) {
+			System.out.print(-1);
+			return;
+		}
 
-				pair[0] = i;
-				pair[i] = 0;
+		List<Integer> list = (numList[0] % 2 == 0) ? evenList : oddList;
 
-				for (int j : list) {
-					if (j == 0 || j == i)
-						continue;
-					isSelect = new boolean[N];
-					isSelect[0] = true;
-					isSelect[i] = true;// 변경 불가
-					if (!dfs(j)) {
-						continue a;
-					}
+		pair = new int[N];
+		isSelect = new boolean[N];
+		a: for (int i : adjList[0]) {// 0번 숫자와 연결 가능한 간선을 따로 지정
+			Arrays.fill(pair, -1);
+
+			pair[0] = i;
+			pair[i] = 0;
+
+			for (int j : list) {
+				if (j == 0)
+					continue;
+				Arrays.fill(isSelect, false);
+				isSelect[0] = true;
+				isSelect[i] = true;// 변경 불가
+				if (!dfs(j)) {
+					continue a;
 				}
-				result.add(numList[i]);
 			}
-			if (result.size() == 0) {
-				System.out.println(-1);
-			}
+			result.add(numList[i]);
+		}
+		if (result.isEmpty()) {
+			sb.append(-1);
+		} else {
 			result.sort(null);
 			for (int i : result) {
 				sb.append(i).append(' ');
 			}
-			System.out.println(sb);
 		}
-		else {
-			System.out.println(-1);
-		}
+
+		System.out.print(sb);
 	}
 
 	public static boolean dfs(int a) {
