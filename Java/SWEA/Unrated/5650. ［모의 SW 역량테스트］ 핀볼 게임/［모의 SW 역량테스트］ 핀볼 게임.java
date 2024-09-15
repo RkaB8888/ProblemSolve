@@ -3,110 +3,125 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
+/*
+ *  40,416kb 601ms
+ */
 public class Solution {
-    static int N, result;
-    static final int drdc[][] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
-    static final int reflectDir[][] = { 
-        {}, 
-        {1, 3, 0, 2}, // 블록 1
-        {3, 0, 1, 2}, // 블록 2
-        {2, 0, 3, 1}, // 블록 3
-        {1, 2, 3, 0}, // 블록 4
-        {1, 0, 3, 2}  // 블록 5
-    };
-    static int[][] map;
-    static WormHole[] wormHoles;
+	static int N, result, map[][];
+	static final int drdc[][] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+	// 블럭 1,2,3,4,5에 대한 방향에 따른 반사된 이둉방향 지정
+	static final int reflectDir[][] = { // block type,drdc
+			{}, { 1, 3, 0, 2 }, // 1일 때
+			{ 3, 0, 1, 2 }, // 2일 때
+			{ 2, 0, 3, 1 }, // 3일 때
+			{ 1, 2, 3, 0 }, // 4일 때
+			{ 1, 0, 3, 2 },// 5일 때
+	};
+	static WormHole wList[], WH[][];
 
-    static class WormHole {
-        int r1, c1, r2, c2;
-        public WormHole(int r1, int c1, int r2, int c2) {
-            this.r1 = r1;
-            this.c1 = c1;
-            this.r2 = r2;
-            this.c2 = c2;
-        }
-        public void warp(int[] curP) {
-            if (curP[0] == r1 && curP[1] == c1) {
-                curP[0] = r2;
-                curP[1] = c2;
-            } else {
-                curP[0] = r1;
-                curP[1] = c1;
-            }
-        }
-    }
+	static class Ball {
+		int dir, sr, sc, cr, cc, cnt;
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-        StringTokenizer st;
-        int TC = Integer.parseInt(br.readLine().trim());
+		public Ball(int dir, int sr, int sc, int cnt) {
+			this.dir = dir;
+			this.sr = sr;
+			this.sc = sc;
+			this.cr = sr;
+			this.cc = sc;
+			this.cnt = cnt;
+		}
 
-        for (int tc = 1; tc <= TC; tc++) {
-            result = 0;
-            N = Integer.parseInt(br.readLine().trim());
-            map = new int[N][N];
-            wormHoles = new WormHole[5]; // 웜홀 최대 5쌍(6~10)
-            for (int i = 0; i < N; i++) {
-                st = new StringTokenizer(br.readLine().trim());
-                for (int j = 0; j < N; j++) {
-                    int val = Integer.parseInt(st.nextToken());
-                    map[i][j] = val;
-                    if (val >= 6) { // 웜홀일 때
-                        if (wormHoles[val - 6] == null) {
-                            wormHoles[val - 6] = new WormHole(i, j, -1, -1);
-                        } else {
-                            wormHoles[val - 6].r2 = i;
-                            wormHoles[val - 6].c2 = j;
-                        }
-                    }
-                }
-            }
-            simulate();
-            sb.append('#').append(tc).append(' ').append(result).append('\n');
-        }
-        System.out.println(sb);
-    }
+	}
 
-    public static void simulate() {
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (map[i][j] == 0) { // 빈 공간에서 시작
-                    for (int d = 0; d < 4; d++) {
-                        runGame(i, j, d);
-                    }
-                }
-            }
-        }
-    }
+	static class WormHole {
+		int r, c, nr, nc;
 
-    public static void runGame(int row, int col, int dir) {
-        int[] curP = {row, col};
-        int curDir = dir;
-        int cnt = 0;
+		public WormHole(int r, int c) {
+			this.r = r;
+			this.c = c;
+		}
 
-        curP[0] += drdc[curDir][0];
-        curP[1] += drdc[curDir][1];
+		public void warp(Ball ball) {
+			ball.cr = this.nr;
+			ball.cc = this.nc;
+		}
+	}
 
-        while (true) {
-            if (curP[0] < 0 || curP[0] >= N || curP[1] < 0 || curP[1] >= N || map[curP[0]][curP[1]] == 5) {
-                // 경계 충돌 또는 5번 블록 충돌
-                result = Math.max(result, cnt * 2 + 1);
-                return;
-            } else if (map[curP[0]][curP[1]] == -1 || (curP[0] == row && curP[1] == col)) {
-                // 블랙홀이나 출발점으로 돌아온 경우
-                result = Math.max(result, cnt);
-                return;
-            } else if (map[curP[0]][curP[1]] >= 6) {
-                // 웜홀을 만났을 때
-                wormHoles[map[curP[0]][curP[1]] - 6].warp(curP);
-            } else if (map[curP[0]][curP[1]] >= 1) {
-                // 블록에 부딪힐 때 방향 반사
-                cnt++;
-                curDir = reflectDir[map[curP[0]][curP[1]]][curDir];
-            }
-            curP[0] += drdc[curDir][0];
-            curP[1] += drdc[curDir][1];
-        }
-    }
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder sb = new StringBuilder();
+		StringTokenizer st = null;
+		int TC = Integer.parseInt(br.readLine().trim());
+		for (int tc = 1; tc <= TC; tc++) {
+			result = 0;
+			N = Integer.parseInt(br.readLine().trim());
+			map = new int[N][N];
+			WH = new WormHole[N][N];
+			wList = new WormHole[5];
+			for (int i = 0; i < N; i++) {
+				st = new StringTokenizer(br.readLine().trim());
+				for (int j = 0; j < N; j++) {
+					int val = Integer.parseInt(st.nextToken());
+					map[i][j] = val;
+					if (val >= 6) {// 월홈을 조사함
+						WH[i][j] = new WormHole(i, j);
+						if (wList[val - 6] != null) {
+							wList[val - 6].nr = i;
+							wList[val - 6].nc = j;
+							WH[i][j].nr = wList[val - 6].r;
+							WH[i][j].nc = wList[val - 6].c;
+						} else {
+							wList[val - 6] = WH[i][j];
+						}
+					}
+				}
+			}
+			dfs();
+			sb.append('#').append(tc).append(' ').append(result).append('\n');
+//			System.out.println(result);
+		}
+		System.out.println(sb);
+	}
+
+	public static void dfs() {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (map[i][j] != 0)
+					continue;
+				goStraight(i, j);
+			}
+		}
+	}
+
+	public static void goStraight(int row, int col) {
+		for (int i = 0; i < 4; i++) {
+			Ball ball = new Ball(i, row, col, 0);
+			ball.cr += drdc[ball.dir][0];
+			ball.cc += drdc[ball.dir][1];
+			while (true) {
+				if (ball.cr < 0 || ball.cr >= N || ball.cc < 0 || ball.cc >= N || map[ball.cr][ball.cc] == 5) {
+					// 경계면 충돌은 5번 블럭 충돌과 같음
+					ball.cnt *= 2;
+					ball.cnt++;
+					result = Math.max(result, ball.cnt);
+					break;
+				} else if (map[ball.cr][ball.cc] == -1 || ball.cr == ball.sr && ball.cc == ball.sc) {
+					// 블랙홀을 만나거나 원위치로 돌아온 경우
+					result = Math.max(result, ball.cnt);
+					break;
+				} else if (map[ball.cr][ball.cc] >= 6) {
+					// 웜홀을 만나서 워프시켜 줌
+					WH[ball.cr][ball.cc].warp(ball);
+				} else if (map[ball.cr][ball.cc] >= 1) {
+					// 벽에 부딪혀서 방향 바꿔줌
+
+					ball.cnt++;
+					ball.dir = reflectDir[map[ball.cr][ball.cc]][ball.dir];
+				}
+				// 다음 칸으로 이동
+				ball.cr += drdc[ball.dir][0];
+				ball.cc += drdc[ball.dir][1];
+			}
+		}
+	}
 }
