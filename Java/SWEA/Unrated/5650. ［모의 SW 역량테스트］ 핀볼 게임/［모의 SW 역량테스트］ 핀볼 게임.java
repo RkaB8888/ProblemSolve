@@ -20,19 +20,6 @@ public class Solution {
 	static mapInfo map[][];
 	static WormHole wList[], WH[][];
 
-	static class Ball {
-		int dir, sr, sc, cr, cc, cnt;
-
-		public Ball(int dir, int sr, int sc, int cnt) {
-			this.dir = dir;
-			this.sr = sr;
-			this.sc = sc;
-			this.cr = sr;
-			this.cc = sc;
-			this.cnt = cnt;
-		}
-
-	}
 	static class mapInfo{
 		int val;
 		boolean[] dirCheck = new boolean[4];
@@ -48,9 +35,9 @@ public class Solution {
 			this.c = c;
 		}
 
-		public void warp(Ball ball) {
-			ball.cr = this.nr;
-			ball.cc = this.nc;
+		public void warp(int[] curP) {
+			curP[0] = this.nr;
+			curP[1] = this.nc;
 		}
 	}
 
@@ -72,20 +59,20 @@ public class Solution {
 					map[i][j] = new mapInfo(val);
 					if (val >= 6) {// 월홈을 조사함
 						WH[i][j] = new WormHole(i, j);
-						if (wList[val - 6] != null) {
-							wList[val - 6].nr = i;
-							wList[val - 6].nc = j;
-							WH[i][j].nr = wList[val - 6].r;
-							WH[i][j].nc = wList[val - 6].c;
+						int p = val-6;
+						if (wList[p] != null) {
+							wList[p].nr = i;
+							wList[p].nc = j;
+							WH[i][j].nr = wList[p].r;
+							WH[i][j].nc = wList[p].c;
 						} else {
-							wList[val - 6] = WH[i][j];
+							wList[p] = WH[i][j];
 						}
 					}
 				}
 			}
 			dfs();
 			sb.append('#').append(tc).append(' ').append(result).append('\n');
-//			System.out.println(result);
 		}
 		System.out.println(sb);
 	}
@@ -104,32 +91,33 @@ public class Solution {
 		for (int i = 0; i < 4; i++) {
 			if(map[row][col].dirCheck[i]) continue;
 			map[row][col].dirCheck[i] = true;
-			Ball ball = new Ball(i, row, col, 0);
-			ball.cr += drdc[ball.dir][0];
-			ball.cc += drdc[ball.dir][1];
+			int curP[] = {row,col};
+			int dir = i;//공의 방향
+			int cnt = 0;
+			curP[0] += drdc[dir][0];
+			curP[1] += drdc[dir][1];
 			while (true) {
-				if (ball.cr < 0 || ball.cr >= N || ball.cc < 0 || ball.cc >= N || map[ball.cr][ball.cc].val == 5) {
+				if (curP[0] < 0 || curP[0] >= N || curP[1] < 0 || curP[1] >= N || map[curP[0]][curP[1]].val == 5) {
 					// 경계면 충돌은 5번 블럭 충돌과 같음
-					ball.cnt *= 2;
-					ball.cnt++;
-					result = Math.max(result, ball.cnt);
+					cnt *= 2;
+					cnt++;
+					result = Math.max(result, cnt);
 					break;
-				} else if (map[ball.cr][ball.cc].val == -1 || ball.cr == ball.sr && ball.cc == ball.sc) {
+				} else if (map[curP[0]][curP[1]].val == -1 || curP[0] == row && curP[1] == col) {
 					// 블랙홀을 만나거나 원위치로 돌아온 경우
-					result = Math.max(result, ball.cnt);
+					result = Math.max(result, cnt);
 					break;
-				} else if (map[ball.cr][ball.cc].val >= 6) {
+				} else if (map[curP[0]][curP[1]].val >= 6) {
 					// 웜홀을 만나서 워프시켜 줌
-					WH[ball.cr][ball.cc].warp(ball);
-				} else if (map[ball.cr][ball.cc].val >= 1) {
+					WH[curP[0]][curP[1]].warp(curP);
+				} else if (map[curP[0]][curP[1]].val >= 1) {
 					// 벽에 부딪혀서 방향 바꿔줌
-
-					ball.cnt++;
-					ball.dir = reflectDir[map[ball.cr][ball.cc].val][ball.dir];
+					cnt++;
+					dir = reflectDir[map[curP[0]][curP[1]].val][dir];
 				}
 				// 다음 칸으로 이동
-				ball.cr += drdc[ball.dir][0];
-				ball.cc += drdc[ball.dir][1];
+				curP[0] += drdc[dir][0];
+				curP[1] += drdc[dir][1];
 			}
 		}
 	}
