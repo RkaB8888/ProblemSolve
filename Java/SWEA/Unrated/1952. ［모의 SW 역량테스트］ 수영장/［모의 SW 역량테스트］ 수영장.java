@@ -4,11 +4,11 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /*
- *  ? KB ? ms
+ *  20,848KB 149ms
+ *  dp 사용
  */
 public class Solution {
-    static int fees[]= new int[4], month[]= new int[12], result;
-    static boolean check[];
+    static int fees[]= new int[4],dp[]= new int[13];
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -21,53 +21,22 @@ public class Solution {
             for(int i = 0 ; i < 4 ; i++) {
             	fees[i] = Integer.parseInt(st.nextToken());
             }
-            result = fees[3];
-            check = new boolean[12];
+            dp[0] = 0;
             st = new StringTokenizer(br.readLine().trim());
-            for(int i = 0 ; i < 12 ; i++) {
+            for(int i = 1 ; i <= 12 ; i++) {
             	int val = Integer.parseInt(st.nextToken());
-            	month[i] = val;
             	if(val!=0) {
-            		check[i] = true;
+            		dp[i] = dp[i-1]+Math.min(fees[0]*val,fees[1]);
+            		if(i>=3) {
+            			dp[i] = Math.min(dp[i], dp[i-3]+fees[2]);
+            		}
             	}
+            	else dp[i] = dp[i-1];
             }
-            dfs(0,0);
-            sb.append('#').append(tc).append(' ').append(result).append('\n');
+            dp[12] = Math.min(dp[12], fees[3]);
+            sb.append('#').append(tc).append(' ').append(dp[12]).append('\n');
         }
         System.out.println(sb);
     }
-    public static void dfs(int str, int sum) {
-    	if(sum >= result) return;
-    	if(str>=12) {
-    		result = sum;
-    		return;
-    	}
-    	while(str<12) {
-    		if(check[str])break;
-    		str++;
-    	}
-    	if(str==12) {
-    		dfs(str,sum);
-    		return;
-    	}
-    	check[str] = false;
-    	if(str<11) {
-    		check[str+1] = false;
-    		if(str<10) {
-    			check[str+2] = false;
-    		}
-    	}
-    	dfs(str+3,sum+fees[2]);
-    	if(str<11) {
-    		check[str+1] = true;
-    		if(str<10) {
-    			check[str+2] = true;
-    		}
-    	}
-    	
-    	dfs(str+1,sum+fees[1]);
-    	
-    	dfs(str+1, sum+fees[0]*month[str]);
-    	check[str] = true;
-    }
+ 
 }
