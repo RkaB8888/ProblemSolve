@@ -3,21 +3,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 /*
- * 메모리 ? KB 시간 ? ms
- * 
+ * 메모리 302,532 KB 시간 1,384 ms
+ * PQ 2개를 이용한 구현
  */
 public class Main {
 
 	static int N, M, K, treeCnt;
 	static int[][] map, a, drdc = {{-1,0},{1,0},{0,-1},{0,1},{1,-1},{1,1},{-1,-1},{-1,1}};
-	static PriorityQueue<Tree> pq1 = new PriorityQueue<>((a, b) -> a.age - b.age);
-	static PriorityQueue<Tree> pq2 = new PriorityQueue<>((a, b) -> a.age - b.age);
+	static PriorityQueue<Tree> trees = new PriorityQueue<>(Comparator.comparingInt(tree -> tree.age));
 	static Queue<Tree> DieQ = new ArrayDeque<>();
+	static Queue<Tree> temp = new ArrayDeque<>();
 
 	static class Tree {
 		int x, y, age;
@@ -33,7 +34,7 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine().trim());
+		StringTokenizer st = new StringTokenizer(br.readLine());
 
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
@@ -44,68 +45,66 @@ public class Main {
 		}
 		a = new int[N][N];
 		for (int i = 0; i < N; i++) {
-			st = new StringTokenizer(br.readLine().trim());
+			st = new StringTokenizer(br.readLine());
 			for (int j = 0; j < N; j++) {
 				a[i][j] = Integer.parseInt(st.nextToken());
 			}
 		}
 		for (int i = 0; i < M; i++) {
 			st = new StringTokenizer(br.readLine().trim());
-			pq1.add(new Tree(Integer.parseInt(st.nextToken())-1, Integer.parseInt(st.nextToken())-1, Integer.parseInt(st.nextToken())));
+			trees.add(new Tree(Integer.parseInt(st.nextToken())-1, 
+					Integer.parseInt(st.nextToken())-1, 
+					Integer.parseInt(st.nextToken())));
 			treeCnt++;
 		}
 		int curYear = 0;
 		while(curYear<K) {
 			//봄, 여름, 가을, 겨울 사이클
 			if(treeCnt==0) break;
-			Spring();
-			Summer();
+			SpringAndSummer();
 			Fall();
 			Winter();
 			curYear++;
 		}
 		System.out.println(treeCnt);
 	}
-	public static void Spring() {
-		while(!pq1.isEmpty()) {
-			Tree tree = pq1.poll();
+	public static void SpringAndSummer() {
+		while(!trees.isEmpty()) {
+			Tree tree = trees.poll();
 			if(map[tree.x][tree.y]<tree.age) {
 				DieQ.add(tree);
 			}
 			else {
 				map[tree.x][tree.y]-=tree.age;
 				tree.age++;
-				pq2.add(tree);
+				temp.add(tree);
 			}
 		}
-	}
-	public static void Summer() {
 		while(!DieQ.isEmpty()) {
-			Tree tree = DieQ.poll();
-			int x = tree.x;
-			int y = tree.y;
-			int extraEnergy = tree.age/2;
-			map[x][y]+=extraEnergy;
+			Tree deadTree = DieQ.poll();
+			map[deadTree.x][deadTree.y]+=deadTree.age/2;
 			treeCnt--;
 		}
+		trees.addAll(temp);
+		temp.clear();
 	}
+
 	public static void Fall() {
-		while(!pq2.isEmpty()) {
-			Tree tree = pq2.poll();
-			int x = tree.x;
-			int y = tree.y;
-			boolean pollen = (tree.age%5==0);
-			if(pollen) {
+		while(!trees.isEmpty()) {
+			Tree tree = trees.poll();
+			if(tree.age%5==0) {
 				for(int i = 0 ; i < 8 ; i++) {
-					 int r = x + drdc[i][0];
-					 int c = y + drdc[i][1];
+					 int r = tree.x + drdc[i][0];
+					 int c = tree.y + drdc[i][1];
 					 if(r<0||c<0||r>=N||c>=N) continue;
-					 pq1.add(new Tree(r,c,1));
+					 temp.add(new Tree(r,c,1));
 					 treeCnt++;
 				}
 			}
-			pq1.add(tree);
+			temp.add(tree);
 		}
+		trees.addAll(temp);
+		temp.clear();
 	}
 	public static void Winter() {
 		for(int i = 0 ; i < N ; i++) {
