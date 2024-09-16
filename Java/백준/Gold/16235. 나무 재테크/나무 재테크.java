@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 
 /*
  * 메모리 302,532 KB 시간 1,384 ms
- * PQ 2개를 이용한 구현
+ * ArrayList 2개를 이용한 구현
  */
 public class Main {
 
@@ -63,8 +63,7 @@ public class Main {
 			//봄, 여름, 가을, 겨울 사이클
 			if(treeCnt==0) break;
 			trees1.sort(Comparator.comparingInt(tree -> tree.age));
-			SpringAndSummer();
-			Fall();
+			SpringAndSummerAndFall();
 			//겨울
 			for(int i = 0 ; i < N ; i++) {
 				for(int j = 0 ; j < N ; j++) {
@@ -75,7 +74,7 @@ public class Main {
 		}
 		System.out.println(treeCnt);
 	}
-	public static void SpringAndSummer() {
+	public static void SpringAndSummerAndFall() {
 		for(Tree tree : trees1) {
 			if(map[tree.x][tree.y]<tree.age) {
 				DieQ.add(tree);
@@ -92,9 +91,6 @@ public class Main {
 			map[deadTree.x][deadTree.y]+=deadTree.age/2;
 			treeCnt--;
 		}
-	}
-
-	public static void Fall() {
 		for(Tree tree : trees2) {
 			if(tree.age%5==0) {
 				for(int i = 0 ; i < 8 ; i++) {
