@@ -1,10 +1,9 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 /*
- * ? KB ? ms
+ * 18,268 KB 177 ms
  * 완전탐색
  */
 public class Solution {
@@ -13,21 +12,17 @@ public class Solution {
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder sb = new StringBuilder();
-		Arrays.fill(result, -1);
-		result[1] = 1;
-		result[2] = 0;
-		result[3] = 0;
-		int TC = Integer.parseInt(br.readLine().trim());
+		for(int i = 1 ; i < 11 ; i++) {
+			N = i;
+			map = new boolean[N][N];
+			colCheck = new boolean[N];
+			backSlash = new boolean[2*N-1];//행 열 합이 0 ~ 2N-2
+			slash = new boolean[2*N-1];//행 열 차가 -N+1 ~ N-1 -> N-1을 더함
+			dfs(0);
+		}
+		int TC = Integer.parseInt(br.readLine());
 		for (int tc = 1; tc <= TC; tc++) {
 			N = Integer.parseInt(br.readLine());
-			if(result[N]==-1) {
-				result[N] = 0;
-				map = new boolean[N][N];
-				colCheck = new boolean[N];
-				backSlash = new boolean[2*N-1];//행 열 합이 0 ~ 2N-2
-				slash = new boolean[2*N-1];//행 열 차가 -N+1 ~ N-1 -> N-1을 더함
-				dfs(0);
-			}
 			sb.append('#').append(tc).append(' ').append(result[N]).append('\n');
 		}
 		System.out.println(sb);
