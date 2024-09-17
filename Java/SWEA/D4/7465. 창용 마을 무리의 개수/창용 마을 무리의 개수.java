@@ -4,12 +4,11 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /*
- *  ?KB ?ms
- * 
+ *  25,964KB 139ms
+ * Union Find
  */
 public class Solution {
     static int N, M, group[], result;
-    static boolean check[];
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -22,20 +21,15 @@ public class Solution {
             st = new StringTokenizer(br.readLine().trim());
             N = Integer.parseInt(st.nextToken());
             M = Integer.parseInt(st.nextToken());
+            result = N;
             makeSet();
             for(int i = 0 ; i < M ; i++) {
             	st = new StringTokenizer(br.readLine().trim());
-            	Union(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
-            }
-            result = 0;
-            check = new boolean[N+1];
-            for(int i = 1 ; i <= N ; i++) {
-            	int iRoot = find(i);
-            	if(!check[iRoot]) {
-            		check[iRoot] = true;
-            		result++;
+            	if(Union(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()))) {
+            		result--;
             	}
             }
+
             sb.append('#').append(tc).append(' ').append(result).append('\n');
         }
         System.out.println(sb);
@@ -50,10 +44,11 @@ public class Solution {
     	if(group[a]==a) return a;
     	return group[a] = find(group[a]);
     }
-    public static void Union(int a, int b) {
+    public static boolean Union(int a, int b) {
     	int aRoot = find(a);
     	int bRoot = find(b);
-    	if(aRoot==bRoot) return;
+    	if(aRoot==bRoot) return false;
     	group[aRoot] = bRoot;
+    	return true;
     }
 }
