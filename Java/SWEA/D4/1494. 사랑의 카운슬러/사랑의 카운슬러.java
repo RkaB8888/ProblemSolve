@@ -4,13 +4,12 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /*
- * 21,128 KB 341 ms
+ * 20,956 KB 328 ms
  * N/2개의 쌍을 결정
  */
 public class Solution {
 	static int N, Cnt, nums[][];
-	static long result;
-	static boolean isSelect[];
+	static long result, sumX, sumY;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -23,12 +22,16 @@ public class Solution {
 			Cnt = N / 2;
 			nums = new int[N][];
 			result = Long.MAX_VALUE;
-			isSelect = new boolean[N];
+			sumX = 0;
+			sumY = 0;
 			for (int i = 0; i < N; i++) {
 				st = new StringTokenizer(br.readLine().trim());
-				nums[i] = new int[] { Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()) };
+				int x = Integer.parseInt(st.nextToken()), y = Integer.parseInt(st.nextToken());
+				nums[i] = new int[] { x, y };
+				sumX -= x;
+				sumY -= y;
 			}
-			dfs(0,0);
+			dfs(0, 0);
 			sb.append('#').append(tc).append(' ').append(result).append('\n');
 		}
 		System.out.println(sb);
@@ -36,28 +39,17 @@ public class Solution {
 
 	public static void dfs(int cnt, int str) {
 		if (cnt == Cnt) {
-			calculate();
+			result = Math.min(result, sumX * sumX + sumY * sumY);
 			return;
 		}
 		for (int i = str; i < N; i++) {
-			isSelect[i] = true;
-			dfs(cnt + 1,i+1);
-			isSelect[i] = false;
+			int x = nums[i][0] * 2, y = nums[i][1] * 2;
+			sumX += x;
+			sumY += y;
+			dfs(cnt + 1, i + 1);
+			sumX -= x;
+			sumY -= y;
 		}
 	}
-    public static void calculate() {
-        long sumX = 0, sumY = 0;
 
-        for (int i = 0; i < N; i++) {
-            if (isSelect[i]) {
-                sumX += nums[i][0];
-                sumY += nums[i][1];
-            } else {
-                sumX -= nums[i][0];
-                sumY -= nums[i][1];
-            }
-        }
-
-        result = Math.min(result, sumX * sumX + sumY * sumY);
-    }
 }
