@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /*
- * ? KB ? ms
+ * 21,128 KB 341 ms
  * N/2개의 쌍을 결정
  */
 public class Solution {
@@ -40,7 +40,6 @@ public class Solution {
 			return;
 		}
 		for (int i = str; i < N; i++) {
-			if (isSelect[i]) continue;
 			isSelect[i] = true;
 			dfs(cnt + 1,i+1);
 			isSelect[i] = false;
