@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 public class Solution {
 	static int N, result;
 	static char num[], idealNum[];
-	static boolean dupl;
+	static boolean dupl, checked[];
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -26,27 +26,25 @@ public class Solution {
 			idealNum = Arrays.copyOf(num, num.length);
 			N = Integer.parseInt(st.nextToken());
 			dupl = false;
-			
-			int len = num.length;
-			
+			checked = new boolean[num.length];
 			Arrays.sort(idealNum);
-			for (int i = 1; i < len; i++) {
+			for (int i = 1; i < idealNum.length; i++) {
 				if (idealNum[i - 1] == idealNum[i]) {
 					dupl = true;
 					break;
 				}
 			}
-			int lastIdx = len - 1;
-			for (int i = 0 ; N > 0 && i < len; i++) {
-				if (num[i] != idealNum[lastIdx - i]) {
-					char changeNum1 = idealNum[lastIdx - i];
+			for (int i = 0, iEnd = num.length; N > 0 && i < iEnd; i++) {
+				if (!checked[i] && num[i] != idealNum[iEnd - 1 - i]) {
+					checked[i] = true;
 					char temp = num[i];
-					num[i] = changeNum1;// 큰 값을 앞쪽에 넣는다.
+					num[i] = idealNum[iEnd - 1 - i];// 큰 값을 앞쪽에 넣는다.
 					int tempIdx = 0;
 					boolean flag = true;
-					for (int j = len - 1; j > i; j--) {
-						if (num[j] == changeNum1) {
-							if (idealNum[lastIdx - j] == temp) {
+					for (int j = iEnd - 1; j > i; j--) {
+						if (num[j] == num[i]) {
+							if (idealNum[iEnd - 1 - j] == temp) {
+								checked[j] = true;
 								num[j] = temp;
 								N--;
 								flag = false;
@@ -58,15 +56,18 @@ public class Solution {
 						}
 					}
 					if(flag) {
+						checked[tempIdx] = true;
 						num[tempIdx] = temp;
 						N--;
 					}
+					
 				}
+				
 			}
 			if (!dupl && N % 2 == 1) {
-				char temp = num[len - 2];
-				num[len - 2] = num[lastIdx];
-				num[lastIdx] = temp;
+				char temp = num[num.length - 2];
+				num[num.length - 2] = num[num.length - 1];
+				num[num.length - 1] = temp;
 			}
 			sb.append('#').append(tc).append(' ').append(new String(num)).append('\n');
 		}
