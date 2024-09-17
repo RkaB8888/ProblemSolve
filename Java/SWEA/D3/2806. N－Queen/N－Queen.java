@@ -3,24 +3,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /*
- * 18,664 KB 90 ms
+ * 16,788 KB 94 ms
  * 비트마스크를 이용한 최적화
  */
 public class Solution {
     static int N, result[] = new int[11];
-    static int colCheck, backSlash, slash; // 비트마스크로 사용
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 1; i < 11; i++) {
+        // 1부터 10까지 미리 계산
+        for (int i = 1; i <= 10; i++) {
             N = i;
             result[N] = 0;
-            colCheck = 0;
-            backSlash = 0;
-            slash = 0;
-            dfs(0);
+            solve(0, 0, 0, 0);
         }
 
         int TC = Integer.parseInt(br.readLine());
@@ -31,30 +28,20 @@ public class Solution {
         System.out.println(sb);
     }
 
-    public static void dfs(int row) {
+    // 비트마스크로 퀸을 놓는 함수
+    // col: 열을 체크, diag1: '\' 대각선 체크, diag2: '/' 대각선 체크
+    public static void solve(int row, int col, int diag1, int diag2) {
         if (row == N) {
             result[N]++;
             return;
         }
-        
-        for (int col = 0; col < N; col++) {
-            // 열(col), 슬래시(\), 백슬래시(/) 체크
-            if ((colCheck & (1 << col)) != 0 ||
-                (backSlash & (1 << (row + col))) != 0 ||
-                (slash & (1 << (row - col + N - 1))) != 0) continue;
-            
-            // 비트마스크로 표시
-            colCheck |= (1 << col);
-            backSlash |= (1 << (row + col));
-            slash |= (1 << (row - col + N - 1));
-            
-            // 다음 행으로 진행
-            dfs(row + 1);
-            
-            // 백트래킹: 비트마스크 복구
-            colCheck &= ~(1 << col);
-            backSlash &= ~(1 << (row + col));
-            slash &= ~(1 << (row - col + N - 1));
+        // 가능한 열 위치를 계산
+        int available = ((1 << N) - 1) & ~(col | diag1 | diag2); // 열, 대각선 겹치는 위치 제외
+        while (available != 0) {
+            int pos = available & -available; // 최하위 비트 선택 (현재 놓을 수 있는 위치)
+            available -= pos; // 그 위치에서 퀸을 놓았으므로 제거
+            // 다음 행으로 이동
+            solve(row + 1, col | pos, (diag1 | pos) << 1, (diag2 | pos) >> 1);
         }
     }
 }
