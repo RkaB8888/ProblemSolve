@@ -5,9 +5,9 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-/*
- * 메모리 15,728 KB 시간 112 ms
- * BFS 구현 최적화
+/**
+ * 메모리 11,768 KB 시간 68 ms
+ * BFS 구현 Q 2개 사용
  */
 public class Main {
 
