@@ -4,13 +4,13 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
  
 /**
- * 메모리:?KB, 시간:?ms
+ * 메모리:96,276KB, 시간:4,545ms
  * 플로이드 워샬을 통해 각 노드의 최단 거리를 구한다.
- * 그 중 가장 작은 값을 출력
+ * 각 행의 SUM 중 가장 작은 값을 출력
  */
 public class Solution {
 	static int N, adjMatrix[][], sum[], result;
-	static final int inf = Integer.MAX_VALUE;
+	static final int inf = 1000;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
          
@@ -21,7 +21,7 @@ public class Solution {
             N = Integer.parseInt(st.nextToken());
             adjMatrix = new int[N][N];
             sum = new int[N];
-            result = inf;
+            result = Integer.MAX_VALUE;
             for(int i = 0 ; i < N ; i++) {
             	for(int j = 0 ; j < N ; j++) {
             		int num = Integer.parseInt(st.nextToken());
@@ -37,20 +37,17 @@ public class Solution {
             	for(int i = 0 ; i < N ; i++) {
             		if(i==k) continue;
             		for(int j = 0 ; j < N ; j++) {
-            			if(j==k||j==i||adjMatrix[i][k]==inf||adjMatrix[k][j]==inf) continue;
+            			if(j==k||j==i) continue;
             			adjMatrix[i][j] = Math.min(adjMatrix[i][j], adjMatrix[i][k]+adjMatrix[k][j]);
             		}
             	}
             }
             for(int i = 0 ; i < N ; i++) {
             	for(int j = 0 ; j < N ; j++) {
-//            		System.out.print(adjMatrix[i][j]+" ");
             		sum[i] += adjMatrix[i][j];
             	}
-//            	System.out.println();
             	result = Math.min(sum[i], result);
             }
-//            System.out.println(inf);
             sb.append("#").append(tc).append(" ").append(result).append("\n");
         }
         System.out.println(sb);
