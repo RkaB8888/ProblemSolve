@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
  
 /**
- * 메모리:96,276KB, 시간:4,545ms
+ * 메모리:97,484KB, 시간:4,112ms
  * 플로이드 워샬을 통해 각 노드의 최단 거리를 구한다.
  * 각 행의 SUM 중 가장 작은 값을 출력
  */
@@ -42,10 +42,11 @@ public class Solution {
             		}
             	}
             }
-            for(int i = 0 ; i < N ; i++) {
+            A:for(int i = 0 ; i < N ; i++) {
             	sum = 0;
             	for(int j = 0 ; j < N ; j++) {
             		sum += adjMatrix[i][j];
+            		if(sum>=result) continue A;
             	}
             	result = Math.min(sum, result);
             }
