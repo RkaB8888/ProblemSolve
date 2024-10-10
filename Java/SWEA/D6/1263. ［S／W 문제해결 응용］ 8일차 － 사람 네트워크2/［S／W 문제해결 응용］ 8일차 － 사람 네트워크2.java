@@ -35,9 +35,7 @@ public class Solution {
             }
             for(int k = 0 ; k < N ; k++) {
             	for(int i = 0 ; i < N ; i++) {
-            		if(i==k) continue;
             		for(int j = 0 ; j < N ; j++) {
-            			if(j==k||j==i) continue;
             			adjMatrix[i][j] = Math.min(adjMatrix[i][j], adjMatrix[i][k]+adjMatrix[k][j]);
             		}
             	}
