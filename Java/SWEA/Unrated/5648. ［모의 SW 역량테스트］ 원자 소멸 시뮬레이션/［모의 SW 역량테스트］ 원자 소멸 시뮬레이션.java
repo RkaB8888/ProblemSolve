@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-/*
- * 메모리 88,232KB 시간 269ms
+/**
+ * 메모리 76,992KB 시간 236ms
+ * 각 원자들의 충돌 예상 시간을 측정하고 PQ에 담음(충돌시간이 빠른 순서)
+ * 충돌시간이 빠른 것 부터 충돌시키면서 원자들을 제거함
+ * 두 원자 중 하나가 이미 충돌로 사라진 경우, 
+ * - 해당 원자가 사라진 시간과 충돌 시간이 동일하면 다자 충돌로 계산함
+ * - 해당 원자가 사라진 시간과 충돌 시간이 동일하지 않다면 충돌이 발생하지 않는 것으로 계산
  */
 public class Solution {
 	static int N, result;
