@@ -2,10 +2,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-
-
+/**
+ * 메모리 22,412 KB 시간 256 ms
+ * DP
+ * @author python98
+ */
 public class Main {
-	static int N, matrixInfo[][], dp[][][];//i~j까지의 곱 중 최소 횟수, m, n
+	static int N, matrixInfo[][], dp[][];//i~j까지의 곱 중 최소 횟수, m, n
 	static final int inf = Integer.MAX_VALUE;
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -17,15 +20,13 @@ public class Main {
 			matrixInfo[i][0] = Integer.parseInt(st.nextToken());
 			matrixInfo[i][1] = Integer.parseInt(st.nextToken());
 		}
-		dp = new int[N][N][3];
+		dp = new int[N][N];
 		for(int i = 0 ; i < N ; i++) {
 			for(int j = 0 ; j < N ; j++) {
 				if(i==j) {
-					dp[i][j][0] = 0;
-					dp[i][j][1] = matrixInfo[i][0];
-					dp[i][j][2] = matrixInfo[i][1];
+					dp[i][j] = 0;
 				} else {
-					dp[i][j][0] = inf;
+					dp[i][j] = inf;
 				}
 			}
 		}
@@ -35,18 +36,17 @@ public class Main {
 				calc(i,i+k);
 			}
 		}
-		System.out.println(dp[0][N-1][0]);
+		System.out.println(dp[0][N-1]);
 	}
-	private static void calc(int str, int end) {
-		for(int i = str ; i < end ; i++) {
-			int m1 = dp[str][i][1], m2 = dp[i+1][end][1];
-			int n2 = dp[i+1][end][2];
-			int temp = dp[str][i][0]+dp[i+1][end][0]+m1*m2*n2;
-			if(dp[str][end][0]>temp) {
-				dp[str][end][0] = temp;
-				dp[str][end][1] = m1;
-				dp[str][end][2] = n2;
-			}
+	private static void calc(int start, int end) {
+		for (int mid = start; mid < end; mid++) {
+            int rows_left = matrixInfo[start][0];
+            int cols_left = matrixInfo[mid][1];
+            int cols_right = matrixInfo[end][1];
+            
+            int cost = dp[start][mid] + dp[mid + 1][end] + rows_left * cols_left * cols_right;
+
+            dp[start][end] = Math.min(dp[start][end], cost);
 		}
 	}
 }
