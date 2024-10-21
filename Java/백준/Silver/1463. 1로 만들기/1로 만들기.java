@@ -2,40 +2,51 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Queue;
 /**
- * 메모리:34848KB, 시간:156ms
- * 1부터 시작해서 bfs 탐색 dp에 그 숫자까지의 최소 연산 횟수 저장
+ * 메모리 ? KB 시간 ? ms 다시 풀어봄
+ * 메모이제이션
+ * @author python98
  */
 public class Main {
-	static int N;
-	static int[] dp;
+	static int N, memo[];
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		N = Integer.parseInt(br.readLine());
-		dp = new int[N+1];
-		Queue<Integer> q = new ArrayDeque<>();
-		q.add(1);
+		if(N==1) System.out.print(0);
+		else {
+			memo = new int[N+1];
+			bfs();
+			System.out.print(memo[1]);
+		}
+	}
+	private static void bfs() {
+		Queue<Integer> q = new ArrayDeque<Integer>();
+		q.add(N);
 		
 		while(!q.isEmpty()) {
-			int num = q.poll();
-			if(num==N) break;
-			int num1 = num+1, num2 = num*2, num3 = num*3, nCnt = dp[num]+1;
-			if(num3<=N&&dp[num3]==0) {
-				dp[num3] = nCnt;
-				q.add(num3);
+			int cur = q.poll();
+			int p = cur%3;
+			int d = cur/3;
+			if(p==0&&memo[d]==0) {
+				memo[d] = memo[cur]+1;
+				if(d==1) return;
+				q.add(d);
 			}
-			if(num2<=N&&dp[num2]==0) {
-				dp[num2] = nCnt;
-				q.add(num2);
+			p = cur&1;
+			d = cur/2;
+			if(p==0&&memo[d]==0) {
+				memo[d] = memo[cur]+1;
+				if(d==1) return;
+				q.add(d);
 			}
-			if(num1<=N&&dp[num1]==0) {
-				dp[num1] = nCnt;
-				q.add(num1);
-			}
+			d = cur-1;
+			if(d>=1&&memo[d]==0) {
+				memo[d] = memo[cur]+1;
+				if(d==1) return;
+				q.add(d);
+			}	
 		}
-		System.out.println(dp[N]);
 	}
 
 }
