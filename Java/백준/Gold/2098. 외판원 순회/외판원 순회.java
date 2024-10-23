@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
  * 메모리:?KB, 시간:?ms
  */
 public class Main {
-	static final int INF = 16*1000000;
+	static final int INF = Integer.MAX_VALUE/2;
 	static int N, adjMatrix[][], dp[][], endbit, result;
 
 	public static void main(String[] args) throws IOException {
@@ -24,35 +24,37 @@ public class Main {
 				adjMatrix[i][j] = Integer.parseInt(st.nextToken());
 			}
 		}
-		endbit = (1 << N)-1;
-		dp = new int[(1 << N)][N];
+		endbit = (1 << N) - 1;
+		dp = new int[1 << N][N]; // [비트마스크][마지막 방문 노드]
 		for(int[] row : dp) {
 			Arrays.fill(row, INF);
 		}
 		dp[1][0] = 0;
-		result = INF;
-		dfs(1, 0, 0);
-
-		System.out.print(result);
-	}
-
-	private static void dfs(int bitmask, int lastNode, int sum) {
-		if(result<=sum) return;
-		if (bitmask == endbit) {
-			if(adjMatrix[lastNode][0]!=0) {
-				result = Math.min(result, dp[endbit][lastNode]+adjMatrix[lastNode][0]);
+		for(int nextNode = 1 ; nextNode < N ; nextNode++) {
+			if(adjMatrix[0][nextNode]!=0) {
+				int nextMask = (1|(1<<nextNode));
+				dp[nextMask][nextNode] = adjMatrix[0][nextNode];
 			}
-			return;
 		}
-		for (int i = 1; i < N; i++) {
-			if (adjMatrix[lastNode][i] != 0 && (bitmask & (1 << i)) == 0) { // 방문한 적 없음
-				int nextBitmask = bitmask | (1 << i);
-				int nextSum = sum + adjMatrix[lastNode][i];
-				if (dp[nextBitmask][i] > nextSum) {
-					dp[nextBitmask][i] = nextSum;
-					dfs(nextBitmask, i, nextSum);
+		
+		for(int mask = 3 ; mask < endbit ; mask++) {
+			for(int lastNode = 1 ; lastNode < N ; lastNode++) {
+				if((mask&(1<<lastNode))==0) continue; // 방문한 적 없음
+				for(int nextNode = 1 ; nextNode < N ; nextNode++) {
+					if((mask&(1<<nextNode))!=0) continue; // 방문한 적 있음
+					if(adjMatrix[lastNode][nextNode]!=0) {
+						int nextMask = (mask|(1<<nextNode));
+						dp[nextMask][nextNode] = Math.min(dp[nextMask][nextNode], dp[mask][lastNode]+adjMatrix[lastNode][nextNode]);
+					}
 				}
 			}
 		}
+		result = INF;
+		for(int lastNode = 1 ; lastNode < N ; lastNode++) {
+			if(adjMatrix[lastNode][0]!=0) { 
+				result = Math.min(result, dp[endbit][lastNode]+adjMatrix[lastNode][0]);
+			}
+		}
+		System.out.print(result);
 	}
 }
