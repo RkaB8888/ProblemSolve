@@ -3,120 +3,62 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-/**
- * 수학 메모리 ? KB 시간 ? ms
- * 
- * @author python98
- */
 public class Main {
-	static int x1, x2, x3, x4;
-	static int y1, y2, y3, y4;
-	static Slop base12, base34, oneNthree, oneNfour, twoNthree, twoNfour;
+    static int x1, y1, x2, y2;
+    static int x3, y3, x4, y4;
 
-	static class Slop {// 기울기
-		long num, denum;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-		public Slop(int num, int denum) {
-			this.num = num;
-			this.denum = denum;
-		}
-	}
+        // 첫 번째 선분의 두 점 (x1, y1) - (x2, y2)
+        x1 = Integer.parseInt(st.nextToken());
+        y1 = Integer.parseInt(st.nextToken());
+        x2 = Integer.parseInt(st.nextToken());
+        y2 = Integer.parseInt(st.nextToken());
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		x1 = Integer.parseInt(st.nextToken());
-		y1 = Integer.parseInt(st.nextToken());
-		x2 = Integer.parseInt(st.nextToken());
-		y2 = Integer.parseInt(st.nextToken());
-		st = new StringTokenizer(br.readLine());
-		x3 = Integer.parseInt(st.nextToken());
-		y3 = Integer.parseInt(st.nextToken());
-		x4 = Integer.parseInt(st.nextToken());
-		y4 = Integer.parseInt(st.nextToken());
-		System.out.print(check());
-	}
+        st = new StringTokenizer(br.readLine());
 
-	//1. 서로 끝단이 겹치는 경우
-	//2. 다른 선분의 한 점까지의 기울기가 동일한 경우
-	//3. 
-	private static int check() {
-		if ((x1 == x3 && y1 == y3) || (x1 == x4 && y1 == y4) || (x2 == x3 && y2 == y3) || (x2 == x4 && y2 == y4)) {
-			return 1;
-		}
-		base12 = new Slop(x2 - x1, y2 - y1);
-		base34 = new Slop(x4 - x3, y4 - y3);
-		oneNthree = new Slop(x3 - x1, y3 - y1);
-		twoNthree = new Slop(x3 - x2, y3 - y2);
-		oneNfour = new Slop(x4 - x1, y4 - y1);
-		twoNfour = new Slop(x4 - x2, y4 - y2);
+        // 두 번째 선분의 두 점 (x3, y3) - (x4, y4)
+        x3 = Integer.parseInt(st.nextToken());
+        y3 = Integer.parseInt(st.nextToken());
+        x4 = Integer.parseInt(st.nextToken());
+        y4 = Integer.parseInt(st.nextToken());
 
-		if (isSame(base12, oneNthree)||isSame(base12, twoNthree)) { // 3번 점이 1,2 직선 상에 있다면
-			if(inArea(x1,y1,x2,y2,x3,y3)) { // 1,2 범위 안에 있으면 선분 위에 있는 것
-				return 1;
-			}
-		}
-		
-		if (isSame(base12, oneNfour)||isSame(base12, twoNfour)) { // 4번 점이 1,2 직선 상에 있다면
-			if(inArea(x1,y1,x2,y2,x4,y4)) { // 1,2 범위 안에 있으면 선분 위에 있는 것
-				return 1;
-			}
-		}
-		
-		if (isSame(base34, oneNthree)||isSame(base34, oneNfour)) { // 1번 점이 3,4 직선 상에 있다면
-			if(inArea(x3,y3,x4,y4,x1,y1)) { // 3,4 범위 안에 있으면 선분 위에 있는 것
-				return 1;
-			}
-		}
-		
-		if (isSame(base34, twoNthree)||isSame(base34, twoNfour)) { // 2번 점이 3,4 직선 상에 있다면
-			if(inArea(x3,y3,x4,y4,x2,y2)) { // 3,4 범위 안에 있으면 선분 위에 있는 것
-				return 1;
-			}
-		}
+        // 두 선분이 교차하는지 여부 출력
+        System.out.println(isIntersect() ? 1 : 0);
+    }
 
-		if ((largeThan(base12, oneNthree) ^ largeThan(base12, oneNfour))
-				&& (largeThan(base12, twoNfour) ^ largeThan(base12, twoNthree))
-				&& (largeThan(base34, oneNthree) ^ largeThan(base34, twoNthree))
-				&& (largeThan(base34, oneNfour) ^ largeThan(base34, twoNfour))) {
-			return 1;
-		}
-		return 0;
-	}
+    // 두 선분이 교차하는지 확인하는 메서드
+    private static boolean isIntersect() {
+        int ccw1 = ccw(x1, y1, x2, y2, x3, y3);
+        int ccw2 = ccw(x1, y1, x2, y2, x4, y4);
+        int ccw3 = ccw(x3, y3, x4, y4, x1, y1);
+        int ccw4 = ccw(x3, y3, x4, y4, x2, y2);
 
-	// 범위 내에 있는지 확인
-	private static boolean inArea(int xa, int ya, int xb, int yb, int xc, int yc) {
-		if (xa >= xb) {
-			if (ya >= yb) {
-				if(xb<=xc&&xc<=xa&&yb<=yc&&yc<=ya) {
-					return true;
-				}
-			} else {
-				if(xb<=xc&&xc<=xa&&yb>=yc&&yc>=ya) {
-					return true;
-				}
-			}
-		} else {
-			if (ya >= yb) {
-				if(xb>=xc&&xc>=xa&&yb<=yc&&yc<=ya) {
-					return true;
-				}
-			} else {
-				if(xb>=xc&&xc>=xa&&yb>=yc&&yc>=ya) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+        // 두 선분이 서로 다른 방향으로 지나가는 경우 (교차)
+        if (ccw1 * ccw2 < 0 && ccw3 * ccw4 < 0) {
+            return true;
+        }
 
-	// 기울기가 같은지 확인
-	private static boolean isSame(Slop a, Slop b) {
-		return a.num * b.denum == b.num * a.denum;
-	}
+        // 끝점이 일치하거나 접하는 경우 처리 (겹치는 경우)
+        if (ccw1 == 0 && onSegment(x1, y1, x2, y2, x3, y3)) return true;
+        if (ccw2 == 0 && onSegment(x1, y1, x2, y2, x4, y4)) return true;
+        if (ccw3 == 0 && onSegment(x3, y3, x4, y4, x1, y1)) return true;
+        if (ccw4 == 0 && onSegment(x3, y3, x4, y4, x2, y2)) return true;
 
-	// a가 b보다 크면 true
-	private static boolean largeThan(Slop a, Slop b) {
-		return a.num * b.denum >= b.num * a.denum;
-	}
+        return false;
+    }
+
+    // CCW 계산: (x1, y1) → (x2, y2) → (x3, y3)의 방향
+    private static int ccw(int x1, int y1, int x2, int y2, int x3, int y3) {
+        long crossProduct = (long) (x2 - x1) * (y3 - y1) - (long) (y2 - y1) * (x3 - x1);
+        return Long.compare(crossProduct, 0); // 양수: 반시계, 음수: 시계, 0: 일직선
+    }
+
+    // (x3, y3)가 (x1, y1) - (x2, y2) 선분 위에 있는지 확인
+    private static boolean onSegment(int x1, int y1, int x2, int y2, int x3, int y3) {
+        return Math.min(x1, x2) <= x3 && x3 <= Math.max(x1, x2) &&
+               Math.min(y1, y2) <= y3 && y3 <= Math.max(y1, y2);
+    }
 }
