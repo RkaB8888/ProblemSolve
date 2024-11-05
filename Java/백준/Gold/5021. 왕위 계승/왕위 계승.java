@@ -8,7 +8,7 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 /**
- * 그리디 메모리 12,352 KB 시간 108 ms
+ * Map을 이용한 BFS 메모리 12,080 KB 시간 68 ms
  */
 public class Main {
 	static int N, M;
@@ -56,13 +56,11 @@ public class Main {
 	private static void bfs() {
 		Queue<String> q = new ArrayDeque<>();	
 		q.add(root);
-		boolean nameCheck[][] = new boolean[N][2];//이름의 부모 속성 사용 여부
 		while(!q.isEmpty()) {
 			String curName = q.poll();
 			double curVal = nameMap.get(curName);
 			for(int i = 0 ; i < N ; i++) {
 				if(name[i][2].equals(curName)) {//뒤쪽 이름이 지금 비교할 이름과 같다면
-					nameCheck[i][1] = true;//둘 다 사용했으니 true로 설정
 					double val = 0;
 					if(nameMap.containsKey(name[i][1])) {
 						val = nameMap.get(name[i][1]);//다른 쪽 부모의 가치를 저장
@@ -70,7 +68,6 @@ public class Main {
 					nameMap.put(name[i][0], (curVal+val)/2);//부모 둘의 가치를 더하고 2로 나눈 것이 자식의 가치
 					q.add(name[i][0]);
 				} else if(name[i][1].equals(curName)) {//뒤쪽 이름이 지금 비교할 이름과 같다면
-					nameCheck[i][0] = true;//둘 다 사용했으니 true로 설정
 					double val = 0;
 					if(nameMap.containsKey(name[i][2])) {
 						val = nameMap.get(name[i][2]);//다른 쪽 부모의 가치를 저장
