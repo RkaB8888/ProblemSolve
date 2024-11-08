@@ -5,41 +5,37 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * 세그먼트 트리 메모리 108,680 KB 시간 460 ms
+ * 수학 메모리 11,632 KB 시간 68 ms
  */
 public class Main {
-	static double X, Y, len, halfLen;
-	static double N;
+    static double start, end, distance, halfDistance;
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringBuilder sb = new StringBuilder();
-		StringTokenizer st;
-		int T = Integer.parseInt(br.readLine());
-		for(int tc = 1 ; tc <= T ; tc++) {
-			st = new StringTokenizer(br.readLine());
-			X = Integer.parseInt(st.nextToken());
-			Y = Integer.parseInt(st.nextToken());
-			len = Y-X;
-			halfLen = len/2;
-			N = findN();
-//			System.out.println("N : "+halfLen);
-//			System.out.println("n : "+N);
-			sb.append((int)N).append('\n');
-		}
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder result = new StringBuilder();
+        int T = Integer.parseInt(br.readLine());
 
-		System.out.print(sb);
+        for (int tc = 1; tc <= T; tc++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            start = Integer.parseInt(st.nextToken());
+            end = Integer.parseInt(st.nextToken());
 
-	}
+            distance = end - start;
+            halfDistance = distance / 2;
 
-	private static double findN() {
-		double NP = Math.round((-1+Math.sqrt(-1+8*halfLen))/2);//거리의 절반까지의 합은 1부터 몇까지 SUM 해야 하는지 구하는 것
-		double tempN = NP*(1+NP);//1부터 NP까지의 합
-//		System.out.println("NP : "+NP+", tempN : "+tempN);
-		if(tempN+NP+1 < len ) return NP*2+2;
-		else if(tempN < len && len <= tempN+NP+1) return NP*2+1;
-		else if(tempN-NP < len && len <= tempN) return NP*2;
-		else return NP*2-1;
-	}
+            int minMoves = calculateMoves();
+            result.append(minMoves).append('\n');
+        }
+        System.out.print(result);
+    }
 
+    private static int calculateMoves() {
+        double maxNP = Math.round((-1 + Math.sqrt(1 + 8 * halfDistance)) / 2);
+        double sumToHalfDistance = maxNP * (maxNP + 1);
+
+        if (sumToHalfDistance + maxNP + 1 < distance) return (int)maxNP * 2 + 2;
+        if (sumToHalfDistance < distance && distance <= sumToHalfDistance + maxNP + 1) return (int)maxNP * 2 + 1;
+        if (sumToHalfDistance - maxNP < distance && distance <= sumToHalfDistance) return (int)maxNP * 2;
+        return (int)maxNP * 2 - 1;
+    }
 }
