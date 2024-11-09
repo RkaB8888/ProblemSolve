@@ -7,7 +7,7 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 /**
- * 윈도우 슬라이딩 ? KB 시간 ? ms
+ * PQ 윈도우슬라이딩 53,376 KB 시간 684 ms
  */
 public class Main {
 	static class Pair implements Comparable<Pair> {
@@ -48,18 +48,11 @@ public class Main {
 		list.sort(null);
 		result = 0;
 		pq = new PriorityQueue<Integer>();
-		for (int i = 0, j = 0 ; i < list.size() ; i++) {
+		for (int i = 0 ; i < list.size() ; i++) {
 			Pair startP = list.get(i);
 			int dE = startP.o, dS=dE-D;
-			while(j<=i) {
-				Pair p = list.get(j);
-				if(p.o<=dE) {
-					pq.add(p.h);
-					j++;
-				} else {
-					break;
-				}
-			}
+			pq.add(startP.h);
+			
 			while(!pq.isEmpty()) {
 				if(pq.peek()<dS) {
 					pq.poll();
