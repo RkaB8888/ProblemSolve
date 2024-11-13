@@ -4,18 +4,17 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * DP 11,932 KB 시간 76 ms
+ * DP 12,036 KB 시간 72 ms
  */
 public class Main {
-    static int N;
-    static int[] DP, preDP; //r g b
+    static int N, R, G, B;
+    static int[] DP; //r g b
     
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
         N = Integer.parseInt(br.readLine());
         DP = new int[3];
-        preDP = new int[3];
         
         StringTokenizer st = new StringTokenizer(br.readLine());
         DP[0] = Integer.parseInt(st.nextToken());
@@ -23,10 +22,12 @@ public class Main {
         DP[2] = Integer.parseInt(st.nextToken());
         for(int i = 1 ; i < N ; i++) {
         	st = new StringTokenizer(br.readLine());
-        	System.arraycopy(DP, 0, preDP, 0, 3);
-        	DP[0] = Math.min(preDP[1], preDP[2])+Integer.parseInt(st.nextToken());
-        	DP[1] = Math.min(preDP[0], preDP[2])+Integer.parseInt(st.nextToken());
-        	DP[2] = Math.min(preDP[1], preDP[0])+Integer.parseInt(st.nextToken());
+        	R = Math.min(DP[1], DP[2])+Integer.parseInt(st.nextToken());
+        	G = Math.min(DP[0], DP[2])+Integer.parseInt(st.nextToken());
+        	B = Math.min(DP[1], DP[0])+Integer.parseInt(st.nextToken());
+        	DP[0] = R;
+            DP[1] = G;
+            DP[2] = B;
         }
         System.out.print(Math.min(DP[0],Math.min(DP[1], DP[2])));
     }
