@@ -1,74 +1,58 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Queue;
-import java.util.StringTokenizer;
-
 /**
  * 
- * 위상정렬 메모리 ? KB 시간 ? ms
- * 
+ * tree dp 메모리 ? KB 시간 ? ms
+ * 원시 링크드 리스트로 최적화
  * @author python98
  *
  */
 public class Main {
-	static int N, result;
-	static int[] cnt;
-	static List<List<Integer>> adjList;
-	static boolean[] adopter;
-	static Queue<Integer> q;
+    static int N;
+    static int[][] dp;
+    static Node[] graph;
+    static boolean[] visited;
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		N = Integer.parseInt(br.readLine());
-		cnt = new int[N + 1];
-		adopter = new boolean[N + 1];
-		adjList = new ArrayList<>();
-		q = new ArrayDeque<Integer>();
-		for (int i = 0; i <= N; i++) {
-			adjList.add(new ArrayList<Integer>());
-		}
-		for (int i = 1; i < N; i++) {
-			StringTokenizer st = new StringTokenizer(br.readLine());
-			int to = Integer.parseInt(st.nextToken());
-			int from = Integer.parseInt(st.nextToken());
-			adjList.get(from).add(to);
-			adjList.get(to).add(from);
-			cnt[from]++;
-			cnt[to]++;
-		}
-		for (int i = 1; i <= N; i++) {
-			if (cnt[i] == 1) {
-				q.add(i);
-				cnt[i]--;
-			}
-		}
-		while (!q.isEmpty()) {
-			int curNode = q.poll();
-			for (int nextNode : adjList.get(curNode)) {
-				cnt[nextNode]--;
-				if(cnt[nextNode]==0) continue;
-				if(!adopter[curNode]) {
-//					System.out.println("nextNode : "+nextNode);
-					adopter[nextNode] = true;
-				}
-				if(cnt[nextNode]==1) {
-//					System.out.println("add : "+nextNode);
-					q.add(nextNode);
-					cnt[nextNode]--;
-				}
-			}
-		}
-		for (int i = 1; i <= N; i++) {
-			if (adopter[i]) {
-				result++;
-			}
-		}
-//		System.out.println(Arrays.toString(adopter));
-		System.out.print(result);
-	}
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        dp = new int[2][N + 1]; // dp[0][i]: i번 노드가 adopter가 아닌 경우, dp[1][i]: i번 노드가 adopter인 경우
+        graph = new Node[N + 1];
+        visited = new boolean[N + 1];
+
+        for (int i = 1; i < N; i++) {
+            String[] input = br.readLine().split(" ");
+            int from = Integer.parseInt(input[0]);
+            int to = Integer.parseInt(input[1]);
+            graph[from] = new Node(to, graph[from]);
+            graph[to] = new Node(from, graph[to]);
+        }
+
+        dfs(1);
+        System.out.print(Math.min(dp[0][1], dp[1][1]));
+    }
+
+    private static void dfs(int node) {
+        visited[node] = true;
+        dp[1][node] = 1; // node가 adopter인 경우, 기본값은 1
+
+        for (Node neighbor = graph[node]; neighbor != null; neighbor = neighbor.next) {
+            if (!visited[neighbor.num]) {
+                dfs(neighbor.num);
+                dp[0][node] += dp[1][neighbor.num];
+                dp[1][node] += Math.min(dp[0][neighbor.num], dp[1][neighbor.num]);
+            }
+        }
+    }
+
+    private static class Node {
+        int num;
+        Node next;
+
+        public Node(int num, Node next) {
+            this.num = num;
+            this.next = next;
+        }
+    }
 }
