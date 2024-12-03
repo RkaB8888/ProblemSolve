@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 
 /**
  * 
- * PQ 메모리 ? KB 시간 ? ms
+ * PQ 메모리 65,748 KB 시간 544 ms
  * 
  * @author python98
  *
@@ -21,7 +21,6 @@ public class Main {
 	static int N, M, S, D, result;
 	static Node[] nodes;
 	static List<Integer>[] prev;
-	static boolean[][] doNotUse;
 
 	static class Node {
 		int num, dist;
@@ -46,7 +45,6 @@ public class Main {
 				break;
 			nodes = new Node[N];
 			prev = new ArrayList[N];
-			doNotUse = new boolean[N][N];
 			st = new StringTokenizer(br.readLine());
 			S = Integer.parseInt(st.nextToken());
 			D = Integer.parseInt(st.nextToken());
@@ -67,7 +65,19 @@ public class Main {
 		}
 		System.out.print(sb);
 	}
-
+	private static void removeEdge(int from, int to) {
+	    Node prevNode = null;
+	    for (Node curr = nodes[from]; curr != null; prevNode = curr, curr = curr.next) {
+	        if (curr.num == to) {
+	            if (prevNode == null) {
+	                nodes[from] = curr.next;
+	            } else {
+	                prevNode.next = curr.next;
+	            }
+	            break;
+	        }
+	    }
+	}
 	private static void removeMinPath() {
 		boolean[] visited = new boolean[N];
 		Queue<Integer> q = new ArrayDeque<>();
@@ -77,7 +87,7 @@ public class Main {
 		while(!q.isEmpty()) {
 			int curNode = q.poll();
 			for(int preNode : prev[curNode]) {
-				doNotUse[preNode][curNode] = true;
+				removeEdge(preNode, curNode);
 				if(!visited[preNode]) {
 					q.add(preNode);
 					visited[preNode] = true;
@@ -137,7 +147,6 @@ public class Main {
 			for (Node next = nodes[curNode]; next != null; next = next.next) {
 				int nextDist = curDist + next.dist;
 				int nextNode = next.num;
-				if(doNotUse[curNode][nextNode]) continue;
 				if (dist[nextNode]> nextDist) {
 					dist[nextNode] = nextDist;
 					pq.add(new int[] {nextNode,nextDist});
