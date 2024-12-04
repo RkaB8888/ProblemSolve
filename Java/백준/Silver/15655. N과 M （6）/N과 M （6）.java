@@ -2,14 +2,13 @@ import java.io.*;
 import java.util.*;
 /**
  * 
- * ? 메모리 ? KB 시간 ? ms
+ * 조합 메모리 11,584 KB 시간 68 ms
  * 
  * @author python98
  *
  */
 public class Main {
-	static int N, M, arr[];
-	static boolean[] selected;
+	static int N, M, arr[], selected[];
 	static StringBuilder sb;
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -18,7 +17,7 @@ public class Main {
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		arr = new int[N];
-		selected = new boolean[N];
+		selected = new int[M];
 		st = new StringTokenizer(br.readLine());
 		for(int i = 0 ; i < N ; i++) {
 			arr[i] = Integer.parseInt(st.nextToken());
@@ -30,18 +29,15 @@ public class Main {
 
 	private static void combination(int depth, int str) {
 		if(depth == M) {
-			for(int i = 0 ; i < str ; i++) {
-				if(selected[i]) {
-					sb.append(arr[i]).append(' ');
-				}
+			for(int num : selected) {
+				sb.append(num).append(' ');
 			}
 			sb.append('\n');
 			return;
 		}
 		for(int i = str ; i < N ; i++) {
-			selected[i] = true;
+			selected[depth] = arr[i];
 			combination(depth+1,i+1);
-			selected[i] = false;
 		}
 	}
 }
