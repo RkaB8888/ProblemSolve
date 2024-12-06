@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 /**
  * 
- * 중복순열 메모리 219,984 KB 시간 512 ms
+ * 중복조합 메모리 20,092 KB 시간 124 ms
  * 
  * @author python98
  *
@@ -27,10 +27,10 @@ public class Main {
 			arr1[i] = Integer.parseInt(st.nextToken());
 		}
 		Arrays.sort(arr1);
-		permutation(0,0);
+		combination(0,0);
 		System.out.print(sb);
 	}
-	private static void permutation(int depth, int str) {
+	private static void combination(int depth, int str) {
 		if(depth==M) {
 			for(int num : arr2) {
 				sb.append(num).append(' ');
@@ -40,7 +40,7 @@ public class Main {
 		}
 		for(int i = str ; i < N ; i++) {
 			arr2[depth] = arr1[i];
-			permutation(depth+1,i);
+			combination(depth+1,i);
 		}
 	}
 }
