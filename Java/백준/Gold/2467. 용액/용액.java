@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 /**
- * 투포인터 메모리 ? KB 시간 ? ms
+ * 투포인터 메모리 32,408 KB 시간 256 ms
  * 
  * @author python98
  */
@@ -21,7 +21,7 @@ public class Main {
 			arr[i] = Long.parseLong(st.nextToken());
 		}
 		int left = 0, right = N-1;
-		while(left<right) {
+		while(mix!=0&&left<right) {
 			long temp = arr[left]+arr[right];
 			if(Math.abs(mix)>Math.abs(temp)) {
 				result[0] = arr[left];
