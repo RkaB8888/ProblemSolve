@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 /**
- * 중복조합 메모리 ? KB 시간 ? ms
+ * 중복조합 메모리 12,064 KB 시간 72 ms
  * 
  * @author python98
  */
@@ -30,14 +30,6 @@ public class Main {
 
         Arrays.sort(arr1);
         
-        int uniqueLen = 0;
-        for(int i = 1 ; i < N ; i++) {
-        	if(arr1[uniqueLen]!=arr1[i]) {
-        		arr1[++uniqueLen] = arr1[i];
-        	}
-        }
-        N = uniqueLen+1;
-        
         combination(0,0);
         
         System.out.print(sb);
@@ -50,9 +42,12 @@ public class Main {
     		sb.append('\n');
     		return;
     	}
+    	int preNum = 0;
     	for(int i = str ; i < N ; i++) {
+    		if(preNum==arr1[i]) continue;
     		arr2[depth] = arr1[i];
     		combination(depth+1,i);
+    		preNum = arr1[i];
     	}
     }
 }
