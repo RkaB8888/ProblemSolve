@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+
 /**
- * 구현 메모리 ? KB 시간 ? ms
+ * PQ, Map, Greedy 메모리 247,176 KB 시간 2,596 ms
  * 
  * @author python98
  */
@@ -14,107 +15,102 @@ public class Main {
 	static int N;
 	static String cmd;
 	static StringBuilder sb;
-	static Map<String, Integer> vars; // 이름, 시작주소
-	static PriorityQueue<int[]> useMemoryRange;
+	static Map<String, int[]> vars; // 이름, 주소
+	static PriorityQueue<int[]> freeBlocks;
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		sb = new StringBuilder();
 		vars = new HashMap<>();
-		useMemoryRange = new PriorityQueue<>((a, b) -> a[0] - b[0]);
 		N = Integer.parseInt(br.readLine());
+		freeBlocks = new PriorityQueue<>((a, b) -> a[0] - b[0]);
+		freeBlocks.add(new int[] { 1, 100000 });
 		String var;
 		for (int i = 0; i < N; i++) {
 			cmd = br.readLine();
 			switch (cmdCheck()) {
 			case 0: // free
 				var = cmd.substring(5, 9);
-//				System.out.println("free("+var+")");
-				if (!vars.containsKey(var))
-					vars.put(var, 0);
-				else
-					free(var);
-
+				if (!vars.containsKey(var)) {
+					vars.put(var, new int[] { 0, 0 });
+				} else {
+					int[] block = vars.get(var);
+					if (block[0] != 0) {
+						free(block);
+						vars.put(var, new int[] { 0, 0 });
+					}
+				}
 				break;
 
 			case 1: // print
 				var = cmd.substring(6, 10);
-				
-				if (!vars.containsKey(var))
-					vars.put(var, 0);
-//				System.out.println("print("+var+") : "+vars.get(var));
-				sb.append(vars.get(var)).append('\n');
+
+				if (!vars.containsKey(var)) {
+					vars.put(var, new int[] { 0, 0 });
+				}
+				sb.append(vars.get(var)[0]).append('\n');
 				break;
 
 			case 2: // malloc
 				var = cmd.substring(0, 4);
 				int size = Integer.parseInt(cmd.substring(12, cmd.length() - 2));
-
-				if (!vars.containsKey(var))
-					vars.put(var, 0);
-				
-				int startAddrs = malloc(size);
-				vars.put(var, startAddrs);
-//				System.out.println(var+"=malloc("+size+") -> "+startAddrs);
+				if (!vars.containsKey(var)) {
+					vars.put(var, new int[] { 0, 0 });
+				}
+				malloc(size, vars.get(var));
 				break;
 			}
 		}
 		System.out.print(sb);
 	}
 
-	private static int malloc(int size) {
+	private static void malloc(int size, int[] block) {
+		block[0] = 0;
+		block[1] = 0;
 		List<int[]> temp = new ArrayList<>();
-		int preEndAddr = 0;
-		while (!useMemoryRange.isEmpty()) {
-			
-			// 메모리 초과하는 경우
-			if (preEndAddr + size > 100000) {
-				useMemoryRange.addAll(temp);
-				return 0;
-			}
 
-			int[] curRange = useMemoryRange.poll();
-			int emptyMemorySize = curRange[0] - preEndAddr - 1;
-			
-			// 빈공간 유무
-			if (emptyMemorySize < size) { 
-				preEndAddr = curRange[1];
-				temp.add(curRange);
-				continue;
+		while (!freeBlocks.isEmpty()) {
+			int[] curBlock = freeBlocks.poll();
+
+			if (curBlock[1] - curBlock[0] + 1 >= size) {
+				block[0] = curBlock[0];
+				block[1] = curBlock[0] + size - 1;
+
+				if (block[1] < curBlock[1]) {
+					temp.add(new int[] { block[1] + 1, curBlock[1] });
+				}
+				break;
 			} else {
-				useMemoryRange.add(new int[] { preEndAddr + 1, preEndAddr + size });
-				useMemoryRange.add(curRange);
-				useMemoryRange.addAll(temp);
-				return preEndAddr + 1;
+				temp.add(curBlock);
 			}
-			
 		}
-		useMemoryRange.addAll(temp);
-		if(preEndAddr+size<=100000) {
-			useMemoryRange.add(new int[] {preEndAddr+1,preEndAddr+size});
-			return preEndAddr+1;
-		}
-		return 0;
+
+		freeBlocks.addAll(temp);
 	}
 
-	private static void free(String var) throws Exception {
-		int startAddr = vars.get(var);
-		if (startAddr != 0) {
-			List<int[]> temp = new ArrayList<>();
-			while (!useMemoryRange.isEmpty()) {
-				int[] curRange = useMemoryRange.poll();
-				if (startAddr == curRange[0]) {
-					useMemoryRange.addAll(temp);
-					vars.put(var, 0);
-					return;
-				} else if (startAddr > curRange[0]) {
-					temp.add(curRange);
-				} else {
-					Exception e = new Exception("존재하지 않는 메모리 시작 주소");
-					throw e;
-				}
+	public static void free(int[] block) {
+		List<int[]> temp = new ArrayList<>();
+		boolean merged = false;
+		
+		while (!freeBlocks.isEmpty()) {
+			int[] curBlock = freeBlocks.poll();
+
+			if (curBlock[1] + 1 == block[0]) {
+				block[0] = curBlock[0];
+				merged = true;
+			} else if (curBlock[0] - 1 == block[1]) {
+				block[1] = curBlock[1];
+				break;
+			} else {
+				temp.add(curBlock);
+				if (merged)
+					break;
 			}
 		}
+
+		temp.add(block);
+
+		freeBlocks.addAll(temp);
 	}
 
 	private static int cmdCheck() {
