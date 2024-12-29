@@ -20,12 +20,12 @@ public class Main {
 		for(char c : target) {
 			if(c >= 'A' && c <= 'Z') {
 				c+=k;
-				while(c>'Z') {
+				if(c>'Z') {
 					c -= 'Z'-'A' + 1;
 				}
 			} else if(c >= 'a' && c <= 'z') {
 				c+=k;
-				while(c>'z') {
+				if(c>'z') {
 					c -= 'z'-'a' + 1;
 				}
 			}
