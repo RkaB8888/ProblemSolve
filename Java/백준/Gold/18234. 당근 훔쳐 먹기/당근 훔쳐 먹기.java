@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class Main {
 	static int N, T;
-	static int[][] carrot; // w p
+	static int[] p;
 	static long result;
 
 	public static void main(String[] args) throws IOException {
@@ -24,17 +24,17 @@ public class Main {
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		N = Integer.parseInt(st.nextToken());
 		T = Integer.parseInt(st.nextToken());
-		carrot = new int[N][2];
+		p = new int[N];
 		
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
-			carrot[i][0] = Integer.parseInt(st.nextToken());
-			carrot[i][1] = Integer.parseInt(st.nextToken());
+			result += Integer.parseInt(st.nextToken());
+			p[i] = Integer.parseInt(st.nextToken());
 		}
 		long time = T - N;
-		Arrays.sort(carrot,(a,b)-> a[1]-b[1]);
-		for(int[] carrotInfo : carrot) {
-			result += carrotInfo[0] + carrotInfo[1] * time;
+		Arrays.sort(p);
+		for(int val : p) {
+			result += val * time;
 			time++;
 		}
 		System.out.print(result);
