@@ -35,7 +35,7 @@ public class Main {
     }
 
     private static void primeFactorization(int n) {
-        for (int i = 2; i * i <= n; i++) {
+        for (int i = 2; i <= n; i++) {
             int factor = 1;
             while (n % i == 0) {
                 factor *= i;
@@ -43,7 +43,6 @@ public class Main {
             }
             if (factor > 1) factors.add(factor);
         }
-        if (n > 1) factors.add(n);
     }
 
     private static void findMin(int a, int b, int depth) {
