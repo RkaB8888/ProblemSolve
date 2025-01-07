@@ -1,37 +1,35 @@
 /**
  * @description 조합 최대 90,345,024번
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @performance 메모리: 12,416 KB, 동작시간: 596 ms
  * @author python98
  */
 public class Main {
-	static int[] nums;
+	static int[] cubes = new int[101];
 	static StringBuilder sb = new StringBuilder();
 
 	public static void main(String[] args) {
-		nums = new int[4];
-		combination(0, 2, 101, 0);
+		
+		for (int i = 2; i <= 100; i++) {
+            cubes[i] = i * i * i;
+        }
+		for (int a = 2; a <= 100; a++) {
+            int aCube = cubes[a];
+            findTriples(a, aCube);
+        }
 		System.out.print(sb);
 	}
 
-	private static void combination(int depth, int str, int max, double product) {
-		if (depth == 4) {
-			if (Math.pow(nums[0], 3) == product) {
-				sb.append("Cube = ").append(nums[0]).append(", Triple = (").append(nums[1]).append(",").append(nums[2])
-						.append(",").append(nums[3]).append(")\n");
-			}
-			return;
-		}
-		if (depth == 0) {
-			for (int i = 2; i < max; i++) {
-				nums[depth] = i;
-				combination(depth + 1, 2, i, product);
-			}
-		} else {
-			for (int i = str; i < max; i++) {
-				nums[depth] = i;
-				combination(depth + 1, i+1, max, product + Math.pow(i, 3));
-			}
-		}
-
-	}
+	private static void findTriples(int a, int aCube) {
+        for (int b = 2; b < a; b++) {
+            for (int c = b+1; c < a; c++) {
+                for (int d = c+1; d < a; d++) {
+                    int sum = cubes[b] + cubes[c] + cubes[d];
+                    if (sum == aCube) {
+                        sb.append("Cube = ").append(a).append(", Triple = (")
+                          .append(b).append(",").append(c).append(",").append(d).append(")\n");
+                    } else if (sum > aCube) break; // 가지치기
+                }
+            }
+        }
+    }
 }
