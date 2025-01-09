@@ -2,7 +2,7 @@ import java.io.*;
 
 /**
  * @description 구현
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @performance 메모리: 11,520 KB, 동작시간: 68 ms
  * @author python98
  */
 public class Main {
@@ -14,31 +14,33 @@ public class Main {
 		input = br.readLine().toCharArray();
 		int c = 0;
 		cnt = input.length;
-		while (c < input.length-1) {
-			if (c < input.length - 1 && input[c] == 'c' && input[c + 1] == '=') {
+		while (c < input.length - 1) {
+			if (input[c] == 'c' && (input[c + 1] == '=' || input[c + 1] == '-')) {
 				c++;
 				cnt--;
-			} if (c < input.length - 1 && input[c] == 'c' && input[c + 1] == '-') {
+			} else if (input[c] == 'd') {
+				if (input[c + 1] == '-') {
+					c++;
+					cnt--;
+				} else if (c < input.length - 2 && input[c + 1] == 'z' && input[c + 2] == '=') {
+					c += 2;
+					cnt -= 2;
+				}
+			} else if (input[c] == 'l' && input[c + 1] == 'j') {
 				c++;
 				cnt--;
-			} if (c < input.length - 1 && input[c] == 'd' && input[c + 1] == '-') {
+			}
+			else if ( input[c] == 'n' && input[c + 1] == 'j') {
 				c++;
 				cnt--;
-			} if (c < input.length - 1 && input[c] == 'l' && input[c + 1] == 'j') {
+			}
+			else if (input[c] == 's' && input[c + 1] == '=') {
 				c++;
 				cnt--;
-			} if (c < input.length - 1 && input[c] == 'n' && input[c + 1] == 'j') {
+			}
+			else if (input[c] == 'z' && input[c + 1] == '=') {
 				c++;
 				cnt--;
-			} if (c < input.length - 1 && input[c] == 's' && input[c + 1] == '=') {
-				c++;
-				cnt--;
-			} if (c < input.length - 1 && input[c] == 'z' && input[c + 1] == '=') {
-				c++;
-				cnt--;
-			} if (c < input.length - 2 && input[c] == 'd' && input[c + 1] == 'z' && input[c + 2] == '=') {
-				c += 2;
-				cnt -= 2;
 			}
 			c++;
 		}
