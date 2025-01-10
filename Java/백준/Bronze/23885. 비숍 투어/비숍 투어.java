@@ -22,11 +22,12 @@ public class Main {
 		
 		st = new StringTokenizer(br.readLine());
 		e = new int[] {Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())};
-		
-		if((s[0]+s[1])%2==(e[0]+e[1])%2&&Math.abs(s[0]-s[1])%2==Math.abs(e[0]-e[1])%2) {
+		if(Arrays.equals(s, e)) {
 			System.out.print("YES");
+		} else if(N==1||M==1||(s[0]+s[1])%2!=(e[0]+e[1])%2||Math.abs(s[0]-s[1])%2!=Math.abs(e[0]-e[1])%2) {
+			System.out.print("NO");
 		} else {
-			System.out.println("NO");
+			System.out.print("YES");
 		}
 	}
 }
