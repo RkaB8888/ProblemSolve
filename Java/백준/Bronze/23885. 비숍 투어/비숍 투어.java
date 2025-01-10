@@ -18,12 +18,12 @@ public class Main {
 		M = Integer.parseInt(st.nextToken());
 		
 		st = new StringTokenizer(br.readLine());
-		s = new int[] {Integer.parseInt(st.nextToken())-1,Integer.parseInt(st.nextToken())-1};
+		s = new int[] {Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())};
 		
 		st = new StringTokenizer(br.readLine());
-		e = new int[] {Integer.parseInt(st.nextToken())-1,Integer.parseInt(st.nextToken())-1};
+		e = new int[] {Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())};
 		
-		if((s[0]+s[1])%2==(e[0]+e[1])%2&&(s[0]-s[1])%2==(e[0]-e[1])%2) {
+		if((s[0]+s[1])%2==(e[0]+e[1])%2&&Math.abs(s[0]-s[1])%2==Math.abs(e[0]-e[1])%2) {
 			System.out.print("YES");
 		} else {
 			System.out.println("NO");
