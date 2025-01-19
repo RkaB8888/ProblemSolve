@@ -3,11 +3,11 @@ import java.util.*;
 
 /**
  * @description 트리의 지름 DFS 재귀
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @performance 메모리: 21,008 KB, 동작시간: 180 ms
  * @author python98
  */
 public class Main {
-	static int n;
+	static int n, maxEat, fartest, start;
 	static int[] fruits;
 	static List<Integer>[] adjList;
 	static boolean[] visited;
@@ -39,14 +39,17 @@ public class Main {
         }
         
         // 임의의 노드에서 출발
-		int[] first = dfs(1,fruits[1]);
+        start = 1;
+        fartest = 1;
+		dfs(start,start,fruits[start]);
 		
 		Arrays.fill(visited, false);
 		
 		// 가장 먼 리프노드에서 출발
-		int[] second = dfs(first[1],fruits[first[1]]);
+		start = fartest;
+		dfs(start,start,fruits[start]);
 		
-		sb.append(second[0]).append(" ").append(Math.min(first[1], second[1]));
+		sb.append(maxEat).append(" ").append(start>fartest?fartest:start);
 		System.out.print(sb);
 	}
 
@@ -56,20 +59,19 @@ public class Main {
      * @param totalEat 현재까지 먹은 과일 수
      * @return {최대 과일 수, 해당 노드}
      */
-    private static int[] dfs(int node, int totalEat) {
-        visited[node] = true;
-        int maxFruits = totalEat;
-        int farthestNode = node;
+    private static void dfs(int startNode, int curNode, int totalEat) {
+        visited[curNode] = true;
+        if(totalEat>maxEat) {
+        	maxEat = totalEat;
+        	fartest = curNode;
+        } else if(totalEat==maxEat) {
+        	fartest = fartest>curNode?curNode:fartest;
+        }
 
-        for (int next : adjList[node]) {
+        for (int next : adjList[curNode]) {
             if (!visited[next]) {
-                int[] result = dfs(next, totalEat + fruits[next]);
-                if (result[0] > maxFruits || (result[0] == maxFruits && result[1] < farthestNode)) {
-                    maxFruits = result[0];
-                    farthestNode = result[1];
-                }
+                dfs(startNode, next, totalEat + fruits[next]);
             }
         }
-        return new int[]{maxFruits, farthestNode};
     }
 }
