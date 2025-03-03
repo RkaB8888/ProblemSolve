@@ -1,58 +1,64 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 /**
- * 메모리 ? KB 시간 ? ms 1.보석을 무게 오름차순으로 정렬 2.가방을 무게 오름차순으로 정렬 3.PQ 생성 (가치를 내림차순으로
- * 정렬) 4.가장 작은 가방의 무게보다 보석의 무게가 더 작으면 PQ에 넣음 5.가방의 무게보다 보석의 무게가 더 크면 이전까지 PQ에
- * 담았던 보석 중에서 가장 큰 가치를 저장 6. 다음 가방으로 4번부터 반복
- * 
+ * @description 이 클래스에 대한 동작 설명
+ * @performance 메모리: ? KB, 동작시간: ? ms
  * @author python98
  */
 public class Main {
-	static int N, K;
 	static long result;
-	static int[][] jewel;
-	static int[] bag;
-	static PriorityQueue<Integer> pq;
-
+	static int N, K;
+	static MV[] mv;
+	static int[] C;
+	
+	static class MV {
+		int M, V;
+		
+		MV(int M, int V) {
+			this.M = M;
+			this.V = V;
+		}
+	}
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		N = Integer.parseInt(st.nextToken());
 		K = Integer.parseInt(st.nextToken());
-
-		jewel = new int[N][2];
-		for (int i = 0; i < N; i++) {
+		
+		mv = new MV[N];
+		for(int i = 0 ; i < N ; i++) {
 			st = new StringTokenizer(br.readLine());
-			jewel[i][0] = Integer.parseInt(st.nextToken());
-			jewel[i][1] = Integer.parseInt(st.nextToken());
+			mv[i] = new MV(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
 		}
-		Arrays.sort(jewel, (a, b) -> a[0] - b[0]);
-
-		bag = new int[K];
-		for (int i = 0; i < K; i++) {
-			bag[i] = Integer.parseInt(br.readLine());
+		Arrays.sort(mv,(mv1, mv2) -> {
+			if(mv1.M == mv2.M) {
+				return mv1.V-mv2.V;
+			} else {
+				return mv1.M-mv2.M;
+			}
+		});
+		
+		C = new int[K];
+		for(int i = 0 ; i < K ; i++) {
+			C[i] = Integer.parseInt(br.readLine());
 		}
-		Arrays.sort(bag);
-
-		pq = new PriorityQueue<>((a, b) -> b-a);
-
-		int j = 0;
-        for (int i = 0; i < K; i++) {
-            while (j < N && jewel[j][0] <= bag[i]) {
-                pq.offer(jewel[j][1]);
-                j++;
-            }
-
-            if (!pq.isEmpty()) {
-                result += pq.poll();
-            }
-        }
-
+		
+		Arrays.sort(C); // 작은 것을 먼저 담는다.
+		
+		PriorityQueue<MV> pq = new PriorityQueue<>((mv1,mv2)-> mv2.V-mv1.V);
+		int mvLen = 0;
+		for(int i = 0 ; i < K ; i++) {
+			int curM = C[i];
+			while(mvLen < N && mv[mvLen].M <= curM) {
+				pq.add(mv[mvLen]);
+				mvLen++;
+			}
+			if(!pq.isEmpty()) {
+				result += pq.poll().V;
+			}
+		}
+		
 		System.out.print(result);
 	}
 }
