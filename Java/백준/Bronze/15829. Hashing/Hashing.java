@@ -19,20 +19,21 @@ public class Main {
         L = Integer.parseInt(br.readLine());
         c = br.readLine().toCharArray();
         
-        conv = new int[c.length];
-        for(int i = 0 ; i < c.length ; i++) {
+        conv = new int[L];
+        for(int i = 0 ; i < L ; i++) {
         	conv[i] = c[i]-'a' +1; // a:1부터 시작
         }
         
-        p = new long[c.length];
+        p = new long[L];
         p[0] = 1;
-        for(int i = 1 ; i < c.length ; i++) {
-        	p[i] = p[i-1] * BASE % MOD; // 각 idx에 곱해줘야 하는 값 세팅
+        for(int i = 1 ; i < L ; i++) {
+        	p[i] = (p[i-1] * BASE) % MOD; // 각 idx에 곱해줘야 하는 값 세팅
         }
         
         result = 0;
-        for(int i = 0 ; i < c.length ; i++) {
-        	result += p[i] * conv[i] % MOD;
+        for(int i = 0 ; i < L ; i++) {
+        	result += (p[i] * conv[i]) % MOD;
+        	result%=MOD;
         }
         
         System.out.print(result);
