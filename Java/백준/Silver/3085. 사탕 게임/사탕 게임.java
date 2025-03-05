@@ -1,9 +1,8 @@
 import java.io.*;
-import java.util.Arrays;
 
 /**
- * @description DFS
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @description 그리디
+ * @performance 메모리: 13,360 KB, 동작시간: 96 ms
  * @author python98
  */
 
@@ -22,97 +21,115 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		N = Integer.parseInt(br.readLine());
 		rows = new int[N];
-		Arrays.fill(rows, 1);
 		cols = new int[N];
-		Arrays.fill(cols, 1);
 		map = new char[N][];
 		for (int i = 0; i < N; i++) {
 			map[i] = br.readLine().toCharArray();
 		}
+
 		for (int i = 0; i < N; i++) {
-			int cnt1 = 1, cnt2 = 1;
+			int cnt = 1;
+			rows[i] = 1;
 			for (int j = 1; j < N; j++) {
-				if (map[i][j - 1] == map[i][j]) { // 행 검사
-					cnt1++;
-					rows[i] = Math.max(cnt1, rows[i]);
+				if (map[i][j - 1] == map[i][j]) {
+					cnt++;
 				} else {
-					cnt1 = 1;
+					cnt = 1;
 				}
-				if (map[j - 1][i] == map[j][i]) { // 열 검사
-					cnt2++;
-					cols[i] = Math.max(cnt2, cols[i]);
-				} else {
-					cnt2 = 1;
-				}
+				rows[i] = Math.max(rows[i], cnt);
 			}
 		}
-		out:for(int i = 0 ; i < N ; i++) {
-			for(int j = 0 ; j < N ; j++) {
-				for(int k = 0 ; k < 2 ; k++) {
-					if(isBorder(i+DIR[k][0],j+DIR[k][1])) continue;
-					swap(i,j,i+DIR[k][0],j+DIR[k][1]);
-					checkRowCol(i,j,i+DIR[k][0],j+DIR[k][1]);
-					for(int l = 0 ; l < N ;l++) {
-						result = Math.max(rows[l], result);
-						result = Math.max(cols[l], result);
-						if(result == N) break out;
-					}
-					swap(i,j,i+DIR[k][0],j+DIR[k][1]);
+		for (int j = 0; j < N; j++) {
+			int cnt = 1;
+			cols[j] = 1;
+			for (int i = 1; i < N; i++) {
+				if (map[i - 1][j] == map[i][j]) {
+					cnt++;
+				} else {
+					cnt = 1;
+				}
+				cols[j] = Math.max(cols[j], cnt);
+			}
+		}
+		result = 0;
+		out: for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				for (int k = 0; k < 2; k++) {
+					int ni = i + DIR[k][0];
+					int nj = j + DIR[k][1];
+					if (isBorder(ni, nj))
+						continue;
+					if (map[i][j] == map[ni][nj])
+						continue;
+
+					swap(i, j, ni, nj);
+
+					int rowCnt1 = rows[i];
+					int rowCnt2 = rows[ni];
+					int colCnt1 = cols[j];
+					int colCnt2 = cols[nj];
+
+					updateRow(i);
+					updateRow(ni);
+					updateCol(j);
+					updateCol(nj);
+
+//					if (result == 0) {
+						checkAll();
+//					} else {
+//						result = Math.max(result, rows[i]);
+//						result = Math.max(result, rows[ni]);
+//						result = Math.max(result, cols[j]);
+//						result = Math.max(result, cols[nj]);
+//					}
+
+					swap(i, j, ni, nj);
+					rows[i] = rowCnt1;
+					rows[ni] = rowCnt2;
+					cols[j] = colCnt1;
+					cols[nj] = colCnt2;
+					if (result == N)
+						break out;
 				}
 			}
 		}
 		System.out.print(result);
 	}
 
-	private static boolean isBorder(int i, int j) {
-		return i>=N||j>=N;
+	private static void checkAll() {
+		for (int i = 0; i < N; i++) {
+			result = Math.max(result, rows[i]);
+			result = Math.max(result, cols[i]);
+		}
 	}
 
-	private static void checkRowCol(int row1, int col1, int row2, int col2) {
-		if(row1==row2) { // 행 row1, 열 col1, col2 검사
-			int cnt1 = 1, cnt2 = 1, cnt3 = 1;
-			for(int i = 1 ; i < N ; i++) {
-				if (map[row1][i-1] == map[row1][i]) {
-					cnt1++;
-					rows[row1] = Math.max(cnt1, rows[row1]);
-				} else {
-					cnt1 = 1;
-				}
-				if (map[i-1][col1] == map[i][col1]) {
-					cnt2++;
-					cols[col1] = Math.max(cnt2, cols[col1]);
-				} else {
-					cnt2 = 1;
-				}
-				if (map[i-1][col2] == map[i][col2]) {
-					cnt3++;
-					cols[col2] = Math.max(cnt3, cols[col2]);
-				} else {
-					cnt3 = 1;
-				}
+	private static boolean isBorder(int i, int j) {
+		return i >= N || j >= N;
+	}
+
+	private static void updateRow(int row) {
+		int cnt = 1;
+		rows[row] = 1;
+		for (int j = 1; j < N; j++) {
+			if (map[row][j - 1] == map[row][j]) {
+				cnt++;
+			} else {
+				cnt = 1;
 			}
-		} else { // 행 row1, row2, 열 col1 검사
-			int cnt1 = 1, cnt2 = 1, cnt3 = 1;
-			for(int i = 1 ; i < N ; i++) {
-				if (map[row1][i-1] == map[row1][i]) {
-					cnt1++;
-					rows[row1] = Math.max(cnt1, rows[row1]);
-				} else {
-					cnt1 = 1;
-				}
-				if (map[row2][i-1] == map[row2][i]) {
-					cnt2++;
-					rows[row2] = Math.max(cnt2, rows[row2]);
-				} else {
-					cnt2 = 1;
-				}
-				if (map[i-1][col1] == map[i][col1]) {
-					cnt3++;
-					cols[col1] = Math.max(cnt3, cols[col1]);
-				} else {
-					cnt3 = 1;
-				}
+			rows[row] = Math.max(rows[row], cnt);
+		}
+	}
+
+	private static void updateCol(int col) {
+		int cnt = 1;
+		cols[col] = 1;
+		for (int i = 1; i < N; i++) {
+			if (map[i - 1][col] == map[i][col]) {
+				cnt++;
+			} else {
+				cnt = 1;
 			}
+			cols[col] = Math.max(cols[col], cnt);
 		}
 	}
 
@@ -121,5 +138,5 @@ public class Main {
 		map[row1][col1] = map[row2][col2];
 		map[row2][col2] = temp;
 	}
-	
+
 }
