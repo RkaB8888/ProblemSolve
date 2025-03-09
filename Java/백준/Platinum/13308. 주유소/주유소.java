@@ -7,7 +7,7 @@ import java.util.*;
  * @author python98
  */
 public class Main {
-	static final int INF = Integer.MAX_VALUE;
+	static final long INF = Long.MAX_VALUE;
 	static int N, M;
 	static List<Edge>[] graph;
 	static int[] gasPrice;
@@ -23,16 +23,17 @@ public class Main {
 
 	// 상태: 현재 노드, 현재까지의 누적 비용, 그리고 지금까지 만난 주유소 중 최저 가격
 	static class State implements Comparable<State> {
-		int node, cost, currentMin;
-
-		State(int node, int cost, int currentMin) {
+		int node, currentMin;
+		long cost;
+		
+		State(int node, long cost, int currentMin) {
 			this.node = node;
 			this.cost = cost;
 			this.currentMin = currentMin;
 		}
 
 		public int compareTo(State other) {
-			return this.cost - other.cost;
+			return Long.compare(this.cost, other.cost);
 		}
 	}
 
@@ -48,7 +49,6 @@ public class Main {
 			gasPrice[i] = Integer.parseInt(st.nextToken());
 		}
 
-		// 인접 리스트 초기화 (양방향 그래프)
 		graph = new ArrayList[N + 1];
 		for (int i = 1; i <= N; i++) {
 			graph[i] = new ArrayList<>();
@@ -62,38 +62,35 @@ public class Main {
 			graph[v].add(new Edge(u, d));
 		}
 
-		int result = dijkstra(1, N);
+		long result = dijkstra(1, N);
 		System.out.print(result);
 	}
 
-	private static int dijkstra(int start, int end) {
+	private static long dijkstra(int start, int end) {
 		PriorityQueue<State> pq = new PriorityQueue<>();
 
-		Map<Integer, Integer>[] best = new HashMap[N + 1];
+		Map<Integer, Long>[] best = new HashMap[N + 1];
 		for (int i = 1; i <= N; i++) {
 			best[i] = new HashMap<>();
 		}
 
 		State init = new State(start, 0, gasPrice[start]);
 		pq.add(init);
-		best[start].put(gasPrice[start], 0);
+		best[start].put(gasPrice[start], 0L);
 
 		while (!pq.isEmpty()) {
 			State cur = pq.poll();
-			int node = cur.node, cost = cur.cost, curMin = cur.currentMin;
+			int node = cur.node, curMin = cur.currentMin;
+			long cost = cur.cost;
 			if (node == end)
 				return cost;
-			// 현재 상태보다 이미 더 좋은 상태가 있다면 건너뜁니다.
 			if (best[node].getOrDefault(curMin, INF) < cost)
 				continue;
 
-			// 인접 노드로 확장
 			for (Edge edge : graph[node]) {
 				int next = edge.to;
-				int newCost = cost + edge.dist * curMin;
-				// 다음 주유소에서의 최저 가격은 현재까지의 최저와 다음 주유소 가격 중 더 낮은 값
+				long newCost = cost + (long) edge.dist * curMin;
 				int newMin = Math.min(curMin, gasPrice[next]);
-				// 만약 next 노드에서 newMin 상태로 도달하는 더 좋은 비용이 있다면 넘어갑니다.
 				if (best[next].getOrDefault(newMin, INF) <= newCost)
 					continue;
 				best[next].put(newMin, newCost);
@@ -102,5 +99,4 @@ public class Main {
 		}
 		return INF;
 	}
-
 }
