@@ -1,18 +1,19 @@
 import java.io.*;
 import java.util.*;
+
 public class Main {
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
-        Integer[] arr = new Integer[N];
+        int[] arr = new int[N];
         StringTokenizer st = new StringTokenizer(br.readLine());
         for(int i = 0 ; i < N ; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
         }
-        Arrays.sort(arr,Collections.reverseOrder());
+        Arrays.sort(arr);
         int result = 2;
-        for(int i = 0 ; i < N ; i++) {
-            int temp = arr[i] + i + 2;
+        for(int i = N-1, day = 1 ; i >= 0 ; i--, day++) {
+            int temp = arr[i] + day + 1;
             if(temp > result) result = temp;
         }
         System.out.print(result);
