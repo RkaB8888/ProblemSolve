@@ -5,21 +5,17 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         char[] input = br.readLine().toCharArray();
-        int len = input.length, N = 0, i = 0;
-        while(i < len){
-            N++;
-            char[] num = Integer.toString(N).toCharArray();
-            int numLen = num.length, j = 0;
-            while(i < len && j < numLen) {
-                if(num[j] == input[i]) {
-                    j++;
+        int N = 1, i = 0;
+        while (i < input.length) {
+            char[] digits = Integer.toString(N).toCharArray();
+            for (char digit : digits) {
+                if (i < input.length && digit == input[i]) {
                     i++;
-                } else {
-                    j++;
                 }
             }
+            N++;
         }
-        System.out.print(N);
+        System.out.print(N-1);
     }
 }
 
