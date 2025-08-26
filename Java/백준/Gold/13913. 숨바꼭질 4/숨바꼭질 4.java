@@ -3,70 +3,88 @@ import java.util.*;
 
 /**
  * @author python98
- * @description BFS + Queue(ArrayDeque) + Path Reconstruction
- * @performance 메모리: 30240 KB, 동작시간: 200 ms
+ * @description BFS + Queue(primitive int[]) + Path Reconstruction
+ * @performance 메모리: 29712 KB, 동작시간: 192 ms
  */
 public class Main {
 
+    static final int MAX = 100000;
     static int N, K;
-    static int[] preNum;
+    static int[] parent;
     static int[] visitedSec;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        StringBuilder sb = new StringBuilder();
         N = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
 
-        preNum = new int[100001];
-        visitedSec = new int[100001];
-        Arrays.fill(preNum, -1);
+        if (N >= K) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(N - K).append('\n');
+            for (int x = N; x >= K; --x) sb.append(x).append(' ');
+            System.out.print(sb);
+            return;
+        }
 
-        search();
+        parent = new int[MAX+1];
+        Arrays.fill(parent, -1);
+        parent[N] = N;
 
-        sb.append(visitedSec[K]).append("\n");
+        bfs();
 
-        Deque<Integer> deque = new ArrayDeque<>();
-        int cur = K;
+        Deque<Integer> path = new ArrayDeque<>();
+        int steps = 0, cur = K;
         while(cur!=N) {
-            deque.push(cur);
-            if(preNum[cur]==-1) {
-                cur--;
-            } else {
-                cur = preNum[cur];
-            }
+            path.push(cur);
+            cur = parent[cur];
+            steps++;
         }
-        deque.push(N);
+        path.push(N);
 
-        while(!deque.isEmpty()) {
-            sb.append(deque.pop()).append(' ');
-        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(steps).append('\n');
+        while(!path.isEmpty()) sb.append(path.pop()).append(' ');
         System.out.print(sb);
     }
 
-    private static void search() {
-        Queue<Integer> queue = new ArrayDeque<>();
-        queue.add(N);
-        visitedSec[N] = 0;
+    private static void bfs() {
+        int[] q = new int[MAX+5];
+        int h = 0, t = 0;
+        q[t++] = N;
 
-        while(!queue.isEmpty()) {
-            int cur = queue.poll();
-            if(cur==K) return;
-            if(cur+1<=100000 && preNum[cur+1]==-1) {
-                visitedSec[cur+1] = visitedSec[cur]+1;
-                preNum[cur+1] = cur;
-                queue.add(cur+1);
+        while(h<t) {
+            int cur = q[h++];
+
+            if(cur>K)  {
+                int next = cur-1;
+                if(parent[next]==-1) {
+                    parent[next] = cur;
+                    if(next==K) return;
+                    q[t++] = next;
+                }
+                continue;
             }
-            if(cur-1>=0 && preNum[cur-1]==-1) {
-                visitedSec[cur-1] = visitedSec[cur]+1;
-                preNum[cur-1] = cur;
-                queue.add(cur-1);
+
+            int next = cur << 1;
+            if (next <= MAX && parent[next] == -1) {
+                parent[next] = cur;
+                if (next == K) return;
+                q[t++] = next;
             }
-            if(cur*2<=100000 && preNum[cur*2]==-1) {
-                visitedSec[cur*2] = visitedSec[cur]+1;
-                preNum[cur*2] = cur;
-                queue.add(cur*2);
+
+            next = cur + 1;
+            if(next <= MAX && parent[next] == -1) {
+                parent[next] = cur;
+                if(next == K) return;
+                q[t++] = next;
+            }
+
+            next = cur - 1;
+            if(next >= 0 && parent[next] == -1) {
+                parent[next] = cur;
+                if(next == K) return;
+                q[t++] = next;
             }
         }
     }
