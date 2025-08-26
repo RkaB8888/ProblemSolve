@@ -3,8 +3,8 @@ import java.util.*;
 
 /**
  * @author python98
- * @description ?
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @description BFS + Queue(ArrayDeque) + Path Reconstruction
+ * @performance 메모리: 30240 KB, 동작시간: 200 ms
  */
 public class Main {
 
@@ -19,10 +19,9 @@ public class Main {
         N = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
 
-        preNum = new int[200000];
-        visitedSec = new int[200000];
+        preNum = new int[100001];
+        visitedSec = new int[100001];
         Arrays.fill(preNum, -1);
-        Arrays.fill(visitedSec, -1);
 
         search();
 
@@ -30,10 +29,15 @@ public class Main {
 
         Deque<Integer> deque = new ArrayDeque<>();
         int cur = K;
-        while(cur!=-1) {
+        while(cur!=N) {
             deque.push(cur);
-            cur = preNum[cur];
+            if(preNum[cur]==-1) {
+                cur--;
+            } else {
+                cur = preNum[cur];
+            }
         }
+        deque.push(N);
 
         while(!deque.isEmpty()) {
             sb.append(deque.pop()).append(' ');
@@ -49,22 +53,20 @@ public class Main {
         while(!queue.isEmpty()) {
             int cur = queue.poll();
             if(cur==K) return;
-            if(cur>0 && visitedSec[cur-1]==-1) {
+            if(cur+1<=100000 && preNum[cur+1]==-1) {
+                visitedSec[cur+1] = visitedSec[cur]+1;
+                preNum[cur+1] = cur;
+                queue.add(cur+1);
+            }
+            if(cur-1>=0 && preNum[cur-1]==-1) {
                 visitedSec[cur-1] = visitedSec[cur]+1;
                 preNum[cur-1] = cur;
                 queue.add(cur-1);
             }
-            if(cur < K && cur < 100000) {
-                if(visitedSec[cur+1]==-1) {
-                    visitedSec[cur+1] = visitedSec[cur]+1;
-                    preNum[cur+1] = cur;
-                    queue.add(cur+1);
-                }
-                if(visitedSec[cur*2]==-1) {
-                    visitedSec[cur*2] = visitedSec[cur]+1;
-                    preNum[cur*2] = cur;
-                    queue.add(cur*2);
-                }
+            if(cur*2<=100000 && preNum[cur*2]==-1) {
+                visitedSec[cur*2] = visitedSec[cur]+1;
+                preNum[cur*2] = cur;
+                queue.add(cur*2);
             }
         }
     }
