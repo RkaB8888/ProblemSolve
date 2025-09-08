@@ -3,8 +3,8 @@ import java.util.*;
 
 /**
  * @author python98
- * @description ?
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @description Binary Search + Rolling Hash (Double Mod) + HashSet
+ * @performance 메모리: 226,568 KB, 동작시간: 744 ms
  */
 public class Main {
 
@@ -43,9 +43,10 @@ public class Main {
 
         int low = 0, high = L - 1;
         result = 0;
+        LongHashSet set = new LongHashSet(L);
         while (low <= high) {
             int mid = (low + high) >>> 1;
-            if (exist(mid)) {
+            if (exist(mid, set)) {
                 result = mid;
                 low = mid + 1;
             } else {
@@ -55,10 +56,10 @@ public class Main {
         System.out.print(result);
     }
 
-    private static boolean exist(int len) {
-        if(len == 0) return true;
-        Set<Long> set = new HashSet<>();
-
+    private static boolean exist(int len, LongHashSet set) {
+        if (len == 0) return true;
+        set.clear();
+        
         long hash1 = 0, hash2 = 0;
         for (int i = 0; i < len; i++) {
             hash1 = (hash1 * BASE + val(i)) % MOD1;
@@ -82,5 +83,71 @@ public class Main {
             set.add(packed);
         }
         return false;
+    }
+
+    static class LongHashSet {
+        static long[] table;
+        static int size;
+        static int thresh;
+        static int mask;
+
+        LongHashSet(int cap) {
+            int n = 1;
+            while (n < cap) n <<= 1;
+            table = new long[n];
+            size = 0;
+            thresh = (int) (n * 0.75);
+            mask = n - 1;
+        }
+
+        private void resize() {
+            long[] old = table;
+            int n = old.length << 1;
+            long[] newTable = new long[n];
+            int newMask = n - 1;
+            for (long v : old) {
+                if (v != 0) {
+                    int idx = (int) (v ^ (v >>> 33)) & newMask;
+                    while (newTable[idx] != 0) {
+                        idx = (idx + 1) & newMask;
+                    }
+                    newTable[idx] = v;
+                }
+            }
+            table = newTable;
+            mask = newMask;
+            thresh = (int) (n * 0.75);
+        }
+
+        private boolean add(long key) {
+            if (size >= thresh) resize();
+            long k = key + 1;
+            int idx = (int) (k ^ (k >>> 33)) & mask;
+            while (true) {
+                if (table[idx] == 0) {
+                    size++;
+                    table[idx] = k;
+                    return true;
+                }
+                if (table[idx] == k) return false;
+                idx = (idx + 1) & mask;
+            }
+        }
+
+        private boolean contains(long key){
+            long k = key+1;
+            int idx = (int)(k^(k>>>33))&mask;
+            while(true){
+                long cur = table[idx];
+                if(cur==0) return false;
+                if(cur==k) return true;
+                idx = (idx+1)&mask;
+            }
+        }
+
+        private void clear(){
+            Arrays.fill(table, 0);
+            size = 0;
+        }
     }
 }
