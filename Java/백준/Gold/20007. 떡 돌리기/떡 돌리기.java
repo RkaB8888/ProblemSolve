@@ -3,8 +3,8 @@ import java.util.*;
 
 /**
  * @author python98
- * @description ?
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @description Dijkstra + Greedy Grouping
+ * @performance 메모리: 43,400 KB, 동작시간: 416 ms
  */
 public class Main {
     static final int MAX = 10000001;
@@ -75,12 +75,13 @@ public class Main {
     }
 
     private static void bfs() {
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[0] - b[0]);
+        int[][] q = new int[MAX][];
+        int b = 0, t = 0;
         Arrays.fill(minDist, MAX);
         minDist[Y] = 0;
-        pq.add(new int[]{0, Y});
-        while (!pq.isEmpty()) {
-            int[] cur = pq.poll();
+        q[t++] = new int[]{0, Y};
+        while (b<t) {
+            int[] cur = q[b++];
             int d = cur[0];
             int u = cur[1];
             if (d != minDist[u]) continue;
@@ -90,7 +91,7 @@ public class Main {
                 int nd = d + dist[idx];
                 if (minDist[v] > nd) {
                     minDist[v] = nd;
-                    pq.add(new int[]{nd, v});
+                    q[t++] = new int[]{nd, v};
                 }
                 idx = next[idx];
             }
