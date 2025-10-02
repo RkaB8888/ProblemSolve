@@ -3,8 +3,8 @@ import java.util.*;
 
 /**
  * @author python98
- * @description Dijkstra + Greedy Grouping
- * @performance 메모리: 43,400 KB, 동작시간: 416 ms
+ * @description SPFA-Style Shortest Path + Greedy Grouping
+ * @performance 메모리: 79,176 KB, 동작시간: 328 ms
  */
 public class Main {
     static final int MAX = 10000001;
@@ -75,23 +75,31 @@ public class Main {
     }
 
     private static void bfs() {
-        int[][] q = new int[MAX][];
-        int b = 0, t = 0;
         Arrays.fill(minDist, MAX);
+
+        boolean[] inQ = new boolean[N];
+        ArrayDeque<Integer> dq = new ArrayDeque<>();
+
         minDist[Y] = 0;
-        q[t++] = new int[]{0, Y};
-        while (b<t) {
-            int[] cur = q[b++];
-            int d = cur[0];
-            int u = cur[1];
-            if (d != minDist[u]) continue;
+        dq.add(Y);
+        inQ[Y] = true;
+
+        while (!dq.isEmpty()) {
+            int u = dq.pollFirst();
+            inQ[u] = false;
+            int d = minDist[u];
+
             int idx = link[u];
             while (idx != -1) {
                 int v = nextNode[idx];
                 int nd = d + dist[idx];
                 if (minDist[v] > nd) {
                     minDist[v] = nd;
-                    q[t++] = new int[]{nd, v};
+                    if (!inQ[v]) {
+                        if (!dq.isEmpty() && nd < minDist[dq.peekFirst()]) dq.addFirst(v);
+                        else dq.addLast(v);
+                        inQ[v] = true;
+                    }
                 }
                 idx = next[idx];
             }
