@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * @author python98
  * @description SPFA (Ring-Buffer Queue) + Greedy Grouping (Ascending by 2*dist)
- * @performance 메모리: 40,248 KB, 동작시간: 324 ms
+ * @performance 메모리: 39,256 KB, 동작시간: 300 ms
  */
 public class Main {
     static final int MAX = 10000001;
@@ -14,16 +14,34 @@ public class Main {
     static int[] link;
     static int[] dist;
 
+    private static int nextInt() throws IOException{
+        int c = System.in.read();
+        while(c <= 32) {
+            if(c == -1) return Integer.MIN_VALUE;
+            c = System.in.read();
+        }
+        int sign = 1;
+        if(c=='-') {
+            sign = -1;
+            c = System.in.read();
+        }
+
+        int n = 0;
+        while(c>32) {
+            n = (n<<3)+(n<<1)+(c&15);
+            c = System.in.read();
+        }
+        return n * sign;
+    }
+
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
+        N = nextInt();
         digit = 1;
         while(digit<N) digit<<=1;
         digit--;
-        M = Integer.parseInt(st.nextToken());
-        X = Integer.parseInt(st.nextToken());
-        Y = Integer.parseInt(st.nextToken());
+        M = nextInt();
+        X = nextInt();
+        Y = nextInt();
         minDist = new int[N];
         next = new int[2 * M];
         Arrays.fill(next, -1);
@@ -33,10 +51,9 @@ public class Main {
         Arrays.fill(link, -1);
         dist = new int[2 * M];
         for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
-            int c = Integer.parseInt(st.nextToken());
+            int a = nextInt();
+            int b = nextInt();
+            int c = nextInt();
             nextNode[2 * i] = b;
             next[2 * i] = link[a];
             link[a] = 2 * i;
