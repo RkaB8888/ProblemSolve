@@ -3,12 +3,12 @@ import java.util.*;
 
 /**
  * @author python98
- * @description SPFA-Style Shortest Path + Greedy Grouping
- * @performance 메모리: 79,176 KB, 동작시간: 328 ms
+ * @description SPFA (Ring-Buffer Queue) + Greedy Grouping (Ascending by 2*dist)
+ * @performance 메모리: 40,248 KB, 동작시간: 324 ms
  */
 public class Main {
     static final int MAX = 10000001;
-    static int N, M, X, Y;
+    static int N, M, X, Y, digit;
     static int[] minDist;
     static int[] next, nextNode;
     static int[] link;
@@ -18,6 +18,9 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
+        digit = 1;
+        while(digit<N) digit<<=1;
+        digit--;
         M = Integer.parseInt(st.nextToken());
         X = Integer.parseInt(st.nextToken());
         Y = Integer.parseInt(st.nextToken());
@@ -78,14 +81,16 @@ public class Main {
         Arrays.fill(minDist, MAX);
 
         boolean[] inQ = new boolean[N];
-        ArrayDeque<Integer> dq = new ArrayDeque<>();
+        int[] q = new int[digit+1];
+        int b = 0, t = 0;
 
         minDist[Y] = 0;
-        dq.add(Y);
+        q[t++] = Y;
         inQ[Y] = true;
 
-        while (!dq.isEmpty()) {
-            int u = dq.pollFirst();
+        while (b!=t) {
+            int u = q[b++];
+            b&=digit;
             inQ[u] = false;
             int d = minDist[u];
 
@@ -96,8 +101,8 @@ public class Main {
                 if (minDist[v] > nd) {
                     minDist[v] = nd;
                     if (!inQ[v]) {
-                        if (!dq.isEmpty() && nd < minDist[dq.peekFirst()]) dq.addFirst(v);
-                        else dq.addLast(v);
+                        q[t++] = v;
+                        t&=digit;
                         inQ[v] = true;
                     }
                 }
