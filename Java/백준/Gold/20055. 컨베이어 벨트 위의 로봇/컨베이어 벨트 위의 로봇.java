@@ -14,7 +14,7 @@ import java.util.*;
 cnt가 K라면 단계 종료
  */
 public class Main {
-    static int N, N2, K, mov, raiseIdx, downIdx, roTop, roBot, cnt;
+    static int N, N2, limit, K, mov, raiseIdx, downIdx, roTop, roBot, cnt;
     static int[] beltD, robot;
     static boolean[] beltO;
 
@@ -29,63 +29,58 @@ public class Main {
         downIdx = N - 1;
         beltD = new int[N2];
         beltO = new boolean[N2];
-        robot = new int[200000];
+        limit = 1;
+        while (limit < N2) limit <<= 1;
+        robot = new int[limit--];
         st = new StringTokenizer(br.readLine());
         for (int i = 0; i < N2; i++) {
             beltD[i] = Integer.parseInt(st.nextToken());
         }
-        int step = 1;
-        while (true) {
-            beltRotate();
-            moveRobot();
-            raiseRobot();
-            if (countDur()) break;
+        int step = 0;
+        while (cnt < K) {
             step++;
+            mov = (mov + 1) % (N2);
+            raiseIdx--;
+            if (raiseIdx < 0) raiseIdx += N2;
+            downIdx--;
+            if (downIdx < 0) downIdx += N2;
+            if (beltO[downIdx]) {
+                beltO[downIdx] = false;
+                roBot++;
+                roBot &= limit;
+            }
+
+            int R = roBot;
+            while (R != roTop) {
+                int nIdx = robot[R] + 1;
+                if (nIdx >= N2) nIdx -= N2;
+                if (beltO[nIdx] || beltD[nIdx] <= 0) {
+                    R++;
+                    R&=limit;
+                    continue;
+                }
+                beltO[robot[R]] = false;
+                beltD[nIdx]--;
+                if (beltD[nIdx] == 0) cnt++;
+                if (nIdx == downIdx) {
+                    roBot++;
+                    roBot &= limit;
+                } else {
+                    beltO[nIdx] = true;
+                    robot[R] = nIdx;
+                }
+                R++; // 다음 로봇 갱신
+                R&=limit;
+            }
+
+            if (!beltO[raiseIdx] && beltD[raiseIdx] > 0) {
+                beltO[raiseIdx] = true;
+                beltD[raiseIdx]--;
+                robot[roTop++] = raiseIdx;
+                roTop &= limit;
+                if (beltD[raiseIdx] == 0) cnt++;
+            }
         }
         System.out.print(step);
-    }
-
-    private static boolean countDur() {
-        return cnt >= K;
-    }
-
-    private static void raiseRobot() {
-        if(beltO[raiseIdx]||beltD[raiseIdx]<=0) return;
-        beltO[raiseIdx] = true;
-        beltD[raiseIdx]--;
-        robot[roTop++] = raiseIdx;
-        if(beltD[raiseIdx]==0) cnt++;
-    }
-
-    private static void moveRobot() {
-        int R = roBot;
-        while (R < roTop) {
-            int idx = robot[R]; // 로봇의 현재 위치 인덱스 가져오기
-            int nIdx = (idx + 1) % N2;
-            if (beltO[nIdx] || beltD[nIdx] <= 0) {
-                R++;
-                continue;
-            }
-            beltO[idx] = false;
-            beltO[nIdx] = true;
-            beltD[nIdx]--;
-            robot[R] = (robot[R] + 1) % N2;
-            if (beltD[nIdx] == 0) cnt++;
-            if (nIdx == downIdx) {
-                beltO[nIdx] = false;
-                roBot++;
-            }
-            R++; // 다음 로봇
-        }
-    }
-
-    private static void beltRotate() {
-        mov = (mov + 1) % (N2);
-        raiseIdx = (raiseIdx + N2 - 1) % N2;
-        downIdx = (downIdx + N2 - 1) % N2;
-        if(beltO[downIdx]) {
-            beltO[downIdx] = false;
-            roBot++;
-        }
     }
 }
