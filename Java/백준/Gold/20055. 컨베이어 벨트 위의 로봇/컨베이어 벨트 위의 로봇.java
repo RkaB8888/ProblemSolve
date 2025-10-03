@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * @author python98
  * @description ?
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @performance 메모리: 13,648 KB, 동작시간: 144 ms
  */
 /*
 추가 인덱스로 벨트 이동(mov)을 계산. (mov+idx)%2N == 2N-1이면 내리는 곳
@@ -18,12 +18,24 @@ public class Main {
     static int[] beltD, robot;
     static boolean[] beltO;
 
+    private static int nextInt() throws IOException {
+        int n = 0, s= 1, c = System.in.read();
+        while(c<=32) c = System.in.read();
+        if(c=='-') {
+            s = -1;
+            c = System.in.read();
+        }
+        while(c>32) {
+            n = (n<<3) + (n<<1) + (c&15);
+            c = System.in.read();
+        }
+        return n*s;
+    }
+
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
+        N = nextInt();
         N2 = N << 1;
-        K = Integer.parseInt(st.nextToken());
+        K = nextInt();
         mov = 0;
         raiseIdx = 0;
         downIdx = N - 1;
@@ -32,9 +44,8 @@ public class Main {
         limit = 1;
         while (limit < N2) limit <<= 1;
         robot = new int[limit--];
-        st = new StringTokenizer(br.readLine());
         for (int i = 0; i < N2; i++) {
-            beltD[i] = Integer.parseInt(st.nextToken());
+            beltD[i] = nextInt();
         }
         int step = 0;
         while (cnt < K) {
