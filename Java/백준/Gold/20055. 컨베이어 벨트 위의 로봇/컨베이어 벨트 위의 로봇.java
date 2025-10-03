@@ -3,8 +3,8 @@ import java.util.*;
 
 /**
  * @author python98
- * @description ?
- * @performance 메모리: 13,648 KB, 동작시간: 144 ms
+ * @description Simulation + Circular Buffer (Ring Queue) + Bitmask Mod
+ * @performance 메모리: 12,136 KB, 동작시간: 120 ms
  */
 /*
 추가 인덱스로 벨트 이동(mov)을 계산. (mov+idx)%2N == 2N-1이면 내리는 곳
@@ -14,7 +14,7 @@ import java.util.*;
 cnt가 K라면 단계 종료
  */
 public class Main {
-    static int N, N2, limit, K, mov, raiseIdx, downIdx, roTop, roBot, cnt;
+    static int N, N2, limit, K, raiseIdx, downIdx, roTop, roBot, cnt;
     static int[] beltD, robot;
     static boolean[] beltO;
 
@@ -36,7 +36,6 @@ public class Main {
         N = nextInt();
         N2 = N << 1;
         K = nextInt();
-        mov = 0;
         raiseIdx = 0;
         downIdx = N - 1;
         beltD = new int[N2];
@@ -50,7 +49,6 @@ public class Main {
         int step = 0;
         while (cnt < K) {
             step++;
-            mov = (mov + 1) % (N2);
             raiseIdx--;
             if (raiseIdx < 0) raiseIdx += N2;
             downIdx--;
