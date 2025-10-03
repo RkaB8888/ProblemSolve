@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * @author python98
  * @description Line Sweep + Sorting
- * @performance 메모리: 143,392 KB, 동작시간: 1,876 ms
+ * @performance 메모리: 116,240 KB, 동작시간: 704 ms
  */
 /*
 동시에 겹치는 구간의 최대 갯수 찾기
@@ -13,17 +13,29 @@ public class Main {
     static int N;
     static int[] L, R, T;
 
+    private static int nextInt() throws IOException {
+        int n = 0, s = 1, c = System.in.read();
+        while (c <= 32) c = System.in.read();
+        if(c == '-') {
+            s = -1;
+            c = System.in.read();
+        }
+        while (c > 32) {
+            n = (n << 3) + (n << 1) + (c & 15);
+            c = System.in.read();
+        }
+        return n*s;
+    }
+
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
-        N = Integer.parseInt(br.readLine());
+        N = nextInt();
         L = new int[N];
         R = new int[N];
         T = new int[N << 1];
         for (int i = 0, idx = 0; i < N; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            int s = Integer.parseInt(st.nextToken());
-            int e = Integer.parseInt(st.nextToken());
+            int s = nextInt();
+            int e = nextInt();
             L[i] = s;
             R[i] = e;
             T[idx++] = ((s - 1) << 1) | 1;
