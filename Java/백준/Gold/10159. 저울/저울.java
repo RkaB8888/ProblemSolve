@@ -3,8 +3,8 @@ import java.util.*;
 
 /**
  * @author python98
- * @description 이 클래스에 대한 동작 설명
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @description 그래프 관계 전파 + 인접 행렬 + Queue
+ * @performance 메모리: 13,720 KB, 동작시간: 100 ms
  */
 public class Main {
     static int N, M;
@@ -30,14 +30,12 @@ public class Main {
                 right[l][0]++;
             }
         }
-        Queue<Integer> lq = new ArrayDeque<>();
-        Queue<Integer> rq = new ArrayDeque<>();
+        Queue<Integer> q = new ArrayDeque<>(100);
         for (int i = 1; i <= N; i++) {
-            if (left[i][0] == 0) lq.add(i);
-            if (right[i][0] == 0) rq.add(i);
+            if (left[i][0] == 0) q.add(i);
         }
-        while (!lq.isEmpty()) {
-            int cur = lq.poll();
+        while (!q.isEmpty()) {
+            int cur = q.poll();
             for (int i = 1; i <= N; i++) {
                 if (left[i][cur] > 0) {
                     for (int j = 1; j <= N; j++) {
@@ -45,13 +43,16 @@ public class Main {
                     }
                     left[i][0]--;
                     if (left[i][0] == 0) {
-                        lq.add(i);
+                        q.add(i);
                     }
                 }
             }
         }
-        while (!rq.isEmpty()) {
-            int cur = rq.poll();
+        for (int i = 1; i <= N; i++) {
+            if (right[i][0] == 0) q.add(i);
+        }
+        while (!q.isEmpty()) {
+            int cur = q.poll();
             for (int i = 1; i <= N; i++) {
                 if (right[i][cur] > 0) {
                     for (int j = 1; j <= N; j++) {
@@ -59,22 +60,15 @@ public class Main {
                     }
                     right[i][0]--;
                     if (right[i][0] == 0) {
-                        rq.add(i);
+                        q.add(i);
                     }
                 }
             }
         }
         for (int i = 1; i <= N; i++) {
-            boolean[] check = new boolean[N + 1];
             int cnt = 0;
             for (int j = 1; j <= N; j++) {
-                if (left[i][j] > 0) {
-                    check[j] = true;
-                    cnt++;
-                } else if (right[i][j] > 0) {
-                    check[j] = true;
-                    cnt++;
-                }
+                if (left[i][j] > 0 || right[i][j] > 0) cnt++;
             }
             sb.append(N - cnt - 1).append('\n');
         }
