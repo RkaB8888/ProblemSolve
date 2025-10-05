@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * @author python98
  * @description Union-Find + Path Compression + 최소 대표 비용
- * @performance 메모리: 16,988 KB, 동작시간: 152 ms
+ * @performance 메모리: 12,128 KB, 동작시간: 88 ms
  */
 public class Main {
     static int N, M, K, money;
@@ -26,7 +26,7 @@ public class Main {
         }
 
         public int findUnion(int a) {
-            if (group[a] == a || group[a] == 0) return a;
+            if (group[a] == 0 || group[a] == a) return a;
             return group[a] = findUnion(group[a]);
         }
     }
