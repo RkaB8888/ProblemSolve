@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * @author python98
  * @description 그래프 관계 전파 + 인접 행렬 + Queue
- * @performance 메모리: 13,720 KB, 동작시간: 100 ms
+ * @performance 메모리: 14,240 KB, 동작시간: 96 ms
  */
 public class Main {
     static int N, M;
@@ -30,12 +30,18 @@ public class Main {
                 right[l][0]++;
             }
         }
-        Queue<Integer> q = new ArrayDeque<>(100);
+        int digit = 1<<7;
+        int[] q = new int[digit--];
+        int b = 0, t = 0;
         for (int i = 1; i <= N; i++) {
-            if (left[i][0] == 0) q.add(i);
+            if (left[i][0] == 0) {
+                q[t++] = i;
+                t&=digit;
+            }
         }
-        while (!q.isEmpty()) {
-            int cur = q.poll();
+        while (b!=t) {
+            int cur = q[b++];
+            b&=digit;
             for (int i = 1; i <= N; i++) {
                 if (left[i][cur] > 0) {
                     for (int j = 1; j <= N; j++) {
@@ -43,16 +49,21 @@ public class Main {
                     }
                     left[i][0]--;
                     if (left[i][0] == 0) {
-                        q.add(i);
+                        q[t++] = i;
+                        t&=digit;
                     }
                 }
             }
         }
         for (int i = 1; i <= N; i++) {
-            if (right[i][0] == 0) q.add(i);
+            if (right[i][0] == 0) {
+                q[t++] = i;
+                t&=digit;
+            }
         }
-        while (!q.isEmpty()) {
-            int cur = q.poll();
+        while (b!=t) {
+            int cur = q[b++];
+            b&=digit;
             for (int i = 1; i <= N; i++) {
                 if (right[i][cur] > 0) {
                     for (int j = 1; j <= N; j++) {
@@ -60,7 +71,8 @@ public class Main {
                     }
                     right[i][0]--;
                     if (right[i][0] == 0) {
-                        q.add(i);
+                        q[t++] = i;
+                        t&=digit;
                     }
                 }
             }
