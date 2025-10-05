@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * @author python98
  * @description Union-Find + Path Compression + 최소 대표 비용
- * @performance 메모리: 17,296 KB, 동작시간: 156 ms
+ * @performance 메모리: 16,988 KB, 동작시간: 152 ms
  */
 public class Main {
     static int N, M, K, money;
@@ -31,22 +31,28 @@ public class Main {
         }
     }
 
+    private static int nextInt() throws IOException {
+        int c, n;
+        while ((n = System.in.read()) <= 32) ;
+        n &= 15;
+        while ((c = System.in.read()) > 32) {
+            n = (n << 3) + (n << 1) + (c & 15);
+        }
+        return n;
+    }
+
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
+        N = nextInt();
+        M = nextInt();
+        K = nextInt();
         price = new int[N + 1];
         check = new boolean[N + 1];
-        st = new StringTokenizer(br.readLine());
         for (int i = 1; i <= N; i++) {
-            price[i] = Integer.parseInt(st.nextToken());
+            price[i] = nextInt();
         }
         UnionFind uf = new UnionFind(N + 1);
         for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine());
-            uf.setUnion(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+            uf.setUnion(nextInt(), nextInt());
         }
         for (int i = 1; i <= N; i++) {
             int gn = uf.findUnion(i);
