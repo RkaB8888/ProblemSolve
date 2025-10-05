@@ -3,24 +3,33 @@ import java.util.*;
 
 /**
  * @author python98
- * @description 그래프 관계 전파 + 인접 행렬 + Queue
- * @performance 메모리: 14,240 KB, 동작시간: 96 ms
+ * @description 그래프 관계 전파 + 인접 행렬 + 원형 Queue
+ * @performance 메모리: 13160 KB, 동작시간: 96 ms
  */
 public class Main {
     static int N, M;
     static int[][] left, right;
 
+    private static int nextInt() throws IOException {
+        int n = 0, s = 1, c;
+        while ((c = System.in.read()) <= 32) ;
+        if (c == '-') s = -1;
+        else n = c & 15;
+        while ((c = System.in.read()) > 32) {
+            n = (n << 3) + (n << 1) + (c & 15);
+        }
+        return n * s;
+    }
+
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
-        N = Integer.parseInt(br.readLine());
-        M = Integer.parseInt(br.readLine());
+        N = nextInt();
+        M = nextInt();
         left = new int[N + 1][N + 1];
         right = new int[N + 1][N + 1];
         for (int i = 0; i < M; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            int l = Integer.parseInt(st.nextToken());
-            int r = Integer.parseInt(st.nextToken());
+            int l = nextInt();
+            int r = nextInt();
             if (left[r][l] == 0) {
                 left[r][l] = 1;
                 left[r][0]++;
@@ -30,18 +39,18 @@ public class Main {
                 right[l][0]++;
             }
         }
-        int digit = 1<<7;
+        int digit = 1 << 7;
         int[] q = new int[digit--];
         int b = 0, t = 0;
         for (int i = 1; i <= N; i++) {
             if (left[i][0] == 0) {
                 q[t++] = i;
-                t&=digit;
+                t &= digit;
             }
         }
-        while (b!=t) {
+        while (b != t) {
             int cur = q[b++];
-            b&=digit;
+            b &= digit;
             for (int i = 1; i <= N; i++) {
                 if (left[i][cur] > 0) {
                     for (int j = 1; j <= N; j++) {
@@ -50,7 +59,7 @@ public class Main {
                     left[i][0]--;
                     if (left[i][0] == 0) {
                         q[t++] = i;
-                        t&=digit;
+                        t &= digit;
                     }
                 }
             }
@@ -58,12 +67,12 @@ public class Main {
         for (int i = 1; i <= N; i++) {
             if (right[i][0] == 0) {
                 q[t++] = i;
-                t&=digit;
+                t &= digit;
             }
         }
-        while (b!=t) {
+        while (b != t) {
             int cur = q[b++];
-            b&=digit;
+            b &= digit;
             for (int i = 1; i <= N; i++) {
                 if (right[i][cur] > 0) {
                     for (int j = 1; j <= N; j++) {
@@ -72,7 +81,7 @@ public class Main {
                     right[i][0]--;
                     if (right[i][0] == 0) {
                         q[t++] = i;
-                        t&=digit;
+                        t &= digit;
                     }
                 }
             }
