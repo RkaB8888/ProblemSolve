@@ -3,8 +3,8 @@ import java.util.*;
 
 /**
  * @author python98
- * @description 이 클래스에 대한 동작 설명
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @description Union-Find + Path Compression + 최소 대표 비용
+ * @performance 메모리: 17,296 KB, 동작시간: 156 ms
  */
 public class Main {
     static int N, M, K, money;
@@ -16,20 +16,17 @@ public class Main {
 
         public UnionFind(int N) {
             this.group = new int[N];
-            for (int i = 0; i < N; i++) {
-                group[i] = i;
-            }
         }
 
         public void setUnion(int a, int b) {
-            int gnA = findUnion(a);
-            int gnB = findUnion(b);
+            int gnA = findUnion(a), gnB = findUnion(b);
+            if (gnA == gnB) return;
             if (price[gnA] > price[gnB]) group[gnA] = gnB;
             else group[gnB] = gnA;
         }
 
         public int findUnion(int a) {
-            if (group[a] == a) return a;
+            if (group[a] == a || group[a] == 0) return a;
             return group[a] = findUnion(group[a]);
         }
     }
@@ -49,9 +46,7 @@ public class Main {
         UnionFind uf = new UnionFind(N + 1);
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            int v = Integer.parseInt(st.nextToken());
-            int w = Integer.parseInt(st.nextToken());
-            uf.setUnion(v, w);
+            uf.setUnion(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
         }
         for (int i = 1; i <= N; i++) {
             int gn = uf.findUnion(i);
