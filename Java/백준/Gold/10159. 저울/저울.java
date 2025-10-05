@@ -4,11 +4,11 @@ import java.util.*;
 /**
  * @author python98
  * @description 그래프 관계 전파 + 인접 행렬 + 원형 Queue
- * @performance 메모리: 13160 KB, 동작시간: 96 ms
+ * @performance 메모리: 12,432 KB, 동작시간: 76 ms
  */
 public class Main {
     static int N, M;
-    static int[][] left, right;
+    static int[][] left;
 
     private static int nextInt() throws IOException {
         int n = 0, s = 1, c;
@@ -26,17 +26,12 @@ public class Main {
         N = nextInt();
         M = nextInt();
         left = new int[N + 1][N + 1];
-        right = new int[N + 1][N + 1];
         for (int i = 0; i < M; i++) {
             int l = nextInt();
             int r = nextInt();
             if (left[r][l] == 0) {
                 left[r][l] = 1;
                 left[r][0]++;
-            }
-            if (right[l][r] == 0) {
-                right[l][r] = 1;
-                right[l][0]++;
             }
         }
         int digit = 1 << 7;
@@ -64,32 +59,11 @@ public class Main {
                 }
             }
         }
-        for (int i = 1; i <= N; i++) {
-            if (right[i][0] == 0) {
-                q[t++] = i;
-                t &= digit;
-            }
-        }
-        while (b != t) {
-            int cur = q[b++];
-            b &= digit;
-            for (int i = 1; i <= N; i++) {
-                if (right[i][cur] > 0) {
-                    for (int j = 1; j <= N; j++) {
-                        right[i][j] |= right[cur][j];
-                    }
-                    right[i][0]--;
-                    if (right[i][0] == 0) {
-                        q[t++] = i;
-                        t &= digit;
-                    }
-                }
-            }
-        }
+
         for (int i = 1; i <= N; i++) {
             int cnt = 0;
             for (int j = 1; j <= N; j++) {
-                if (left[i][j] > 0 || right[i][j] > 0) cnt++;
+                if (left[i][j] > 0 || left[j][i] > 0) cnt++;
             }
             sb.append(N - cnt - 1).append('\n');
         }
