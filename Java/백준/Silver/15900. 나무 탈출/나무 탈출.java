@@ -1,14 +1,13 @@
 import java.io.*;
-import java.util.*;
 
 /**
  * @author python98
- * @description BFS + 인접 리스트(전방성 배열) + 배열 큐
- * @performance 메모리: 26,324 KB, 동작시간: 292 ms
+ * @description DFS + 인접 리스트(전방성 배열)
+ * @performance 메모리: 35,120 KB, 동작시간: 732 ms
  */
 public class Main {
     static int N, sum;
-    static int[] step, deg, link, next, v;
+    static int[] deg, link, next, v;
 
     private static int nextInt() throws IOException {
         int n, c;
@@ -20,44 +19,42 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         N = nextInt();
-        step = new int[N + 1];
         deg = new int[N + 1];
         link = new int[N + 1];
         next = new int[N << 1];
         v = new int[N << 1];
         for (int i = 1; i < N; i++) {
-            int a = nextInt(), b = nextInt();
-            next[(i << 1)] = link[a];
-            link[a] = (i << 1);
-            v[(i << 1)] = b;
-
-            next[(i << 1) + 1] = link[b];
-            link[b] = (i << 1) + 1;
-            v[(i << 1) + 1] = a;
-
+            int a = nextInt(), b = nextInt(), idx1 = i << 1, idx2 = idx1 + 1;
+            next[idx1] = link[a];
+            link[a] = idx1;
+            v[idx1] = b;
+            next[idx2] = link[b];
+            link[b] = idx2;
+            v[idx2] = a;
             deg[a]++;
             deg[b]++;
         }
 
-        bfs();
-        System.out.print((sum & 1) == 1 ? "Yes" : "No");
-    }
+        int[] node = new int[N], parent = new int[N], depth = new int[N];
+        int idx = 0;
+        node[idx] = 1;
+        parent[idx] = 0;
+        depth[idx++] = 0;
+        while (idx > 0) {
+            int curV = node[--idx], parentNode = parent[idx], d = depth[idx];
 
-    private static void bfs() {
-        int[] q = new int[N];
-        int b = 0, t = 0;
-        Arrays.fill(step, -1);
-        step[1] = 0;
-        q[t++] = 1;
-        while (b < t) {
-            int curV = q[b++];
-            for (int e = link[curV]; e > 0; e = next[e]) {
+            if (curV != 1 && deg[curV] == 1) { // leaf
+                sum ^= d;          // sum은 1 또는 0만 갖게 됨
+                continue;
+            }
+            for (int e = link[curV]; e != 0; e = next[e]) {
                 int nextV = v[e];
-                if (step[nextV] >= 0) continue;
-                step[nextV] = step[curV] + 1;
-                q[t++] = nextV;
-                if (deg[nextV] == 1) sum += step[nextV];
+                if (nextV == parentNode) continue;
+                node[idx] = nextV;
+                parent[idx] = curV;
+                depth[idx++] = d ^ 1;
             }
         }
+        System.out.print((sum == 1) ? "Yes" : "No");
     }
 }
