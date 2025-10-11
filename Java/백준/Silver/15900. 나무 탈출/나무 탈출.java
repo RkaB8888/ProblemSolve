@@ -3,11 +3,11 @@ import java.io.*;
 /**
  * @author python98
  * @description DFS + 인접 리스트(전방성 배열)
- * @performance 메모리: 35,120 KB, 동작시간: 732 ms
+ * @performance 메모리: 30,160 KB, 동작시간: 272 ms
  */
 public class Main {
     static int N, sum;
-    static int[] deg, link, next, v;
+    static int[] link, next, v;
 
     private static int nextInt() throws IOException {
         int n, c;
@@ -19,7 +19,6 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         N = nextInt();
-        deg = new int[N + 1];
         link = new int[N + 1];
         next = new int[N << 1];
         v = new int[N << 1];
@@ -31,29 +30,30 @@ public class Main {
             next[idx2] = link[b];
             link[b] = idx2;
             v[idx2] = a;
-            deg[a]++;
-            deg[b]++;
         }
 
+        // stack
         int[] node = new int[N], parent = new int[N], depth = new int[N];
         int idx = 0;
+
         node[idx] = 1;
         parent[idx] = 0;
         depth[idx++] = 0;
+
         while (idx > 0) {
             int curV = node[--idx], parentNode = parent[idx], d = depth[idx];
+            
+            boolean isLeaf = true; // leaf 노드 판별 플래그
 
-            if (curV != 1 && deg[curV] == 1) { // leaf
-                sum ^= d;          // sum은 1 또는 0만 갖게 됨
-                continue;
-            }
             for (int e = link[curV]; e != 0; e = next[e]) {
                 int nextV = v[e];
                 if (nextV == parentNode) continue;
+                isLeaf = false;
                 node[idx] = nextV;
                 parent[idx] = curV;
                 depth[idx++] = d ^ 1;
             }
+            if (isLeaf) sum ^= d;
         }
         System.out.print((sum == 1) ? "Yes" : "No");
     }
