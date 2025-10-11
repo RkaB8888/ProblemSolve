@@ -4,16 +4,22 @@ import java.util.*;
 /**
  * @author python98
  * @description 이 클래스에 대한 동작 설명
- * @performance 메모리: 153,148 KB, 동작시간: 580 ms
+ * @performance 메모리: 143,712 KB, 동작시간: 528 ms
  */
 public class Main {
     static int N, totalStep;
     static int[] step, link, next, v;
     static boolean[] leaf;
 
+    private static int nextInt() throws IOException {
+        int n, c;
+        while((n=System.in.read())<=32);
+        n&=15;
+        while((c=System.in.read())>32) n = (n<<3) + (n<<1) + (c&15);
+        return n;
+    }
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
+        N = nextInt();
         step = new int[N + 1];
         Arrays.fill(step, -1);
         link = new int[N + 1];
@@ -21,9 +27,7 @@ public class Main {
         v = new int[N << 1];
         leaf = new boolean[N + 1];
         for (int i = 1; i < N; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
+            int a = nextInt(), b = nextInt();
             next[(i << 1)] = link[a];
             link[a] = (i << 1);
             v[(i << 1)] = b;
