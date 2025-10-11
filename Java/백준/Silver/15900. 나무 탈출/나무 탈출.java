@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * @author python98
  * @description 이 클래스에 대한 동작 설명
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @performance 메모리: 153,148 KB, 동작시간: 580 ms
  */
 public class Main {
     static int N, totalStep;
@@ -20,7 +20,7 @@ public class Main {
         next = new int[N << 1];
         v = new int[N << 1];
         leaf = new boolean[N + 1];
-        for (int i = 1; i < N ; i++) {
+        for (int i = 1; i < N; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
@@ -34,26 +34,27 @@ public class Main {
         }
 
         dfs();
-        for (int i = 1 ; i <= N ; i++) {
-            if(leaf[i]) totalStep += step[i];
+        for (int i = 1; i <= N; i++) {
+            if (leaf[i]) totalStep += step[i];
         }
         System.out.print((totalStep & 1) == 1 ? "Yes" : "No");
     }
 
     private static void dfs() {
-        Queue<Integer> q = new ArrayDeque<>();
+        int[] q = new int[N];
+        int b = 0, t = 0;
         leaf[1] = true;
         step[1] = 0;
-        q.add(1);
-        while (!q.isEmpty()) {
-            int curV = q.poll();
+        q[t++] = 1;
+        while (b<t) {
+            int curV = q[b++];
             for (int e = link[curV]; e > 0; e = next[e]) {
                 int nextV = v[e];
                 if (step[nextV] >= 0) continue;
                 leaf[curV] = false;
                 leaf[nextV] = true;
                 step[nextV] = step[curV] + 1;
-                q.add(nextV);
+                q[t++] = nextV;
             }
         }
     }
