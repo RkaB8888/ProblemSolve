@@ -15,22 +15,17 @@ int main(void)
     int N;
     if (scanf("%d", &N) != 1)
         return 1;
-
-    int temp = 0, two = 0, five = 0;
+    int temp = 1, count = 0;
     for (int i = 2; i <= N; i++)
     {
-        temp = i;
-        while (temp % 2 == 0)
+        temp *= i;
+        while (temp % 10 == 0)
         {
-            two++;
-            temp /= 2;
+            count++;
+            temp /= 10;
         }
-        while (temp % 5 == 0)
-        {
-            five++;
-            temp /= 5;
-        }
+        temp %= 100000;
     }
-    printf("%d\n", two < five ? two : five);
+    printf("%d\n", count);
     return 0;
 }
