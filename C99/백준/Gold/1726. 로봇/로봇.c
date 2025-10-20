@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 /**
- * @description ?
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @description BFS + 원형 큐 + 3차원 방문배열
+ * @performance 메모리: 1,216 KB, 동작시간: 0 ms
  * @author java08
  */
 
@@ -94,7 +94,7 @@ int main(void)
             if (current.x == robot_end_x && current.y == robot_end_y && current.dir == robot_end_direction)
             {
                 printf("%d\n", steps);
-                break;
+                return 0;
             }
             // 회전 (좌, 우)
             int new_dir = (current.dir + 4 - 1) % 4;
