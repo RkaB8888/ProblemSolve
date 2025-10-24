@@ -6,16 +6,9 @@
 
 /**
  * @description 정렬(qsort) + 배열
- * @performance 메모리: 2,108 KB, 동작시간: 24 ms
+ * @performance 메모리: 1,484 KB, 동작시간: 24 ms
  * @author java08
  */
-
-static int compare(const void *a, const void *b)
-{
-    int tree1 = *(int *)a;
-    int tree2 = *(int *)b;
-    return tree1 - tree2;
-}
 
 int main(void)
 {
@@ -34,7 +27,8 @@ int main(void)
         }
         result += h;
     }
-    int grow[n];
+    int *grow = malloc(n * sizeof(int));
+    int max = 0;
     for (int i = 0; i < n; i++)
     {
         int a;
@@ -43,13 +37,32 @@ int main(void)
             return 1; // 입력 오류 처리
         }
         grow[i] = a;
+        if (a > max)
+        {
+            max = a;
+        }
     }
-    qsort(grow, n, sizeof(int), compare);
+    int *count = calloc(max + 1, sizeof(int));
+    for (int i = 0; i < n; i++)
+    {
+        count[grow[i]]++;
+    }
+    int idx = 0;
+    for (int i = 1; i <= max; i++)
+    {
+        for (; count[i]; count[i]--)
+        {
+            grow[idx++] = i;
+        }
+    }
+    free(count);
+
     for (int i = 0; i < n; i++)
     {
         result += grow[i] * i;
     }
-
     printf("%ld\n", result);
+
+    free(grow);
     return 0;
 }
