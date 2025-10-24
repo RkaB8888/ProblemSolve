@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 /**
- * @description 정렬(qsort) + 배열
- * @performance 메모리: 1,484 KB, 동작시간: 24 ms
+ * @description Counting Sort
+ * @performance 메모리: 1,364 KB, 동작시간: 16 ms
  * @author java08
  */
 
@@ -15,7 +15,7 @@ int main(void)
     int n;
     if (scanf("%d", &n) != 1)
     {
-        return 1; // 입력 오류 처리
+        return 1;
     }
     long result = 0;
     for (int i = 0; i < n; i++)
@@ -23,7 +23,7 @@ int main(void)
         int h;
         if (scanf("%d", &h) != 1)
         {
-            return 1; // 입력 오류 처리
+            return 1;
         }
         result += h;
     }
@@ -34,7 +34,7 @@ int main(void)
         int a;
         if (scanf("%d", &a) != 1)
         {
-            return 1; // 입력 오류 처리
+            return 1;
         }
         grow[i] = a;
         if (a > max)
@@ -42,27 +42,23 @@ int main(void)
             max = a;
         }
     }
+
+    // 카운팅 배열
     int *count = calloc(max + 1, sizeof(int));
     for (int i = 0; i < n; i++)
     {
         count[grow[i]]++;
     }
+    free(grow);
     int idx = 0;
     for (int i = 1; i <= max; i++)
     {
         for (; count[i]; count[i]--)
         {
-            grow[idx++] = i;
+            result += i * idx++;
         }
     }
-    free(count);
-
-    for (int i = 0; i < n; i++)
-    {
-        result += grow[i] * i;
-    }
     printf("%ld\n", result);
-
-    free(grow);
+    free(count);
     return 0;
 }
