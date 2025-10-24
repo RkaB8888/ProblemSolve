@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 /**
- * @description ?
+ * @description 수학적 분할(Quotient 분배) + 반복 계산
  * @performance 메모리: 1,112 KB, 동작시간: 0 ms
  * @author java08
  */
@@ -18,20 +18,11 @@ int main(void)
         return 1; // 입력 오류 처리
     }
 
-    int quotient = S / K;
-    int remainder = S % K;
+    int q = S / K, r = S % K;
     long long result = 1;
-    for (int i = 0; i < K; i++)
+    while (K--)
     {
-        if (remainder)
-        {
-            result *= (quotient + 1);
-            remainder--;
-        }
-        else
-        {
-            result *= quotient;
-        }
+        result *= (K < r) ? (q + 1) : q;
     }
     printf("%lld\n", result);
     return 0;
