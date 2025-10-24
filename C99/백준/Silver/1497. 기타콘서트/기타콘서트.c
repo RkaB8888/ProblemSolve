@@ -6,14 +6,14 @@
 
 /**
  * @description dfs + bitmask
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @performance 메모리: 1,116 KB, 동작시간: 0 ms
  * @author java08
  */
 
 static int N, M, result, songTotal;
 
-// 기타 정보, 몇 번째 기타, 기타 사용 갯수, 가능한 노래 비트마스크, 연주 가능한 곡 갯수
-static void dfs(long long *guitar, int depth, int cnt, long long bitmask, int songCnt)
+// 기타 정보, 몇 번째 기타, 기타 사용 갯수, 가능한 노래 비트마스크
+static void dfs(long long *guitar, int depth, int cnt, long long bitmask)
 {
     if (songTotal == M && result <= cnt)
     {
@@ -21,6 +21,12 @@ static void dfs(long long *guitar, int depth, int cnt, long long bitmask, int so
     }
     if (depth == N)
     {
+        int songCnt = 0;
+        while (bitmask)
+        {
+            bitmask &= bitmask - 1;
+            songCnt++;
+        }
         if (songCnt > songTotal)
         {
             songTotal = songCnt;
@@ -32,16 +38,8 @@ static void dfs(long long *guitar, int depth, int cnt, long long bitmask, int so
         }
         return;
     }
-    dfs(guitar, depth + 1, cnt, bitmask, songCnt);
-    int nextSongCnt = songCnt;
-    long long nextBitmask = ~bitmask & guitar[depth];
-    while (nextBitmask)
-    {
-        nextBitmask &= (nextBitmask - 1);
-        nextSongCnt++;
-    }
-    nextBitmask = bitmask | guitar[depth];
-    dfs(guitar, depth + 1, cnt + 1, nextBitmask, nextSongCnt);
+    dfs(guitar, depth + 1, cnt, bitmask);
+    dfs(guitar, depth + 1, cnt + 1, bitmask | guitar[depth]);
 }
 
 int main(void)
@@ -75,8 +73,8 @@ int main(void)
         guitar[i] = bitmask;
     }
     result = N + 1;
-    // 기타 정보, 몇 번째 기타, 기타 사용 갯수, 가능한 노래 비트마스크, 연주 가능한 곡 갯수
-    dfs(guitar, 0, 0, 0LL, 0);
+    // 기타 정보, 몇 번째 기타, 기타 사용 갯수, 가능한 노래 비트마스크
+    dfs(guitar, 0, 0, 0LL);
     if (!result)
     {
         result = -1;
