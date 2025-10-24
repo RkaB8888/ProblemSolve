@@ -5,20 +5,16 @@
 #include <stdint.h>
 
 /**
- * @description ?
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @description 정렬(qsort) + 배열
+ * @performance 메모리: 2,108 KB, 동작시간: 24 ms
  * @author java08
  */
 
 static int compare(const void *a, const void *b)
 {
-    int *tree1 = (int *)a;
-    int *tree2 = (int *)b;
-    if (tree1[1] != tree2[1])
-    {
-        return (tree1[1] < tree2[1]) ? -1 : 1;
-    }
-    return (tree1[0] > tree2[0]) ? -1 : 1;
+    int tree1 = *(int *)a;
+    int tree2 = *(int *)b;
+    return tree1 - tree2;
 }
 
 int main(void)
@@ -28,7 +24,7 @@ int main(void)
     {
         return 1; // 입력 오류 처리
     }
-    int (*tree)[2] = malloc(sizeof(int[2]) * n);
+    long result = 0;
     for (int i = 0; i < n; i++)
     {
         int h;
@@ -36,8 +32,9 @@ int main(void)
         {
             return 1; // 입력 오류 처리
         }
-        tree[i][0] = h;
+        result += h;
     }
+    int grow[n];
     for (int i = 0; i < n; i++)
     {
         int a;
@@ -45,16 +42,14 @@ int main(void)
         {
             return 1; // 입력 오류 처리
         }
-        tree[i][1] = a;
+        grow[i] = a;
     }
-    qsort(tree, n, sizeof(int[2]), compare);
-    long result = 0;
+    qsort(grow, n, sizeof(int), compare);
     for (int i = 0; i < n; i++)
     {
-        result += tree[i][0] + tree[i][1] * i;
+        result += grow[i] * i;
     }
 
     printf("%ld\n", result);
-    free(tree);
     return 0;
 }
