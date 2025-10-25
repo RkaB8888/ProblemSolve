@@ -1,108 +1,97 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <stdint.h>
 
 /**
- * @description ?
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @description 백트래킹(타이트) + 그리디 + 계수배열
+ * @performance 메모리: 1,116 KB, 동작시간: 0 ms
  * @author java08
  */
 
-static int cmp(const void *a, const void *b)
-{
-    return (*(char *)b - *(char *)a);
-}
+static int Bd[10], lenA, lenB;
+static int cnt[10]; // 자릿수 카운팅
+static int ansd[10];
 
-static bool dfs(int depth, int lenA, char *A, char *B, char *C, bool *used, bool *notEqual)
+static bool dfs(int pos, bool tight)
 {
-    if (depth == lenA)
+    if (pos == lenA)
+        return true; // 전부 채웠음
+
+    int limit = tight ? Bd[pos] : 9;
+    for (int d = limit; d >= 0; --d)
     {
-        return *notEqual;
-    }
-    for (int i = 0; i < lenA; i++)
-    {
-        if (used[i])
+        if (cnt[d] == 0)
             continue;
-        if (*notEqual)
-        {
-            used[i] = true;
-            C[depth] = A[i];
-            if (dfs(depth + 1, lenA, A, B, C, used, notEqual))
-                return true;
-            used[i] = false;
-        }
-        else
-        {
-            if (depth == 0 && A[i] == '0')
-                continue;
-            if (A[i] < B[depth])
-            {
-                used[i] = true;
-                C[depth] = A[i];
-                *notEqual = true;
-                if (dfs(depth + 1, lenA, A, B, C, used, notEqual))
-                    return true;
-                *notEqual = false;
-                used[i] = false;
-            }
-            else if (A[i] == B[depth])
-            {
-                used[i] = true;
-                C[depth] = A[i];
-                if (dfs(depth + 1, lenA, A, B, C, used, notEqual))
-                    return true;
-                used[i] = false;
-            }
-        }
+        if (pos == 0 && d == 0)
+            continue; // 선행 0 금지
+
+        cnt[d]--;
+        ansd[pos] = d;
+        bool next_tight = tight && (d == limit);
+        if (dfs(pos + 1, next_tight))
+            return true;
+        cnt[d]++;
     }
     return false;
 }
 
 int main(void)
 {
-    char A[11], B[11];
-    if (scanf("%10s %10s", A, B) != 2)
-    {
+    char A[12], B[12];
+    if (scanf("%11s %11s", A, B) != 2)
         return 1;
-    }
-    size_t lenA = strlen(A);
-    size_t lenB = strlen(B);
+
+    lenA = (int)strlen(A);
+    lenB = (int)strlen(B);
 
     if (lenA > lenB)
     {
-        printf("-1\n");
+        puts("-1");
         return 0;
     }
-    else if (lenA < lenB)
-    {
-        qsort(A, lenA, sizeof(char), cmp);
-        int temp = 0;
-        for (int i = 0; i < lenA; i++)
-        {
-            temp = (temp << 3) + (temp << 1) + (A[i] & 15);
-        }
-        printf("%d\n", temp);
-        return 0;
-    }
-    qsort(A, lenA, sizeof(char), cmp);
 
-    char C[11];
-    C[lenA] = '\0';
-    bool used[11] = {false}, notEqual = false;
-    if (dfs(0, lenA, A, B, C, used, &notEqual))
+    memset(cnt, 0, sizeof(cnt));
+    for (int i = 0; A[i]; ++i)
+        cnt[A[i] - '0']++;
+
+    if (lenA < lenB)
     {
-        int result = 0;
-        for (size_t i = 0; i < lenA; i++)
+        for (int d = 9; d >= 1; --d)
         {
-            result = (result << 3) + (result << 1) + (C[i] & 15);
+            if (cnt[d])
+            {
+                ansd[0] = d;
+                cnt[d]--;
+                break;
+            }
         }
-        printf("%d\n", result);
+
+        int pos = 1;
+        for (int d = 9; d >= 0; --d)
+        {
+            while (cnt[d]--)
+                ansd[pos++] = d;
+        }
+
+        int val = 0;
+        for (int i = 0; i < lenA; ++i)
+            val = val * 10 + ansd[i];
+        printf("%d\n", val);
+        return 0;
     }
-    else
+
+    for (int i = 0; i < lenA; ++i)
+        Bd[i] = B[i] - '0';
+
+    if (!dfs(0, true))
     {
-        printf("-1\n");
+        puts("-1");
+        return 0;
     }
+
+    int val = 0;
+    for (int i = 0; i < lenA; ++i)
+        val = val * 10 + ansd[i];
+    printf("%d\n", val);
     return 0;
 }
