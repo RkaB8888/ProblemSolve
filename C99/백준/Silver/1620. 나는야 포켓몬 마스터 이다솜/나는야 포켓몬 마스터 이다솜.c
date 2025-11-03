@@ -6,10 +6,10 @@
 
 /**
  * @description djb2 해시
- * @performance 메모리: 5,916 KB, 동작시간: 232 ms
+ * @performance 메모리: 3,556 KB, 동작시간: 68 ms
  * @author java08
  */
-#define HASH_SIZE 100003
+#define HASH_SIZE 199999
 static char (*arr)[21];
 
 static int hash_table[HASH_SIZE];
@@ -17,16 +17,6 @@ static int hash_table[HASH_SIZE];
 static inline int is_number(const char *str)
 {
     return str[0] >= '0' && str[0] <= '9';
-}
-
-static inline int char2int(char c)
-{
-    if (c >= 'A' && c <= 'Z')
-        return c - 'A';
-    else if (c >= 'a' && c <= 'z')
-        return c - 'a' + 26;
-
-    return -1;
 }
 
 static unsigned long long djb2(const char *str)
