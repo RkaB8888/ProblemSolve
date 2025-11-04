@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 /**
- * @description ?
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @description 구현
+ * @performance 메모리: 1,116 KB, 동작시간: 0 ms
  * @author java08
  */
 
@@ -23,42 +23,30 @@ static int table[10][7] = {
     {1, 1, 1, 1, 0, 1, 1}  // 9
 };
 
+static inline void putchar_n(char c, int n)
+{
+    for (int i = 0; i < n; i++)
+        putchar(c);
+}
+
 static void process(int s, char *n)
 {
+    int len = strlen(n);
     for (int i = 0; i < 5; i++)
     {
         if (i == 1 || i == 3) // 세로줄
         {
+            int left = (i == 1) ? 1 : 4;
+            int right = (i == 1) ? 2 : 5;
             for (int k = 0; k < s; k++) // 행 반복
             {
-                for (int j = 0; j < strlen(n); j++)
+                for (int j = 0; j < len; j++)
                 {
-                    if (i == 1)
-                    {
-                        if (table[n[j] - '0'][1])
-                            putchar('|');
-                        else
-                            putchar(' ');
-                        for (int k = 0; k < s; k++) // 열 반복
-                            putchar(' ');
-                        if (table[n[j] - '0'][2])
-                            putchar('|');
-                        else
-                            putchar(' ');
-                    }
-                    else
-                    {
-                        if (table[n[j] - '0'][4])
-                            putchar('|');
-                        else
-                            putchar(' ');
-                        for (int k = 0; k < s; k++) // 열 반복
-                            putchar(' ');
-                        if (table[n[j] - '0'][5])
-                            putchar('|');
-                        else
-                            putchar(' ');
-                    }
+                    int d = n[j] - '0';
+                    int *seg = table[d];
+                    putchar(seg[left] ? '|' : ' ');
+                    putchar_n(' ', s); // 열 반복
+                    putchar(seg[right] ? '|' : ' ');
                     putchar(' ');
                 }
                 putchar('\n');
@@ -66,31 +54,14 @@ static void process(int s, char *n)
         }
         else // 가로줄
         {
+            int seg_row = (i == 0) ? 0 : ((i == 2) ? 3 : 6);
             for (int j = 0; j < strlen(n); j++)
             {
+                int d = n[j] - '0';
+                int *seg = table[d];
                 putchar(' ');
-                if (i == 0 && table[n[j] - '0'][0])
-                {
-                    for (int k = 0; k < s; k++) // 열 반복
-                        putchar('-');
-                }
-                else if (i == 2 && table[n[j] - '0'][3])
-                {
-                    for (int k = 0; k < s; k++) // 열 반복
-                        putchar('-');
-                }
-                else if (i == 4 && table[n[j] - '0'][6])
-                {
-                    for (int k = 0; k < s; k++) // 열 반복
-                        putchar('-');
-                }
-                else
-                {
-                    for (int k = 0; k < s; k++) // 열 반복
-                        putchar(' ');
-                }
-                putchar(' ');
-                putchar(' ');
+                putchar_n(seg[seg_row] ? '-' : ' ', s);
+                putchar_n(' ', 2);
             }
             putchar('\n');
         }
@@ -100,10 +71,9 @@ static void process(int s, char *n)
 int main(void)
 {
     int s;
+    char n[11];
     scanf("%d", &s);
-    char *n = malloc(sizeof(char) * (s + 1));
-    scanf("%s", n);
+    scanf("%10s", n);
     process(s, n);
-    free(n);
     return 0;
 }
