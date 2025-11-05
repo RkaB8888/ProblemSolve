@@ -5,79 +5,178 @@
 #include <stdint.h>
 
 /**
- * @description MST 크루스칼
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @description Prim + Min-Heap + Adjacency List
+ * @performance 메모리: 4,252 KB, 동작시간: 88 ms
  * @author java08
  */
 
-static int V, E;
-static int *group;
+#define MAX 1000001
 
-static int cmp(const void *a, const void *b)
+static int V, E;
+static int q_size;
+static int *link, *next, *val, *node;
+static int *vertex_q;
+static int *pos_in_heap;
+static int *min_cost;
+static bool *visited;
+
+static inline void heap_swap(int i, int j)
 {
-    return ((int *)a)[0] - ((int *)b)[0];
+    int vi = vertex_q[i], vj = vertex_q[j];
+    vertex_q[i] = vj;
+    vertex_q[j] = vi;
+    pos_in_heap[vi] = j;
+    pos_in_heap[vj] = i;
 }
 
-static void union_init()
+static void heap_bubble_up(int i)
 {
-    group = malloc((V + 1) * sizeof(int));
-    for (int i = 0; i <= V; i++)
+    while (i > 1)
     {
-        group[i] = i;
+        int p = i >> 1;
+        if (min_cost[vertex_q[p]] <= min_cost[vertex_q[i]])
+            break;
+
+        heap_swap(i, p);
+        i = p;
     }
 }
 
-static int union_find(int a)
+static void heap_bubble_down(int i)
 {
-    if (group[a] == a)
-        return a;
-    return group[a] = union_find(group[a]);
+    while (1)
+    {
+        int l = i << 1, r = l + 1, s = i;
+        if (l <= q_size && min_cost[vertex_q[l]] < min_cost[vertex_q[s]])
+            s = l;
+        if (r <= q_size && min_cost[vertex_q[r]] < min_cost[vertex_q[s]])
+            s = r;
+        if (s == i)
+            break;
+        heap_swap(i, s);
+        i = s;
+    }
 }
 
-static bool union_set(int a, int b)
+static void MHQ_push(int v) // edge의 가중치가 낮은 것이 위로
 {
-    int ga = union_find(a);
-    int gb = union_find(b);
-    if (ga == gb)
-        return false;
-    group[gb] = ga;
-    return true;
+    if (pos_in_heap[v] != -1)
+        return;
+    vertex_q[++q_size] = v;
+    pos_in_heap[v] = q_size;
+    heap_bubble_up(q_size);
 }
 
-static void union_delete()
+static void MHQ_decrease_key(int v)
 {
-    free(group);
+    int i = pos_in_heap[v];
+    if (i == -1)
+    {
+        MHQ_push(v);
+        return;
+    }
+    heap_bubble_up(i);
+}
+
+static int MHQ_pop()
+{
+    if (q_size == 0)
+        return -1;
+    int top = vertex_q[1];
+    pos_in_heap[top] = -1;
+
+    vertex_q[1] = vertex_q[q_size--];
+    pos_in_heap[vertex_q[1]] = 1;
+
+    if (q_size > 1)
+        heap_bubble_down(1);
+
+    return top;
 }
 
 int main(void)
 {
     if (scanf("%d %d", &V, &E) != 2)
         return 1;
-    int (*edges)[3] = malloc(E * sizeof(int[3]));
+
+    link = malloc((V + 1) * sizeof(int));
+    next = malloc((E << 1) * sizeof(int));
+    val = malloc((E << 1) * sizeof(int));
+    node = malloc((E << 1) * sizeof(int));
+    visited = malloc((V + 1) * sizeof(bool));
+    memset(visited, 0, (V + 1) * sizeof(bool));
+    min_cost = malloc((V + 1) * sizeof(int));
+    vertex_q = malloc((V + 1) * sizeof(int));
+    pos_in_heap = malloc((V + 1) * sizeof(int));
+
+    for (int i = 0; i <= V; i++)
+    {
+        link[i] = -1;
+        min_cost[i] = MAX;
+        pos_in_heap[i] = -1;
+    }
+
     for (int i = 0; i < E; i++)
     {
         int a, b, c;
         if (scanf("%d %d %d", &a, &b, &c) != 3)
             return 1;
-        edges[i][0] = c;
-        edges[i][1] = a;
-        edges[i][2] = b;
-    }
-    qsort(edges, E, sizeof(int[3]), cmp);
 
-    union_init();
-    int e_idx = 0, v_cnt = 1, val = 0;
-    while (e_idx < E && v_cnt < V)
+        int e1 = i << 1;
+        int e2 = e1 + 1;
+
+        next[e1] = link[a];
+        link[a] = e1;
+        node[e1] = b;
+        val[e1] = c;
+
+        next[e2] = link[b];
+        link[b] = e2;
+        node[e2] = a;
+        val[e2] = c;
+    }
+
+    int result = 0;
+    int picked = 0;
+
+    min_cost[1] = 0;
+    MHQ_push(1);
+
+    while (q_size > 0 && picked < V)
     {
-        int *cur = edges[e_idx++];
-        if (union_set(cur[1], cur[2]))
+        int u = MHQ_pop();
+        if (u == -1)
+            break;
+        if (visited[u])
+            continue;
+        visited[u] = true;
+        result += min_cost[u];
+        picked++;
+
+        for (int e = link[u]; e >= 0; e = next[e])
         {
-            v_cnt++;
-            val += cur[0];
+            int v = node[e];
+            int w = val[e];
+            if (!visited[v] && w < min_cost[v])
+            {
+                min_cost[v] = w;
+                if (pos_in_heap[v] == -1)
+                    MHQ_push(v);
+                else
+                    MHQ_decrease_key(v);
+            }
         }
     }
-    printf("%d", val);
-    free(edges);
-    union_delete();
+
+    printf("%d\n", result);
+
+    free(link);
+    free(next);
+    free(val);
+    free(node);
+    free(visited);
+    free(min_cost);
+    free(vertex_q);
+    free(pos_in_heap);
     return 0;
 }
