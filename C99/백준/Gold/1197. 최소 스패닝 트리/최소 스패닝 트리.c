@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 /**
- * @description Prim + Min-Heap + Adjacency List
- * @performance 메모리: 4,252 KB, 동작시간: 88 ms
+ * @description Prim + Binary Heap(Decrease-Key) + Adjacency List
+ * @performance 메모리: 3,636 KB, 동작시간: 40 ms
  * @author java08
  */
 
@@ -19,6 +19,24 @@ static int *vertex_q;
 static int *pos_in_heap;
 static int *min_cost;
 static bool *visited;
+
+static inline int fast_i()
+{
+    int s = 1, c, n;
+    while ((n = getchar()) <= 32)
+        ;
+    if (n == '-')
+    {
+        s = -1;
+        n = getchar();
+    }
+    n &= 15;
+    while ((c = getchar()) > 32)
+    {
+        n = (n << 3) + (n << 1) + (c & 15);
+    }
+    return s * n;
+}
 
 static inline void heap_swap(int i, int j)
 {
@@ -85,8 +103,10 @@ static int MHQ_pop()
     int top = vertex_q[1];
     pos_in_heap[top] = -1;
 
-    vertex_q[1] = vertex_q[q_size--];
-    pos_in_heap[vertex_q[1]] = 1;
+    vertex_q[1] = vertex_q[q_size];
+    if (q_size >= 1)
+        pos_in_heap[vertex_q[1]] = 1;
+    q_size--;
 
     if (q_size > 1)
         heap_bubble_down(1);
@@ -96,8 +116,8 @@ static int MHQ_pop()
 
 int main(void)
 {
-    if (scanf("%d %d", &V, &E) != 2)
-        return 1;
+    V = fast_i();
+    E = fast_i();
 
     link = malloc((V + 1) * sizeof(int));
     next = malloc((E << 1) * sizeof(int));
@@ -118,9 +138,7 @@ int main(void)
 
     for (int i = 0; i < E; i++)
     {
-        int a, b, c;
-        if (scanf("%d %d %d", &a, &b, &c) != 3)
-            return 1;
+        int a = fast_i(), b = fast_i(), c = fast_i();
 
         int e1 = i << 1;
         int e2 = e1 + 1;
@@ -147,8 +165,6 @@ int main(void)
         int u = MHQ_pop();
         if (u == -1)
             break;
-        if (visited[u])
-            continue;
         visited[u] = true;
         result += min_cost[u];
         picked++;
