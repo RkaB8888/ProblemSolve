@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 /**
- * @description MST(크루스칼)
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @description MST(크루스칼) + Union-Find(경로 압축, 랭크)
+ * @performance 메모리: 1,584 KB, 동작시간: 16 ms
  * @author java08
  */
 
@@ -50,15 +50,19 @@ static bool union_set(int a, int b)
 
     if (root_a == root_b)
         return false;
-    if (rank[a] < rank[b])
+
+    if (rank[root_a] < rank[root_b])
+    {
+        group[root_a] = root_b;
+    }
+    else if (rank[root_a] > rank[root_b])
     {
         group[root_b] = root_a;
-        rank[a] = rank[b] + 1 > rank[a] ? rank[b] + 1 : rank[a];
     }
     else
     {
-        group[root_a] = root_b;
-        rank[b] = rank[a] + 1 > rank[b] ? rank[a] + 1 : rank[b];
+        group[root_b] = root_a;
+        rank[root_a]++;
     }
     return true;
 }
