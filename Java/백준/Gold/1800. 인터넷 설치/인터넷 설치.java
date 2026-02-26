@@ -3,17 +3,28 @@ import java.util.*;
 
 /**
  * @description 이분탐색 + BFS
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @performance 메모리: 18,252 KB, 동작시간: 172 ms
  * @author python98
  */
 public class Main {
 	static int N, P, K;
 	static int[] list, next, node, val;
+	static int[] visited;
 	static int[][] q = new int[10000][2];
+
+	private static final InputStream in = System.in;
+	private static int nextInt() throws IOException{
+		int c, n;
+		while((c = in.read())<=32);
+		n = c & 15;
+		while((c = in.read())>32){
+			n = (n << 3) + (n<<1) + (c&15);
+		}
+		return n;
+	}
 
 	private static boolean bfs(int line){
 		int front = 0, rear = 0;
-		int[] visited = new int[N+1];
 		Arrays.fill(visited,K+1);
 
 		q[rear][0] = 1;
@@ -42,11 +53,9 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		N = Integer.parseInt(st.nextToken());
-		P = Integer.parseInt(st.nextToken());
-		K = Integer.parseInt(st.nextToken());
+		N = nextInt();
+		P = nextInt();
+		K = nextInt();
 
 		list = new int[N+1];
 		Arrays.fill(list, -1);
@@ -59,10 +68,9 @@ public class Main {
 			int i1 = i<<1;
 			int i2 = i1+1;
 
-			st = new StringTokenizer(br.readLine());
-			int a = Integer.parseInt(st.nextToken());
-			int b = Integer.parseInt(st.nextToken());
-			int c = Integer.parseInt(st.nextToken());
+			int a = nextInt();
+			int b = nextInt();
+			int c = nextInt();
 			maxCost = Math.max(maxCost, c);
 
 			next[i1] = list[a];
@@ -78,6 +86,7 @@ public class Main {
 		int result = -1;
 		while(minCost <= maxCost){
 			int line = (minCost+maxCost)>>1;
+			visited = new int[N+1];
 			if(bfs(line)){
 				result = line;
 				maxCost = line - 1;
