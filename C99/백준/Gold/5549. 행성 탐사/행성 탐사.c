@@ -6,10 +6,10 @@
 
 /**
  * @description 2차원 누적합
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @performance 메모리: 12,732 KB, 동작시간: 92 ms
  * @author java08
  */
-
+int dp[3][1001][1001];
 int main(void)
 {
     int M, N, K;
@@ -17,15 +17,6 @@ int main(void)
         return 1;
     if (scanf("%d", &K) != 1)
         return 1;
-    int **dp[3];
-    for (int i = 0; i < 3; i++)
-    {
-        dp[i] = malloc((M + 1) * sizeof(int *));
-        for (int j = 0; j <= M; j++)
-        {
-            dp[i][j] = calloc((N + 1), sizeof(int));
-        }
-    }
     for (int i = 1; i <= M; i++)
     {
         char line[1001];
@@ -46,12 +37,11 @@ int main(void)
         int x1, y1, x2, y2;
         if (scanf("%d %d %d %d", &x1, &y1, &x2, &y2) != 4)
             return 1;
-        int result[3];
-        for (int j = 0; j < 3; j++)
-        {
-            result[j] = dp[j][x2][y2] - dp[j][x1 - 1][y2] - dp[j][x2][y1 - 1] + dp[j][x1 - 1][y1 - 1];
-        }
-        printf("%d %d %d\n", result[0], result[1], result[2]);
+
+        printf("%d %d %d\n",
+               dp[0][x2][y2] - dp[0][x1 - 1][y2] - dp[0][x2][y1 - 1] + dp[0][x1 - 1][y1 - 1],
+               dp[1][x2][y2] - dp[1][x1 - 1][y2] - dp[1][x2][y1 - 1] + dp[1][x1 - 1][y1 - 1],
+               dp[2][x2][y2] - dp[2][x1 - 1][y2] - dp[2][x2][y1 - 1] + dp[2][x1 - 1][y1 - 1]);
     }
     return 0;
 }
