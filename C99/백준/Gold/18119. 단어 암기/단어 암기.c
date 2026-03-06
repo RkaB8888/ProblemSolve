@@ -24,7 +24,6 @@ int main(void)
         return 1;
 
     int rem_cnt[10001] = {0}; // 암기 카운팅 (0이면 전부 암기 상태)
-    // bool cmap[26][10001] = {0}; // 각 단어에 들어있는 알파벳 유무
     node alpha[26];
     for (int i = 0; i < 26; i++)
     {
@@ -40,7 +39,6 @@ int main(void)
             return 1;
         for (char *c = temp; *c; c++)
         {
-            // cmap[*c - 'a'][i] = true;
             if (alpha[*c - 'a'].word[alpha[*c - 'a'].len - 1] != i)
             {
                 alpha[*c - 'a'].word[alpha[*c - 'a'].len] = i;
