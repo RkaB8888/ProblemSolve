@@ -3,7 +3,7 @@ import java.util.*;
 
 /**
  * @description odd-only sieve + bitset + long
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @performance 메모리: 50,808 KB, 동작시간: 724 ms
  * @author python98
  */
 public class Main {
@@ -18,8 +18,17 @@ public class Main {
 	private static void set(int n) {
 		prime[n>>7] |= (1L<<(((n>>1)&63)));
 	}
+
+	private static int nextInt() throws IOException{
+		int c, n = 0;
+		while ((n = System.in.read()) <= 32);
+		n &= 15;
+		while ((c = System.in.read()) > 32) {
+       		n = (n << 3) + (n << 1) + (c & 15);
+    	}
+		return n;
+	}
 	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder sb = new StringBuilder();
 
 		for(int i = 3 ; i * i <= MAX ; i+=2) {
@@ -32,7 +41,7 @@ public class Main {
 		}
 
 		while(true){
-			int n = Integer.parseInt(br.readLine());
+			int n = nextInt();
 			boolean find = false;
 			if(n==0) break;
 			for(int i = 3 ; i <= n/2 ; i+=2) {
