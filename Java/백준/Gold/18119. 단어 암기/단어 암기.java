@@ -3,10 +3,36 @@ import java.util.*;
 
 /**
  * @description 역인덱스 + 상태 카운팅
- * @performance 메모리: ? KB, 동작시간: ? ms
+ * @performance 메모리: 73,088 KB, 동작시간: 612 ms
  * @author python98
  */
 public class Main {
+	static char nextChar() throws IOException {
+		int c;
+		while ((c = System.in.read()) <= 32);
+		return (char)c;
+	}
+
+	static int nextInt() throws IOException {
+		int c, n = 0;
+		while ((n = System.in.read()) <= 32);
+		n &= 15;
+		while ((c = System.in.read()) > 32) {
+			n = (n << 3) + (n << 1) + (c & 15);
+		}
+		return n;
+	}
+	static int readWord(char[] buf) throws IOException {
+		int c, len = 0;
+
+		while ((c = System.in.read()) <= 32);
+
+		do {
+			buf[len++] = (char)c;
+		} while ((c = System.in.read()) > 32);
+
+		return len;
+	}
 
 	private static class Node{
 		boolean rem;
@@ -21,34 +47,32 @@ public class Main {
 		}
 	}
 	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder sb = new StringBuilder();
-		StringTokenizer st = new StringTokenizer(br.readLine());
 
-		int N = Integer.parseInt(st.nextToken());
-		int M = Integer.parseInt(st.nextToken());
+		int N = nextInt();
+		int M = nextInt();
 		Node[] alpha = new Node[26];
 		for(int i = 0 ; i < 26 ; i++) {
 			alpha[i] = new Node(N);
 		}
 
+		char[] input = new char[1000];
 		for(int i = 0 ; i < N ; i++) {
-			char[] input = br.readLine().toCharArray();
-			for(char c : input){
-				if(alpha[c-'a'].lastWord==i) continue;
-				alpha[c-'a'].lastWord = i;
-				alpha[c-'a'].words[alpha[c-'a'].len] = i;
-				alpha[c-'a'].len++;
+			int len = readWord(input);
+			for(int j = 0 ; j < len ; j++){
+				int idx = input[j] - 'a';
+				if(alpha[idx].lastWord==i) continue;
+				alpha[idx].lastWord = i;
+				alpha[idx].words[alpha[idx].len] = i;
+				alpha[idx].len++;
 			}
 		}
 
 		int result = N;
 		int[] words_cnt = new int[N];
-		Arrays.fill(words_cnt,0);
 		for(int i = 0 ; i < M ; i++) {
-			st = new StringTokenizer(br.readLine());
-			int d = Integer.parseInt(st.nextToken());
-			char c = st.nextToken().charAt(0);
+			int d = nextInt();
+			char c = nextChar();
 			if(d==1) { // 잊어야 한다
 				if(!alpha[c-'a'].rem) continue;
 				Node node = alpha[c-'a'];
