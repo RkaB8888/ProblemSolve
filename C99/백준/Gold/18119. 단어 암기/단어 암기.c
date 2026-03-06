@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 /**
- * @description 구현
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @description 역인덱스 + 상태 카운팅
+ * @performance 메모리: 3,068 KB, 동작시간: 184 ms
  * @author java08
  */
 
@@ -23,8 +23,8 @@ int main(void)
     if (scanf("%d %d", &N, &M) != 2)
         return 1;
 
-    int rem_cnt[10001] = {0};  // 암기 카운팅 (0이면 전부 암기 상태)
-    int cmap[26][10001] = {0}; // 각 단어에 들어있는 알파벳 갯수
+    int rem_cnt[10001] = {0}; // 암기 카운팅 (0이면 전부 암기 상태)
+    // bool cmap[26][10001] = {0}; // 각 단어에 들어있는 알파벳 유무
     node alpha[26];
     for (int i = 0; i < 26; i++)
     {
@@ -40,7 +40,7 @@ int main(void)
             return 1;
         for (char *c = temp; *c; c++)
         {
-            cmap[*c - 'a'][i]++;
+            // cmap[*c - 'a'][i] = true;
             if (alpha[*c - 'a'].word[alpha[*c - 'a'].len - 1] != i)
             {
                 alpha[*c - 'a'].word[alpha[*c - 'a'].len] = i;
@@ -70,7 +70,7 @@ int main(void)
                 int word_idx = cur->word[j];
                 if (rem_cnt[word_idx] == 0)
                     result--;
-                rem_cnt[word_idx] -= cmap[c - 'a'][word_idx];
+                rem_cnt[word_idx]--;
             }
             printf("%d\n", result);
         }
@@ -85,7 +85,7 @@ int main(void)
             for (int j = 1; j < cur->len; j++)
             {
                 int word_idx = cur->word[j];
-                rem_cnt[word_idx] += cmap[c - 'a'][word_idx];
+                rem_cnt[word_idx]++;
                 if (rem_cnt[word_idx] == 0)
                     result++;
             }
