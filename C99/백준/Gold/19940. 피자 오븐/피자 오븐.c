@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 /**
- * @description BFS + Queue
- * @performance 메모리: 1,116 KB, 동작시간: 0 ms
+ * @description ?
+ * @performance 메모리: 1,112 KB, 동작시간: 0 ms
  * @author java08
  */
 
@@ -19,26 +19,31 @@ int main(void)
     {
         return 1;
     }
-    int visited[61][6];
+    int (*visited)[6] = malloc(61 * sizeof(int[6]));
     while (T--)
     {
         if (scanf("%d", &N) != 1)
         {
+            free(visited);
             return 1;
         }
-
         temp = N / 60;
         N %= 60;
-
         if (!N)
         {
             printf("%d 0 0 0 0\n", temp);
             continue;
         }
 
-        memset(visited, 0, sizeof(visited));
+        for (int i = 0; i < 61; i++)
+        {
+            for (int j = 0; j < 6; j++)
+            {
+                visited[i][j] = 0;
+            }
+        }
 
-        int q[60];
+        int q[3601];
         int front = 0, rear = 0;
         q[rear++] = 0;
         bool flag = false;
@@ -73,5 +78,6 @@ int main(void)
         }
         printf("%d %d %d %d %d\n", visited[N][4] + temp, visited[N][3], visited[N][2], visited[N][1], visited[N][0]);
     }
+    free(visited);
     return 0;
 }
