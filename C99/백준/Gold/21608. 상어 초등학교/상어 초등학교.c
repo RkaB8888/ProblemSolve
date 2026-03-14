@@ -6,7 +6,7 @@
 
 /**
  * @description 구현
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @performance 메모리: 1,116 KB, 동작시간: 0 ms
  * @author java08
  */
 
@@ -46,22 +46,10 @@ void batch(int num)
                 stack[top][1] = nfc;
                 top++;
             }
-            // printf("%d의 nfr: %d, nfc: %d, 값: %d\n", fnum, nfr, nfc, farr[nfr][nfc]);
             farr[nfr][nfc]++; // 선호도 상승
         }
     }
-    // if (num == 7)
-    // {
-    // printf("farr: \n");
-    // for (int i = 0; i <= N; i++)
-    // {
-    //     for (int j = 0; j <= N; j++)
-    //     {
-    //         printf("%d ", farr[i][j]);
-    //     }
-    //     printf("\n");
-    // }
-    // }
+
     int max = 0, r = N + 1, c = N + 1; // 선호도 높은 곳 찾기
     while (top--)
     {
@@ -121,7 +109,6 @@ void batch(int num)
     space[r][c] = -1; // 할당된 공간의 빈공간을 표시 제거
     pos[num][0] = r;
     pos[num][1] = c;
-    // printf("%d의 위치: (%d %d)\n", num, r, c);
     for (int j = 0; j < 4; j++)
     { // 주변 공간에 빈공간 1씩 낮춤
         int tr = r + dir[j][0];
@@ -207,25 +194,7 @@ int main(void)
         friend[a][2] = d;
         friend[a][3] = e;
         batch(a);
-        // printf("arr: \n");
-        // for (int i = 0; i <= N; i++)
-        // {
-        //     for (int j = 0; j <= N; j++)
-        //     {
-        //         printf("%d ", arr[i][j]);
-        //     }
-        //     printf("\n");
-        // }
-        // printf("####################\n");
     }
-    // for (int i = 0; i <= N; i++)
-    // {
-    //     for (int j = 0; j <= N; j++)
-    //     {
-    //         printf("%d ", arr[i][j]);
-    //     }
-    //     printf("\n");
-    // }
     printf("%d\n", calc());
     free(pos);
     free(friend);
