@@ -13,7 +13,7 @@
 int main(void)
 {
     int N;
-    int s[4] = {0}, d[4] = {0};
+    int s[4] = {0};
     if (scanf("%d", &N) != 1)
         return 1;
     int cur = 0;
@@ -24,19 +24,17 @@ int main(void)
             return 1;
         if (flag)
             continue;
+        int minS = -1, minD = 100001;
         for (int j = 0; j < 4; j++)
         {
-            d[j] = cur - s[j];
-        }
-        int minS = 0, minD = 100001;
-        for (int j = 0; j < 4; j++)
-        {
-            if (minD > d[j] && d[j] > 0)
+            int d = cur - s[j];
+            if (d > 0 && minD > d)
             {
-                minD = d[j];
+                minD = d;
                 minS = j;
             }
         }
+
         if (minD == 100001)
         {
             flag = true;
