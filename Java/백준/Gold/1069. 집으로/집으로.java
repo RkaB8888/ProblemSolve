@@ -15,15 +15,17 @@ public class Main {
 		double D = Double.parseDouble(st.nextToken());
 		double T = Double.parseDouble(st.nextToken());
 		double R = Math.sqrt(X*X+Y*Y);
+		double onlyW = R;
 		double jumps = Math.floor(R/D);
 		double restR = R - (jumps * D);
-		double onlyW = R;
-		double JnWS = jumps * T + restR;
-		double JnWO = (jumps+1) * T + (jumps + 1) * D - R;
+		double JnW = jumps * T + restR;
+		if(restR > D / 2.0) {
+			JnW = (jumps+1) * T + ((jumps+1) * D) - R;
+		}
+		
 		double onlyJ = jumps == 0.0 ? 2*T : (jumps+1) * T;
 		double result = onlyW;
-		if(result > JnWS) result = JnWS;
-		if(result > JnWO) result = JnWO;
+		if(result > JnW) result = JnW;
 		if(result > onlyJ) result = onlyJ;
 		System.out.print(result);
 	}
