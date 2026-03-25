@@ -6,7 +6,7 @@
 #include <math.h>
 
 /**
- * @description ?
+ * @description Geometry
  * @performance 메모리: 1,112 KB, 동작시간: 0 ms
  * @author java08
  */
@@ -22,7 +22,7 @@
 int main(void)
 {
     double X, Y, D, T, R;
-    double sum, JnW, onlyW, onlyJ;
+    double JnW, onlyW, onlyJ;
     if (scanf("%lf %lf %lf %lf", &X, &Y, &D, &T) != 4)
         return 1;
     // 걷기만 했을 때 시간
@@ -31,13 +31,9 @@ int main(void)
     // 점프 후 남은 거리 걸었을 때 시간
     double J = floor(R / D);
     double restR = R - (J * D);
-    JnW = J * T;
-    if (restR > D / 2.0)
-    {
-        JnW += T;
-        restR = fabs(((J + 1) * D) - R);
-    }
-    JnW += restR;
+    double JnWS = J * T + restR;
+    double JnWO = ((J + 1) * T) + fabs(((J + 1) * D) - R);
+    JnW = (JnWS < JnWO) ? JnWS : JnWO;
 
     // 점프만 했을 때 시간
     if (J == 0.0)
