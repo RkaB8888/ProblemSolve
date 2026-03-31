@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 /**
- * @description BFS + DP
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @description DP
+ * @performance 메모리: 2,676 KB, 동작시간: 44 ms
  * @author java08
  */
 
@@ -14,12 +14,11 @@
 // 이동 방향은 무조건 커지는 방향
 // N은 최대 300, M은 최대 N, K는 최대 100,000이니 인접 행렬도 괜찮을 듯?
 
-#define Q_SIZE 0b100000000000000000
-#define Q_MASK 0b011111111111111111
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 int N, M, K;
-int **adjMap;
-int **visited;
+int adjMap[301][301]; // 이전 노드, 이후 노드
+int dp[301][301];     // 노드 번호, 이동 횟수
 
 int main(void)
 {
@@ -32,93 +31,39 @@ int main(void)
         return 0;
     }
 
-    adjMap = malloc((N + 1) * sizeof(int *));
-    for (int i = 0; i <= N; i++)
-    {
-        adjMap[i] = calloc(N + 1, sizeof(int));
-    }
+    memset(adjMap, 0, sizeof(adjMap));
+    memset(dp, -1, sizeof(adjMap));
 
     for (int i = 0; i < K; i++)
     {
         int a, b, c;
         if (scanf("%d %d %d", &a, &b, &c) != 3)
-        {
-            for (int i = 0; i < N; i++)
-            {
-                free(adjMap[i]);
-            }
-            free(adjMap);
             return 1;
-        }
-        if (a >= b)
-            continue;
-        if (adjMap[a][b] < c)
-            adjMap[a][b] = c;
+
+        if (a < b)
+            adjMap[a][b] = MAX(adjMap[a][b], c);
     }
 
-    visited = malloc((N + 1) * sizeof(int *));
-    for (int i = 0; i <= N; i++)
+    dp[1][1] = 0;
+    for (int curN = 2; curN <= N; curN++)
     {
-        visited[i] = calloc((M + 1), sizeof(int));
-    }
-
-    int q[Q_SIZE][2]; // 현재 위치, 지금까지 비용
-    int front = 0, rear = 0;
-    visited[1][1] = 0;
-    q[rear][0] = 1;
-    q[rear++][1] = 0;
-
-    int mov = 1;
-    while (front < rear)
-    {
-        mov++;
-        if (mov > M)
-            break;
-        int cnt = rear - front;
-        while (cnt-- > 0)
+        for (int preN = 1; preN < curN; preN++)
         {
-            int curN = q[front & Q_MASK][0];
-            int curV = q[front & Q_MASK][1];
-            front++;
-            if (curV < visited[curN][mov - 1])
-                continue;
-
-            for (int i = curN + 1; i <= N; i++)
+            for (int m = 2; m <= M; m++)
             {
-                if (adjMap[curN][i] != 0) // 길이 있는지 체크
-                {
-                    int nextV = curV + adjMap[curN][i];
-                    if (visited[i][mov] < nextV) // 해당 이동횟수에 더 높은 비용이면 갱신
-                    {
-                        visited[i][mov] = nextV;
-                        if (i != N) // 마지막 이동인지 체크
-                        {
-                            q[rear & Q_MASK][0] = i;
-                            q[rear & Q_MASK][1] = nextV;
-                            rear++;
-                        }
-                    }
-                }
+                if (!adjMap[preN][curN] || dp[preN][m - 1] == -1)
+                    continue;
+                dp[curN][m] = MAX(dp[curN][m], dp[preN][m - 1] + adjMap[preN][curN]);
             }
         }
     }
-    int result = 0;
-    for (int i = 0; i <= M; i++)
-    {
-        if (result < visited[N][i])
-        {
-            result = visited[N][i];
-        }
-    }
 
+    int result = 0;
+    for (int i = 1; i <= M; i++)
+    {
+        result = MAX(result, dp[N][i]);
+    }
     printf("%d\n", result);
 
-    for (int i = 0; i <= N; i++)
-    {
-        free(visited[i]);
-        free(adjMap[i]);
-    }
-    free(visited);
-    free(adjMap);
     return 0;
 }
