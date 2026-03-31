@@ -6,7 +6,7 @@
 
 /**
  * @description DP
- * @performance 메모리: 2,676 KB, 동작시간: 44 ms
+ * @performance 메모리: 1,824 KB, 동작시간: 40 ms
  * @author java08
  */
 
@@ -32,7 +32,7 @@ int main(void)
     }
 
     memset(adjMap, 0, sizeof(adjMap));
-    memset(dp, -1, sizeof(adjMap));
+    memset(dp, -1, sizeof(dp));
 
     for (int i = 0; i < K; i++)
     {
