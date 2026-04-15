@@ -6,14 +6,14 @@
 
 /**
  * @description 다익스트라
- * @performance 메모리: 1,112 KB, 동작시간: 0 ms
+ * @performance 메모리: 26,904 KB, 동작시간: 80 ms
  * @author java08
  */
 
 // N은 4000 이하, M은 100000 이하
 // a와 b는 N 이하, d는 100000 이하
 
-#define MAX_HEAP 2000000
+#define MAX_HEAP 300000
 #define MAX 2000000000
 
 typedef struct
