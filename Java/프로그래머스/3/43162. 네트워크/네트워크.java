@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 
+ * @description 유니온 파인드
  */
  
 // 유니온 파인드 or BFS
@@ -14,9 +14,6 @@ class Solution {
         int[] gn;
         int[] depth;
         int gCnt;
-        UnionFind(){
-
-        }
         UnionFind(int len){
             gn = new int[len];
             for(int i = 0 ; i < len ; i++) {
@@ -26,7 +23,6 @@ class Solution {
             gCnt = len;
         }
         void set(int a, int b){
-            if(a==b) return;
             int gnA = this.find(a);
             int gnB = this.find(b);
             if(gnA==gnB) return;
@@ -34,6 +30,7 @@ class Solution {
                 gn[gnA] = gnB;
             }else {
                 gn[gnB] = gnA;
+                if(depth[gnA]==depth[gnB]) depth[gnA]++;
             }
             gCnt--;
         }
