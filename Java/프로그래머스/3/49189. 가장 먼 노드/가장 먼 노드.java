@@ -2,14 +2,14 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 이 클래스에 대한 동작 설명
+ * @description BFS
  */
 
 // n: 노드의 개수 2이상 20,000이하
 // edge: 간선의 개수 1이상 50,000이하 [간선번호][2]
 // bfs로 1번 노드부터 모든 노드 방문 체크하며 건너간 횟수 입력 (가장 먼 거리 저장)
 // visited 확인하여 가장 먼 거리인 경우 카운팅
-// 시간복잡도 n*edge + n
+// 시간복잡도 n + edge
 class Solution {
     public int solution(int n, int[][] edge) {
         int len = edge.length;
@@ -34,7 +34,7 @@ class Solution {
             v[e2] = a;
         }
         boolean[] visited = new boolean[n+1];
-        int[] q = new int[len];
+        int[] q = new int[n];
         int front = 0, rear = 0;
         q[rear++] = 1;
         visited[1] = true;
