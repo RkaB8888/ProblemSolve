@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description Priority Queue
+ * @description 이분 탐색
  */
 // a,b는 10^9 이하 (요구 금, 은)
 // 배열의 길이 g, s, w, t는 1 이상 10^5 이하 (금, 은, 질량, 편도 시간)
@@ -29,27 +29,32 @@ class Solution {
         long gSum = 0;
         long sSum = 0;
         long wSum = 0;
+
         for(int i = 0 ; i < t.length ; i++) {
             long gi = g[i];
             long si = s[i];
             long wi = w[i];
             long ti = 2L*t[i];
+
             long cnt = time/ti;
             if(time%ti>=t[i]) cnt++;
-            wSum += Math.min(wi*cnt,gi+si);
-            gSum += Math.min(wi*cnt,gi);
-            sSum += Math.min(wi*cnt,si);
+
+            long maxWeight = wi * cnt;
+            wSum += maxWeight < gi + si ? maxWeight : gi + si;
+            gSum += maxWeight < gi ? maxWeight : gi;
+            sSum += maxWeight < si ? maxWeight : si;
         }
-        if(gSum >= a && sSum >= b && wSum >= a+b) return true;
-        return false;
+        return gSum >= a && sSum >= b && wSum >= a+b;
     }
 
     public long solution(int a, int b, int[] g, int[] s, int[] w, int[] t) {
         long left = 0;
-        long right = (long)(4*Math.pow(10,14));
+        long right = 400_000_000_000_000L;
         long answer = -1;
+
         while(left<=right) {
             long mid = (left+right)>>>1;
+            
             if(isPossible(mid, a, b, g, s, w, t)){ // 가능하면 시간을 더 줄여본다.
                 right = mid-1;
                 answer = mid;
