@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 이 클래스에 대한 동작 설명
+ * @description Kruskal + Union-Find
  */
 
 // 간선을 비용 오름차순으로 정렬
@@ -15,9 +15,7 @@ import java.util.*;
 class Solution {
     static class Union{
         int[] group;
-        Union(){
 
-        }
         Union(int len){
             this.group = new int[len];
             for(int i = 0 ; i < len ; i++) {
@@ -40,12 +38,15 @@ class Solution {
         Arrays.sort(costs,(a,b)->Integer.compare(a[2],b[2]));
         Union union = new Union(n);
         int answer = 0;
+        int cnt = 0;
         for(int[] u : costs) {
             int v1 = u[0];
             int v2 = u[1];
             int cost = u[2];
             if(union.set(v1,v2)) {
                 answer+=cost;
+                cnt++;
+                if(cnt == n-1) break;
             }
         }
         return answer;
