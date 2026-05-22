@@ -19,66 +19,40 @@ import java.util.*;
 class Solution {
     private static final int[] DR = {0,0,1,-1};
     private static final int[] DC = {1,-1,0,0};
-    int[] dfs(int[][] board, int ar, int ac, int br, int bc, int turn){
-        if((turn&1)==0) { // turn이 짝수면 A 차례
-            if(board[ar][ac]==0) { // 현재 발판이 0이면 패배 처리
-                return new int[] {1, turn}; // 1: B의 승리
-            }
-            board[ar][ac]=0;
-            int[] result = new int[] {1,turn};
-            for(int d = 0 ; d < 4 ; d++) {
-                int nr = ar + DR[d];
-                int nc = ac + DC[d];
-                if(nr<0||nc<0||nr>=board.length||nc>=board[0].length) continue;
-                if(board[nr][nc]==1) {
-                    int[] answer = dfs(board, nr, nc, br, bc, turn+1);
-                    if(answer[0]==0) { // 승리의 기회가 있다면
-                        if(result[0]==1) {
-                            result[0] = 0;
-                            result[1] = answer[1];
-                        } else result[1] = Math.min(result[1],answer[1]);
-                    }
-                    else if(result[0]==1){ // 패배만 하는 경우
-                        result[1] = Math.max(result[1],answer[1]);
-                    }
-                }
-            }
-            board[ar][ac]=1;
-            return result;
-        }else {
-            if(board[br][bc]==0) {
-                return new int[] {0, turn}; // 0: A의 승리
-            }
-            board[br][bc]=0;
-            int[] result = new int[] {0,turn};
-            for(int d = 0 ; d < 4 ; d++) {
-                int nr = br + DR[d];
-                int nc = bc + DC[d];
-                if(nr<0||nc<0||nr>=board.length||nc>=board[0].length) continue;
-                if(board[nr][nc]==1) {
-                    int[] answer = dfs(board, ar, ac, nr, nc, turn+1);
-                    if(answer[0]==1) { // 승리의 기회가 있다면
-                        if(result[0]==0) {
-                            result[0] = 1;
-                            result[1] = answer[1];
-                        } else result[1] = Math.min(result[1],answer[1]);
-                    }
-                    else if(result[0]==0){ // 패배만 하는 경우
-                        result[1] = Math.max(result[1],answer[1]);
-                    }
-                }
-            }
-            board[br][bc]=1;
-            return result;
+    int dfs(int[][] board, int cr, int cc, int or, int oc, int turn){
+        if(board[cr][cc]==0) { // 현재 발판이 0이면 패배 처리
+            return turn; // 1: B의 승리
         }
+        board[cr][cc]=0;
+        int minWinTurn = Integer.MAX_VALUE;
+        int maxLoseTurn = turn;
+        boolean canWin = false;
+        for(int d = 0 ; d < 4 ; d++) {
+            int nr = cr + DR[d];
+            int nc = cc + DC[d];
+            if(nr<0||nc<0||nr>=board.length||nc>=board[0].length) continue;
+            if(board[nr][nc]==1) {
+                int nresult = dfs(board, or, oc, nr, nc, turn+1);
+                int nwin = nresult>>16; // 1이면 상대방이 이겼다는 의미
+                int nturn = nresult&0xFFFF;
+                if(nwin==0) { // 승리의 기회가 있다면
+                    canWin = true;
+                    minWinTurn = Math.min(minWinTurn,nturn);
+                } else if(!canWin){ // 패배만 하는 경우
+                    maxLoseTurn = Math.max(maxLoseTurn,nturn);
+                }
+            }
+        }
+        board[cr][cc]=1;
+        if(canWin) return (1<<16)|minWinTurn;
+        return maxLoseTurn;
     }
     public int solution(int[][] board, int[] aloc, int[] bloc) {
-        int[] answer = dfs(board, aloc[0], aloc[1], bloc[0], bloc[1], 0);
-        // if(answer[0]==1) System.out.println("A 패배");
-        return answer[1];
+        int answer = dfs(board, aloc[0], aloc[1], bloc[0], bloc[1], 0);
+        return answer&0xFFFF;
     }
     public static void main(String[] args) {
-        int[][] board = {{1,1,1},{1,0,1},{1,1,1}};
+        int[][] board = {{1,1,1},{1,1,1},{1,1,1}};
         int[] aloc = {1,0};
         int[] bloc = {1,2};
         Solution sol = new Solution();
