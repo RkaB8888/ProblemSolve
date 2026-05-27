@@ -1,10 +1,10 @@
 # [level 5] 신비로운 유적 탐험 - 1834 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/1834) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/1834?language=java) 
 
 ### 성능 요약
 
-메모리: 78 MB, 시간: 6.49 ms
+메모리: 70.5 MB, 시간: 9.39 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2026년 05월 27일 07:49:32
+2026년 05월 27일 10:16:14
 
 ### 문제 설명
 

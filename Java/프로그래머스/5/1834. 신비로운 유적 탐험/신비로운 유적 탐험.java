@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description TreeDP + 헝가리안 알고리즘
+ * @description TreeDP + 헝가리안 알고리즘 O(N^3) 최적화
  */
 
 // 그래프 구성 후 트리 구성
@@ -73,66 +73,79 @@ class Solution {
     static class Hungarian{
         private int n;
         private int[][] weight;
-        private int[] u, v, match, slack;
-        private boolean[] checkU, checkV;
+        private int[] u, v, match, slack, pre;
+        private boolean[] checkV;
 
-        public Hungarian(int[][] weight){
-            this.n = weight.length;
-            this.weight = weight;
-            this.u = new int[n];
-            this.v = new int[n];
-            this.match = new int[n];
-            this.slack = new int[n];
-            this.checkU = new boolean[n];
-            this.checkV = new boolean[n];
-
-            Arrays.fill(match,-1);
-        }
-        private boolean dfs(int row){
-            checkU[row] = true;
-            for(int col = 0 ; col < n ; col++) {
-                if(checkV[col]) continue;
-                int diff = u[row] + v[col] - weight[row][col];
-                if(diff==0) {
-                    checkV[col] = true;
-                    if(match[col]==-1||dfs(match[col])) {
-                        match[col] = row;
-                        return true;
-                    }
-                } else {
-                    slack[col] = Math.min(slack[col],diff);
+        public Hungarian(int[][] matrix){
+            this.n = matrix.length;
+            this.weight = new int[n+1][n+1];
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    this.weight[i + 1][j + 1] = matrix[i][j];
                 }
             }
-            return false;
+            this.u = new int[n+1];
+            this.v = new int[n+1];
+            this.match = new int[n+1];
+            this.slack = new int[n+1];
+            this.pre = new int[n+1];
+            this.checkV = new boolean[n+1];
         }
-        private void update(){
-            int diff = Integer.MAX_VALUE;
-            for(int i = 0 ; i < n ; i++) {
-                if(!checkV[i]) diff = Math.min(diff, slack[i]);
-            }
-            for(int i = 0 ; i < n ; i++) {
-                if(checkU[i]) u[i] -= diff;
-                if(checkV[i]) v[i] += diff;
-            }
-        }
+
         private int getVal(){
-            for(int i = 0 ; i < n ; i++) {
-                for(int j = 0 ; j < n ; j++) {
-                    u[i] = Math.max(u[i],weight[i][j]);
+            for (int i = 1; i <= n; i++) {
+                for (int j = 1; j <= n; j++) {
+                    u[i] = Math.max(u[i], weight[i][j]);
                 }
             }
-            for(int i = 0 ; i < n ; i++) {
+            for(int i = 1 ; i <= n ; i++) { // 이사할 사람(i) 투입
+                match[0] = i; // i를 0번 방에 준비
+                int curR = 0; // i의 현재 위치는 0번
                 Arrays.fill(slack,Integer.MAX_VALUE);
-                while(true) {
-                    Arrays.fill(checkU,false); // 행 방문 여부
-                    Arrays.fill(checkV,false); // 열 방문 여부
-                    if(dfs(i)) break;
-                    update();
+                Arrays.fill(checkV, false);
+
+                while(match[curR] != 0) { // 이사할 사람이 있는가?
+                    checkV[curR] = true; // 이 방은 교체된 적 있다는 표시
+                    int curL = match[curR]; // 현재 방의 주인 (이사할 예정)
+                    int diff = Integer.MAX_VALUE; // nextR 갱신을 위한 초기화
+                    int nextR = 0;
+
+                    for(int j = 1 ; j <= n ; j++) { // 다른 방 찾기
+                        if(!checkV[j]) { // 변경된 적이 없는 방
+                            int gap = u[curL] + v[j] - weight[curL][j];
+                            if(gap<slack[j]) { // 각 방마다 누구와 gap이 적었는지 확인
+                                slack[j] = gap; // gap 갱신
+                                pre[j] = curR; // 현재 주인이 가장 gap이 적어서 할당 받는다면 남는 방 curR을 저장
+                            }
+                            if(slack[j]<diff) { // 제일 선호되는 방 기록
+                                diff = slack[j];
+                                nextR = j; // 다음 방 준비
+                            }
+                        }
+                    }
+
+                    for(int j = 0 ; j <= n ; j++) {
+                        if(checkV[j]) { // 신입 i나 방 배정 실패한 사람도 0번 방에 배정되어 있음
+                            u[match[j]] -= diff; // 그래서 checkU가 없이 같은 조건문에 가능
+                            v[j] += diff;
+                        } else { // diff를 차감하여 가장 gap이 작은 방의 비용을 0으로 바꾸고 nextR부터 이어서 시작
+                            slack[j] -= diff;
+                        }
+                    }
+                    curR = nextR;
+                }
+
+                // curR 방의 주인이 없으면 이사를 시작함
+                // pre에 curR방으로 옮길 사람이 살던 방이 담겨 있음
+                while (curR != 0) {
+                    int prevR = pre[curR]; // curR로 이사하기 전 방번호
+                    match[curR] = match[prevR]; // curR 방에 이전 방의 주인을 옮겨줌
+                    curR = prevR;
                 }
             }
 
             int sumWeight = 0;
-            for(int i = 0 ; i < n ; i++) {
+            for(int i = 1 ; i <= n ; i++) {
                 sumWeight += weight[match[i]][i];
             }
             return sumWeight;
