@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 이 클래스에 대한 동작 설명
+ * @description 정렬 후 공통 접두사 계산
  */
  
 // 주어진 words를 찾을 때 입력해야 하는 글자 수 총합
@@ -22,48 +22,29 @@ import java.util.*;
 // 공간 복잡도는 N
 
 class Solution {
-    static class Node{
-        int cnt;
-        Node[] next;
-        public Node(){
-            this.cnt = 0;
-            this.next = new Node[26];
+    int getLcp(String a, String b) {
+        int len = Math.min(a.length(), b.length());
+        int count = 0;
+        for(int i = 0 ; i < len ; i++) {
+            if(a.charAt(i)==b.charAt(i)) count++;
+            else break;
         }
-    }
-    static class Trie{
-        Node root;
-        public Trie(){
-            this.root = new Node();
-        }
-        void add(String word){
-            Node cur = root;
-            for(int i = 0 ; i < word.length() ; i++) {
-                int idx = word.charAt(i)-'a';
-                if(cur.next[idx]==null) cur.next[idx] = new Node();
-                cur = cur.next[idx];
-                cur.cnt++;
-            }
-        }
-        int getCnt(String word){
-            Node cur = root;
-            for(int i = 0 ; i < word.length() ; i++) {
-                int idx = word.charAt(i)-'a';
-                cur = cur.next[idx];
-                if(cur.cnt==1) {
-                    return i+1;
-                }
-            }
-            return word.length();
-        }
+        return count;
     }
     public int solution(String[] words) {
-        Trie trie = new Trie();
-        for(String word : words) {
-            trie.add(word);
+        Arrays.sort(words);
+        int n = words.length;
+        int[] lcp = new int[n-1]; // 0-1, 1-2 사이의 공통 길이 저장
+        for(int i = 0 ; i < n-1 ; i++) {
+            lcp[i] = getLcp(words[i],words[i+1]);
         }
+
         int answer = 0;
-        for(String word : words) {
-            answer+=trie.getCnt(word);
+        for(int i = 0 ; i < n ; i++) {
+            int maxLcp = 0;
+            if(i>0) maxLcp = Math.max(maxLcp, lcp[i-1]);
+            if(i<n-1) maxLcp = Math.max(maxLcp, lcp[i]);
+            answer += Math.min(words[i].length(),maxLcp+1);
         }
         return answer;
     }
