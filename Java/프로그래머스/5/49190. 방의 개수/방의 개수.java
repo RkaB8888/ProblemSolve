@@ -1,8 +1,10 @@
 import java.io.*;
 import java.util.*;
 
+import org.w3c.dom.Node;
+
 /**
- * @description 이 클래스에 대한 동작 설명
+ * @description 오일러 다면체 공식
  */
  
 // arrows의 크기는 1이상 100,000이하
@@ -22,6 +24,9 @@ import java.util.*;
 // -> 모래시계 모양으로 방이 형성될 수 있으니 화살의 크기를 *2로 하여 중간에 노드 추가
 // 시간복잡도 2n
 // 공간복잡도 2n
+
+// 오일러 다면체 정리 R = E - V + 1
+// 간선과 노드의 해시셋을 따로 관리하여 갯수만 관리
 class Solution {
     private static final int[][] DIR = {{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}};
     private static class Node{
@@ -39,29 +44,46 @@ class Solution {
         }
         @Override
         public int hashCode(){
-            return Objects.hash(this.x,this.y);
+            return this.x*31+this.y;
+        }
+    }
+    private static class Edge{
+        int x1, y1, x2, y2;
+        public Edge(int x1, int y1, int x2, int y2) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+        }
+        @Override
+        public boolean equals(Object o) {
+            if(this == o) return true;
+            if(o==null || this.getClass() != o.getClass()) return false;
+            Edge other = (Edge)o;
+            return (this.x1==other.x1&&this.y1==other.y1&&this.x2==other.x2&&this.y2==other.y2)||
+            (this.x1==other.x2&&this.y1==other.y2&&this.x2==other.x1&&this.y2==other.y1);
+        }
+        @Override
+        public int hashCode(){
+            int hash1 = this.x1*31+this.y1;
+            int hash2 = this.x2*31+this.y2;
+            return hash1+hash2;
         }
     }
     public int solution(int[] arrows) {
-        Node cur = new Node(0,0);
-        HashMap<Node,HashSet<Node>> visited = new HashMap<>();
-        visited.put(cur,new HashSet<>());
-        int answer = 0;
+        Node curN = new Node(0,0);
+        HashSet<Node> visitedNode = new HashSet<>();
+        HashSet<Edge> visitedEdge = new HashSet<>();
+        visitedNode.add(curN);
         for(int arrow : arrows) {
             for(int i = 0 ; i < 2 ; i++) {
-                Node next = new Node(cur.x + DIR[arrow][0],cur.y + DIR[arrow][1]);
-                if(!visited.containsKey(next)) { // 새롭게 가는 노드
-                    visited.put(next,new HashSet<>());
-                    visited.get(cur).add(next);
-                    visited.get(next).add(cur);
-                } else if(!visited.get(cur).contains(next)) { // 간선만 새로 생기는 노드
-                    visited.get(cur).add(next);
-                    visited.get(next).add(cur);
-                    answer++;
-                }
-                cur = next;
+                Node nextN = new Node(curN.x + DIR[arrow][0],curN.y + DIR[arrow][1]);
+                Edge nextE = new Edge(curN.x, curN.y, nextN.x, nextN.y);
+                visitedNode.add(nextN);
+                visitedEdge.add(nextE);
+                curN = nextN;
             }
         }
-        return answer;
+        return visitedEdge.size() - visitedNode.size() + 1;
     }
 }
