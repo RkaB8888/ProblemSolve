@@ -51,15 +51,6 @@ class Solution {
         if(x>0&&x<n&&map[x-1][y][1]==1&&map[x+1][y][1]==1) return true;
         return false;
     }
-    private boolean isAllValid() {
-        for (int i = 0; i <= n; i++) {
-            for (int j = 0; j <= n; j++) {
-                if (map[i][j][0] == 1 && !columnIsPossible(i, j)) return false;
-                if (map[i][j][1] == 1 && !beamIsPossible(i, j)) return false;
-            }
-        }
-        return true;
-    }
 
     public int[][] solution(int n, int[][] build_frame) {
         this.n = n;
@@ -69,18 +60,49 @@ class Solution {
         for(int[] order : build_frame) {
             int x = order[0], y = order[1], a = order[2], b = order[3];
             if(b==1) { // 설치
-                map[x][y][a] = 1;
-                if(!isAllValid()) {
-                    map[x][y][a] = 0;
-                }else {
-                    cnt++;
+                if (a == 0) { // 기둥 설치
+                    if (columnIsPossible(x, y)) {
+                        map[x][y][0] = 1;
+                        cnt++;
+                    }
+                } else { // 보 설치
+                    if (beamIsPossible(x, y)) {
+                        map[x][y][1] = 1;
+                        cnt++;
+                    }
                 }
             } else { // 삭제
-                map[x][y][a] = 0;
-                if(!isAllValid()) {
-                    map[x][y][a] = 1;
-                }else {
+                if (a == 0) { 
+                    map[x][y][0] = 0;
                     cnt--;
+
+                    if (y + 1 <= n && map[x][y + 1][0] == 1 && !columnIsPossible(x, y + 1)) {
+                        map[x][y][0] = 1; 
+                        cnt++;
+                    } else if (y + 1 <= n && map[x][y + 1][1] == 1 && !beamIsPossible(x, y + 1)) {
+                        map[x][y][0] = 1; 
+                        cnt++;
+                    } else if (x - 1 >= 0 && y + 1 <= n && map[x - 1][y + 1][1] == 1 && !beamIsPossible(x - 1, y + 1)) {
+                        map[x][y][0] = 1; 
+                        cnt++;
+                    }
+                } else { 
+                    map[x][y][1] = 0;
+                    cnt--;
+
+                    if (map[x][y][0] == 1 && !columnIsPossible(x, y)) {
+                        map[x][y][1] = 1; 
+                        cnt++;
+                    } else if (x + 1 <= n && map[x + 1][y][0] == 1 && !columnIsPossible(x + 1, y)) {
+                        map[x][y][1] = 1; 
+                        cnt++;
+                    } else if (x - 1 >= 0 && map[x - 1][y][1] == 1 && !beamIsPossible(x - 1, y)) {
+                        map[x][y][1] = 1; 
+                        cnt++;
+                    } else if (x + 1 <= n && map[x + 1][y][1] == 1 && !beamIsPossible(x + 1, y)) {
+                        map[x][y][1] = 1; 
+                        cnt++;
+                    }
                 }
             }
         }
@@ -93,13 +115,6 @@ class Solution {
                 
             }
         }
-        // Arrays.sort(answer,(a,b)->{
-        //     if(a[0]==b[0]) {
-        //         if(a[1]==b[1]) {
-        //             return Integer.compare(a[2],b[3]);
-        //         }else return Integer.compare(a[1], b[1]);
-        //     } else return Integer.compare(a[0],b[0]);
-        // });
         return answer;
     }
     // public static void main(String[] args) {

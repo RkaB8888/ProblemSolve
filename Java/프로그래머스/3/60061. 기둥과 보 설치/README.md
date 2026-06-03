@@ -1,10 +1,10 @@
 # [level 3] 기둥과 보 설치 - 60061 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/60061) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/60061?language=java) 
 
 ### 성능 요약
 
-메모리: 67.4 MB, 시간: 30.23 ms
+메모리: 65.1 MB, 시간: 0.95 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2026년 06월 03일 08:56:27
+2026년 06월 03일 09:07:36
 
 ### 문제 설명
 
