@@ -11,27 +11,19 @@ import java.util.*;
 class Solution {
 
     public int solution(int[] A, int[] B) {
-        int[][] total = new int[A.length*2][2];
+        int N = A.length;
+        int[] total = new int[N*2];
         int answer = 0;
-        for(int i = 0 ; i < A.length ; i++) {
-            int idx = i<<1;
-            total[idx][0] = 0;
-            total[idx][1] = A[i];
-            total[idx+1][0] = 1;
-            total[idx+1][1] = B[i];
+
+        for(int i = 0 ; i < N ; i++) {
+            total[i*2] = (A[i]<<1)|1;
+            total[i*2+1] = (B[i]<<1)|0;
         }
-        Arrays.sort(total, (a,b) ->{
-            if(a[1] == b[1]) { // A를 뒤로 보내야 함
-                if (a[0]==0 && b[0]==1) return 1;
-                if (a[0]==1 && b[0]==0) return -1;
-                return 0;
-            } else {
-                return Integer.compare(a[1], b[1]);
-            }
-        });
+        Arrays.sort(total);
+
         int aCnt = 0;
         for(int i = 0 ; i < total.length ; i++){
-            if(total[i][0]==0) {
+            if((total[i]&1)==1) {
                 aCnt++;
             }else {
                 if(aCnt>0) {
