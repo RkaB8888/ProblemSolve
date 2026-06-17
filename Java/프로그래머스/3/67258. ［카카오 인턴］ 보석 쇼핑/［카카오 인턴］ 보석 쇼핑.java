@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 윈도우 슬라이딩 + 이분 탐색
+ * @description 투포인터
  */
  
 // 슬라이딩 범위는 최소 보석 종류, 최대 진열대 길이
@@ -15,71 +15,38 @@ import java.util.*;
 
 // 구간 분할 log N * 해당 구간으로 슬라이딩 탐색 N
 class Solution {
-    int totalGem;
-    String[] gems;
-    Map<String, Integer> gemIdx;
 
-    private int find(int size){
-        int idx = 0;
-        int total = 0;
-        int[] cnt = new int[totalGem];
-        
-        while(idx<size) {
-            int gem = gemIdx.get(gems[idx]);
-            if(cnt[gem]==0) {
-                total++;
-            }
-            cnt[gem]++;
-            idx++;
-        }
-
-        if(total==totalGem) return size;
-
-        while(idx<gems.length) {
-            int addgem = gemIdx.get(gems[idx]);
-            int absgem = gemIdx.get(gems[idx-size]);
-
-            if(cnt[addgem]==0) {
-                total++;
-            }
-            cnt[addgem]++;
-
-            if(cnt[absgem]==1) {
-                total--;
-            }
-            cnt[absgem]--;
-
-            idx++;
-
-            if(total==totalGem) return idx;
-        }
-
-        return 0;
-    }
     public int[] solution(String[] gems) {
-        this.gems = gems;
-        gemIdx = new HashMap<>();
-        totalGem = 0;
-        for(int i = 0 ; i < gems.length ; i++) {
-            if(!gemIdx.containsKey(gems[i])) {
-                gemIdx.put(gems[i],totalGem);
-                totalGem++;
+
+        Set<String> gemSet = new HashSet<>(Arrays.asList(gems));
+        int totalGem = gemSet.size();
+
+        Map<String, Integer> gemCount = new HashMap<>();
+        int left = 0;
+        int minLen = Integer.MAX_VALUE;
+        int start = 0;
+
+        for (int right = 0; right < gems.length; right++) {
+            gemCount.put(gems[right], gemCount.getOrDefault(gems[right], 0) + 1);
+
+            while (gemCount.get(gems[left]) > 1) {
+                gemCount.put(gems[left], gemCount.get(gems[left]) - 1);
+                left++;
+            }
+
+            if (gemCount.size() == totalGem && right - left < minLen) {
+                minLen = right - left;
+                start = left;
             }
         }
 
-        int[] answer = new int[]{-1,-1};
-        int left = totalGem, right = gems.length;
-        while(left<=right) {
-            int mid = (left+right)>>1;
-            int endIdx = find(mid);
-            if(endIdx!=0) { // 가능
-                answer[0] = endIdx-mid+1;
-                answer[1] = endIdx;
-                right = mid-1;
-            } else { // 불가능
-                left = mid+1;
-            }
-        }
-        return answer;
+        return new int[]{start + 1, start + minLen + 1};
+        
+    }
+
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+        int[] result = sol.solution(new String[]{"A", "B", "A", "A", "A", "C", "A", "B"});
+        System.out.println(result[0]+", "+result[1]);
     }
 }
