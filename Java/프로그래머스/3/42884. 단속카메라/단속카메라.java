@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 정렬
+ * @description 그리디
  */
  
 // -30,000 ~ 30,000 사이 구간분포가 존재하며, 
@@ -20,17 +20,14 @@ import java.util.*;
 // 모든 구간분포 순회하며 연산 10000
 // 따라서 10000 log 10000 예상
 class Solution {
-    int[][] r;
     public int solution(int[][] routes) {
-        Arrays.sort(routes, (a,b) -> Integer.compare(a[0], b[0]));
+        Arrays.sort(routes, (a,b) -> Integer.compare(a[1], b[1]));
         int end = -30001;
         int answer = 0;
-        for(int i = 0 ; i < routes.length ; i++) {
-            if(end < routes[i][0]) { // 새로운 구간이 이전 구간과 겹치지 않음
+        for(int[] route : routes) {
+            if(end < route[0]) { // 새로운 구간이 이전 구간과 겹치지 않음
                 answer++;
-                end = routes[i][1];
-            } else {
-                end = Math.min(end,routes[i][1]);
+                end = route[1];
             }
         }
         return answer;
