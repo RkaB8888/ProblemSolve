@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 이 클래스에 대한 동작 설명
+ * @description BFS + ArrayDeque
  */
  
 // 단방향 그래프 생성 후
@@ -10,7 +10,7 @@ import java.util.*;
 // 순위를 매길 수 있음 +1
 
 // n은 최대 100, 간선은 최대 4500
-// 시간 복잡도 100 * 100 (각 노드마다 연결된 노드 확인)
+// 시간 복잡도 100 * (100+4500) (각 노드마다 연결된 간선이 최악 4500개인 경우)
 class Solution {
     public int solution(int n, int[][] results) {
         int[] next = new int[n+1];
@@ -39,7 +39,7 @@ class Solution {
         }
 
         int answer = 0;
-        Queue<Integer> q = new ArrayDeque<>();
+        int[] q = new int[n+1];
         boolean[] visited = new boolean[n+1];
         for(int i = 1 ; i <= n ; i++) {
             int cnt = 1;
@@ -47,28 +47,29 @@ class Solution {
             visited[i] = true;
 
             // 순방향 노드 갯수
-            q.add(i);
-            while(!q.isEmpty()) {
-                int curV = q.poll();
+            int front = 0, rear = 0;
+            q[rear++] = i;
+            while(front<rear) {
+                int curV = q[front++];
                 for(int e = next[curV] ; e != -1 ; e = link[e]) {
                     int nextV = val[e];
                     if(visited[nextV]) continue;
                     visited[nextV] = true;
                     cnt++;
-                    q.add(nextV);
+                    q[rear++] = nextV;
                 }
             }
 
             // 역방향 노드 갯수
-            q.add(i);
-            while(!q.isEmpty()) {
-                int curV = q.poll();
+            q[rear++] = i;
+            while(front<rear) {
+                int curV = q[front++];
                 for(int e = rnext[curV] ; e != -1 ; e = rlink[e]) {
                     int nextV = rval[e];
                     if(visited[nextV]) continue;
                     visited[nextV] = true;
                     cnt++;
-                    q.add(nextV);
+                    q[rear++] = nextV;
                 }
             }
 
