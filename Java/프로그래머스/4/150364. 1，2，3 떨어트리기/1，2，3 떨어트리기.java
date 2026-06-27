@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description DFS
+ * @description 시뮬 + 그리디
  */
  
 // 그래프 생성 후 시뮬레이션 했을 떄, 각 리프 노드에 쌓인 값의 합이 target과 같아야 함(최소, 사전 정렬 가장 빠른)
@@ -12,7 +12,6 @@ import java.util.*;
 
 class Solution {
     int leafCnt;
-    Deque<Integer> result;
     Tree tree;
 
     static class Node{
@@ -85,7 +84,6 @@ class Solution {
             boolean isImpossible = false;
             boolean isSatisfied = true;
             for(int i = 0 ; i < n ; i++) {
-                if(target[i]==0) continue;
 
                 if(cnt[i]>target[i]) { // 구조적으로 가능한지
                     isImpossible = true;
