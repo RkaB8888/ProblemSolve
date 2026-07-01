@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description Trie + Queue
+ * @description Trie + DP
  */
  
 // 사용가능한 문자열을 사용하여 주어진 단어 t를 완성할 수 있는 최소 횟수.
@@ -15,17 +15,10 @@ import java.util.*;
 // 4-2. t가 끝났을 때 최소 횟수 갱신 후 Queue가 빌 때까지 반복
 
 // 최적화
-// 1. Queue에 들어간 사용 횟수가 갱신된 최소 횟수보다 크면 종료하도록
-// 2. t의 인덱스 위치마다 도달할 수 있는 최소 횟수를 갱신/저장하며 가지치기
+// 1. Queue 대신 DP를 사용하여 모든 t의 인덱스를 확인 -> dp의 값을 통해 도달한 적 없으면 넘길 수 있어서 약간의 차이만 있음
+// 2. 하지만 Queue와 Point 오버헤드가 확실히 줆
+// 3. t의 인덱스 위치마다 도달할 수 있는 최소 횟수를 갱신/저장하며 가지치기
 class Solution {
-    static class Point{
-        int idx;
-        int cnt;
-        Point(int idx, int cnt){
-            this.idx = idx;
-            this.cnt = cnt;
-        }
-    }
     static class Node{
         boolean isEnd;
         Node[] next;
@@ -57,42 +50,30 @@ class Solution {
             trie.add(str);
         }
 
-        Queue<Point> q = new ArrayDeque<>();
-        q.add(new Point(0,0));
-
         int n = t.length();
-        char[] chars = t.toCharArray();
-        int[] cnts = new int[n];
-        Arrays.fill(cnts,20001);
-        cnts[0] = 0;
-        int answer = 20001;
+        int[] dp = new int[n+1];
+        final int INF = 20001;
+        Arrays.fill(dp,INF);
+        dp[0] = 0;
 
-        while(!q.isEmpty()){
-            Point p = q.poll(); // 가장 마지막에 끝나는 것이 제일 뒤에 있음
-            int curCnt = p.cnt;
-            int curTidx = p.idx;
-
-            if(curCnt>=answer) continue;
+        for(int i = 0 ; i < n ; i++) {
+            if(dp[i]==INF) continue; // 도달한적 없는 t 인덱스
 
             Node curNode = trie.root;
-            for(int i = curTidx ; i < n ; i++) {
-                curNode = curNode.next[chars[i]-'a'];
+
+            for(int j = i ; j < n ; j++) {
+                int charIdx = t.charAt(j)-'a';
+                curNode = curNode.next[charIdx];
+
                 if(curNode == null) break;
+
                 if(curNode.isEnd) {
-                    int nextTidx = i+1;
-                    int nextCnt = curCnt+1;
-                    if(nextTidx == n) {
-                        answer = nextCnt;
-                    } else{
-                        if(cnts[nextTidx]>nextCnt) {
-                            cnts[nextTidx] = nextCnt;
-                            q.add(new Point(nextTidx,nextCnt));
-                        }
+                    if(dp[i]+1 < dp[j+1]) {
+                        dp[j+1] = dp[i]+1;
                     }
                 }
             }
         }
-        if(answer==20001) answer = -1;
-        return answer;
+        return dp[n]==INF?-1:dp[n];
     }
 }
