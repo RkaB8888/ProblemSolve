@@ -17,11 +17,8 @@ import java.util.*;
 // 다시 각 블록의 직사각형부분을 탐색하며 -1 또는 다른 블럭이 없는지 검사
 // -> 제거할 수 있으면 제거하며 해당 직사각형 부분의 위쪽만 다시 검사
 // 제거하고 검사하는 것을 반복하며 해당 턴에서 하나도 제거할 수 없다면 종료
-// 시간복잡도는 최악 50*50*200*6
+// 시간복잡도는 최악 50*50+200*200*6*50
 class Solution {
-    private static final int[] dr = {1,-1,0,0};
-    private static final int[] dc = {0,0,1,-1};
-
     private boolean canRemove(int num, int[] box, int[][] board){
         int cnt = 0;
         for(int r = box[0] ; r <= box[2] ; r++) {
