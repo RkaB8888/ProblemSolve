@@ -16,7 +16,9 @@ import java.util.*;
 // 이분 탐색의 기준 시간 내에 각 심사관이 심사할 수 있는 모든 인원을 합했을 때 n보다 크면 가능한 것으로 판단
 class Solution {
     public long solution(int n, int[] times) {
-        long left = 1L, right = 1_000_000_000_000_000_000L;
+        Arrays.sort(times);
+        long left = 1L;
+        long right = (long) times[times.length - 1] * n;
         long answer = right;
         while(left<=right) {
             long mid = (left+right)>>1;
