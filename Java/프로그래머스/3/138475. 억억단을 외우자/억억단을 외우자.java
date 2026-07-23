@@ -21,13 +21,13 @@ import java.util.*;
 // s~e까지를 반복해서 구하면 1000000*5000000이 되기 때문에 DP를 통해 미리 최고 값을 담아 둔다.
 class Solution {
     public int[] solution(int e, int[] starts) {
-        int[] memo = new int[5000001];
-        for(int i = 1 ; i <= 5000000 ; i++) {
-            for(int j = i ; j <= 5000000 ; j+=i) {
+        int[] memo = new int[e+1];
+        for(int i = 1 ; i <= e ; i++) {
+            for(int j = i ; j <= e ; j+=i) {
                 memo[j]++;
             }
         }
-        int[] best = new int[5000001];
+        int[] best = new int[e+1];
         best[e] = e;
         int num = e;
         for(int i = e ; i > 0 ; i--) {
