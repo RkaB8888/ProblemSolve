@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 이 클래스에 대한 동작 설명
+ * @description DP
  */
  
 // 1~n크기의 건물이 2채씩 존재할 때 일렬로 바라봐서 구분할 수 있는 건물의 수가 count채인 경우의 수를 구하기
