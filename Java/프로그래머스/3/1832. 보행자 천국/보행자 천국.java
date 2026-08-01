@@ -29,35 +29,23 @@ import java.util.*;
 class Solution {
     int MOD = 20170805;
     public int solution(int m, int n, int[][] cityMap) {
-        int[][][] dp = new int[m][n][2];
-        dp[0][0][0] = 1; // 왼쪽에서 오는 경우
-        dp[0][0][1] = 1; // 위쪽에서 오는 경우
-        for(int i = 1 ; i < m ; i++) { // 아래쪽 초기화
-            if(cityMap[i-1][0]==1) { // 통행 불가만 신경 씀
-                dp[i][0][1] = 0;
-            } else {
-                dp[i][0][1] = dp[i-1][0][1];
-            }
-        }
+        int[][] dp = new int[n][2];
+        dp[0][0] = 1; // 왼쪽에서 오는 경우
+        dp[0][1] = 1;
         for(int i = 1 ; i < n ; i++) { // 오른쪽 초기화
-            if(cityMap[0][i-1]==1) { // 통행 불가만 신경 씀
-                dp[0][i][0] = 0;
-            } else {
-                dp[0][i][0] = dp[0][i-1][0];
-            }
+            if(cityMap[0][i-1]==1) break; // 통행 불가만 신경 씀
+            dp[i][0] = dp[i-1][0];
         }
+        dp[0][0] = 0;
         for(int i = 1 ; i < m ; i++) {
+            if(cityMap[i-1][0]==1) dp[0][1] = 0;
             for(int j = 1 ; j < n ; j++) {
                 // 위쪽 노드에 따라 올 수 있는 경우가 정해짐
-                int up = cityMap[i-1][j] == 1 ? 0 : (cityMap[i-1][j] == 2 ? dp[i-1][j][1] : ((dp[i-1][j][0]+dp[i-1][j][1])%MOD));
+                dp[j][1] = cityMap[i-1][j] == 1 ? 0 : (cityMap[i-1][j] == 2 ? dp[j][1] : ((dp[j][0]+dp[j][1])%MOD));
                 // 왼쪽 노드에 따라 올 수 있는 경우가 정해짐
-                int left = cityMap[i][j-1] == 1 ? 0 : (cityMap[i][j-1] == 2 ? dp[i][j-1][0] : ((dp[i][j-1][0]+dp[i][j-1][1])%MOD));
-                dp[i][j][0] = left;
-                dp[i][j][1] = up;
-                // System.out.println("("+i+","+j+") up: "+dp[i][j][1]+", left: "+dp[i][j][0]);
+                dp[j][0] = cityMap[i][j-1] == 1 ? 0 : (cityMap[i][j-1] == 2 ? dp[j-1][0] : ((dp[j-1][0]+dp[j-1][1])%MOD));
             }
         }
-        // System.out.println("up: "+dp[m-1][n-1][1]+", left: "+dp[m-1][n-1][0]);
-        return (dp[m-1][n-1][0]+dp[m-1][n-1][1])%MOD;
+        return (dp[n-1][0]+dp[n-1][1])%MOD;
     }
 }

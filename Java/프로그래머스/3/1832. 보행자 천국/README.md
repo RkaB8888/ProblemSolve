@@ -1,10 +1,10 @@
 # [level 3] 보행자 천국 - 1832 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/1832) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/1832?language=java) 
 
 ### 성능 요약
 
-메모리: 138 MB, 시간: 75.79 ms
+메모리: 102 MB, 시간: 40.48 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2026년 08월 01일 23:37:24
+2026년 08월 01일 23:53:29
 
 ### 문제 설명
 
