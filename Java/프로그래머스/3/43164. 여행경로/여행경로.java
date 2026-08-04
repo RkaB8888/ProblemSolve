@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 이 클래스에 대한 동작 설명
+ * @description 정렬 + DFS + HashMap
  */
  
 // 모든 간선을 사용해서 거쳐가는 노드 반환
