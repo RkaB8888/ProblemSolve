@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 이 클래스에 대한 동작 설명
+ * @description 삼분탐색
  */
 
 // land는 NxN 크기의 2차원 배열이며, N은 1이상 300이하
@@ -42,16 +42,24 @@ public class Solution {
                 minH = Math.min(minH,land[i][j]);
             }
         }
-        while(minH<maxH){
-            int midH = (minH + maxH) >> 1;
-            long midV1 = calc(midH, land, P, Q);
-            long midV2 = calc(midH+1, land, P, Q);
+        while(maxH-minH >= 3){
+            int midH1 = minH + (maxH - minH) / 3;
+            int midH2 = maxH - (maxH - minH) / 3;
+            long midV1 = calc(midH1, land, P, Q);
+            long midV2 = calc(midH2, land, P, Q);
             if(midV1 < midV2) { // 기준 왼쪽에 최소가 있음
-                maxH = midH;
-            } else { // 기준 오른쪽에 최소가 있음
-                minH = midH+1;
+                maxH = midH2;
+            } else if(midV1 > midV2){ // 기준 오른쪽에 최소가 있음
+                minH = midH1;
+            } else {
+                minH = midH1;
+                maxH = midH2;
             }
         }
-        return calc(minH,land,P,Q);
+        long answer = calc(minH,land,P,Q);
+        for(int i = minH + 1 ; i <= maxH ; i++) {
+            answer = Math.min(answer,calc(i,land,P,Q));
+        }
+        return answer;
     }
 }
