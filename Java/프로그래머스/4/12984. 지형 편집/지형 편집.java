@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description 삼분탐색
+ * @description 정렬 탐색
  */
 
 // land는 NxN 크기의 2차원 배열이며, N은 1이상 300이하
@@ -13,52 +13,33 @@ import java.util.*;
 // 맞춰야 할 높이는 각 요소의 최소값 ~ 최대값 범위 내에 있음
 // 높이의 갯수를 메모리 상에 올려두려면 최대 10억 * 4Byte -> 메모리 초과
 // 적어도 높이를 정하고 해당 높이를 맞출 때의 비용을 다 계산해야 함.
-// -> 예를 들어 최소가 0이고 최대가 10억이라면 범위가 넓으니 이분 탐색을 고려해볼만 함
-// -> 근데 P비용과 Q비용 둘 다 자연수라서 비용 그래프가 2차 함수 형태 같은데?
-// -> 기준의 오른쪽이 더 낮을지 왼쪽이 더 낮을지를 구분해야 함.
-// -> 기준과 기준+1의 비용을 비교해서 낮아지는 쪽으로 이분탐색 진행.
 
-// 단순 높이 이분탐색 시간복잡도: 300*300 * log 10^10;
+// land를 1차원 배열로 오름차순 정렬한다.
+// 제일 작은 높이를 기준으로 나머지 모든 높이를 깎을 때의 비용을 구한다.
+// 그 다음으로 작은 높이[1]를 기준으로 비용을 계산할 때
+// h[0]은 h[1]-h[0]만큼 높이를 증가시켜야 하므로 P*(h[1]-h[0])을 비용에 추가하고
+// h[2]~h[N*N]은 h[1]-h[0]만큼의 높이를 원복하는 과정이므로 Q*(h[1]-h[0])이 각각 제거된다.
+// 이를 N*N 순회할 때 최소비용을 반환하면 될 듯. 
 public class Solution {
-    private long calc(int height, int[][] land, int P, int Q){
-        long result = 0;
-        for(int i = 0 ; i < land.length ; i++) {
-            for(int j = 0 ; j < land[0].length ; j++) {
-                int diff = height - land[i][j];
-                if(diff<0) {
-                    result -= (long)Q * (long)diff;
-                }else{
-                    result += (long)P * (long)diff;
-                }
-            }
-        }
-        return result;
-    }
     public long solution(int[][] land, int P, int Q) {
-        int maxH = 0, minH = 1000000000;
+        int len = land.length * land.length;
+        int[] h = new int[len];
         for(int i = 0 ; i < land.length ; i++) {
             for(int j = 0 ; j < land[0].length ; j++) {
-                maxH = Math.max(maxH,land[i][j]);
-                minH = Math.min(minH,land[i][j]);
+                h[i*land.length+j] = land[i][j];
             }
         }
-        while(maxH-minH >= 3){
-            int midH1 = minH + (maxH - minH) / 3;
-            int midH2 = maxH - (maxH - minH) / 3;
-            long midV1 = calc(midH1, land, P, Q);
-            long midV2 = calc(midH2, land, P, Q);
-            if(midV1 < midV2) { // 기준 왼쪽에 최소가 있음
-                maxH = midH2;
-            } else if(midV1 > midV2){ // 기준 오른쪽에 최소가 있음
-                minH = midH1;
-            } else {
-                minH = midH1;
-                maxH = midH2;
-            }
+        Arrays.sort(h);
+        long answer = 0;
+        for(int i = 1 ; i < len ; i++) {
+            answer += (long)(h[i]-h[0])*Q;
         }
-        long answer = calc(minH,land,P,Q);
-        for(int i = minH + 1 ; i <= maxH ; i++) {
-            answer = Math.min(answer,calc(i,land,P,Q));
+        long preV = answer;
+        for(int i = 1 ; i < len ; i++) {
+            long diff = h[i]-h[i-1];
+            preV += diff*P*i;
+            preV -= diff*Q*(len-i);
+            answer = Math.min(answer,preV);
         }
         return answer;
     }
