@@ -35,16 +35,25 @@ class Solution {
             int nc2 = c2+rotate[s][1];
             int ns = nextS[s];
             // 이동한 2번좌표가 안에 있는지, 빈공간인지, 온적 있는지 검사
-            if(inBound(nr2, nc2, n)&&board[nr2][nc2]==0&&!visited[r1][c1][ns]) {
-                visited[r1][c1][ns] = true;
-                q.add(new int[]{r1,c1,ns,t+1});
+            if(inBound(nr2, nc2, n)&&board[nr2][nc2]==0) {
+                if(ns==0) { // 세로 형태
+                    r1 = nr2;
+                    ns = 2;
+                } else if(ns==3) { // 가로 형태
+                    c1 = nc2;
+                    ns = 1;
+                }
+                if(!visited[r1][c1][ns-1]){
+                    visited[r1][c1][ns-1] = true;
+                    q.add(new int[]{r1,c1,ns,t+1});
+                }
             }
         }
     }
     public int solution(int[][] board) {
         int n = board.length;
-        boolean[][][] visited = new boolean[n][n][4]; // 1번 축 기준 위치 4개를 체크
-        visited[0][0][1] = true;
+        boolean[][][] visited = new boolean[n][n][2]; // 1번 축 기준 위치 4개를 체크
+        visited[0][0][0] = true;
         Queue<int[]> q = new ArrayDeque<>();
         q.add(new int[]{0,0,1,0}); // (0,0)에 1의 형태 0초
 
@@ -76,8 +85,8 @@ class Solution {
                 int nr2 = r2+other[i][0];
                 int nc2 = c2+other[i][1];
                 if(inBound(nr1, nc1, n)&&inBound(nr2, nc2, n)) {
-                    if(board[nr1][nc1]==0&&board[nr2][nc2]==0&&!visited[nr1][nc1][s]) {
-                        visited[nr1][nc1][s] = true;
+                    if(board[nr1][nc1]==0&&board[nr2][nc2]==0&&!visited[nr1][nc1][s-1]) {
+                        visited[nr1][nc1][s-1] = true;
                         q.add(new int[]{nr1,nc1,s,t+1});
                     }
                 }
