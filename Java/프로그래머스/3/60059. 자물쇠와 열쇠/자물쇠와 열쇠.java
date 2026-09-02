@@ -12,6 +12,25 @@ import java.util.*;
 // 겹치는 위치에 대한 비교 전에 해당 영역의 홈 갯수를 서로 비교해서 같은 경우만 하면 최적화 가능할 듯?
 
 class Solution {
+    private boolean isValid(int[][] key, int[][] lock, int r, int c, int holeCnt) {
+        int m = key.length;
+        int n = lock.length;
+        int checkCnt = 0;
+        for(int k1 = 0 ; k1 < m ; k1++) { // 열쇠와 비교
+            int lockR = r+k1-m+1;
+            if(lockR<0||lockR>=n) continue;
+            for(int k2 = 0 ; k2 < m ; k2++) {
+                int lockC = c+k2-m+1;
+                if(lockC<0||lockC>=n) continue;
+                if(lock[lockR][lockC] == 1 && key[k1][k2] == 1) return false;
+                if(lock[lockR][lockC] == 0) {
+                    if(key[k1][k2] == 0) return false;
+                    else checkCnt++; 
+                }
+            }
+        }
+        return checkCnt==holeCnt;
+    }
     private int[][] rotateKey(int[][] key){
         int m = key.length;
         int[][] result = new int[m][m];
@@ -35,6 +54,7 @@ class Solution {
         }
         // 키 없이 자물쇠 열리는 경우
         if(holeCnt == 0) return true;
+
         for(int i = 0 ; i < m ; i++) {
             for(int j = 0 ; j < m ; j++) {
                 if(key[i][j]==1) keyCnt++;
@@ -44,40 +64,11 @@ class Solution {
         if(keyCnt < holeCnt) return false;
 
         int len = n+(m<<1)-2;
-        int[][] map = new int[len][len];
-        for(int i = 0 ; i < n ; i++) {
-            for(int j = 0 ; j < n ; j++) {
-                map[i+m-1][j+m-1] = lock[i][j];
-            }
-        }
 
         for(int i = 0 ; i < 4 ; i++) { // 회전 횟수
             for(int j1 = 0 ; j1 <= len - m ; j1++) { // 겹치는 영역 시작 행
                 for(int j2 = 0 ; j2 <= len - m ; j2++) { // 겹치는 영역 시작 열
-                    boolean flag = false;
-                    int checkCnt = 0;
-                    for(int k1 = 0 ; k1 < m ; k1++) { // 열쇠와 비교
-                        if((j1+k1<m-1)||(j1+k1)>len-m) continue;
-                        for(int k2 = 0 ; k2 < m ; k2++) {
-                            if((j2+k2<m-1)||(j2+k2)>len-m) continue;
-                            int mapV = map[j1+k1][j2+k2];
-                            int keyV = key[k1][k2];
-                            if(mapV == 0) {
-                                if(keyV==0) {
-                                    flag = true;
-                                    break;
-                                }
-                                checkCnt++;
-                            } else {
-                                if(keyV == 1) {
-                                    flag = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if(flag) break;
-                    }
-                    if(!flag&&checkCnt==holeCnt) return true;
+                    if(isValid(key,lock,j1,j2,holeCnt)) return true;
                 }
             }
             key = rotateKey(key);
